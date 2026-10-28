@@ -1,0 +1,90 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extName__",
+  "short_name": "__MSG_extShort__",
+  "version": "2.2.0",
+  "description": "__MSG_extDesc__",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "__MSG_actionTitle__",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "permissions": [
+    "storage",
+    "alarms",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://einoow.com/*",
+    "https://raw.githubusercontent.com/*"
+  ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://einoow.com/play/kanto-tactics*"
+      ],
+      "js": [
+        "lib/i18n-game.js",
+        "lib/core.js",
+        "content/overlay.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://einoow.com/playables/kanto-tactics/*"
+      ],
+      "js": [
+        "content/reader.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "https://einoow.com/playables/kanto-tactics/*"
+      ],
+      "js": [
+        "lib/i18n-game.js",
+        "lib/core.js",
+        "content/overlay.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "commands": {
+    "toggle-overlay": {
+      "suggested_key": {
+        "default": "Alt+K"
+      },
+      "description": "__MSG_cmdToggle__"
+    },
+    "clear-shop": {
+      "suggested_key": {
+        "default": "Alt+R"
+      },
+      "description": "__MSG_cmdClear__"
+    }
+  },
+  "default_locale": "de"
+}

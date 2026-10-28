@@ -1,0 +1,20 @@
+{
+  "extName": {
+    "message": "Kanto Coach – Overlay"
+  },
+  "extShort": {
+    "message": "Kanto Coach"
+  },
+  "extDesc": {
+    "message": "Inoffizielles Overlay für Kanto Tactics: erkennt Shop, Bank und Items, kreist passende Pokémon ein, zeigt Platzierung und Ziel-Team."
+  },
+  "actionTitle": {
+    "message": "Kanto Coach"
+  },
+  "cmdToggle": {
+    "message": "Overlay ein- oder ausblenden"
+  },
+  "cmdClear": {
+    "message": "Shop leeren (nach dem Neu-Würfeln)"
+  }
+}

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanto Coach – Overlay für Kanto Tactics</title>
+<meta name="description" content="Inoffizielles Chrome-Overlay für Kanto Tactics: sagt dir in jeder Runde, was du kaufen, sparen und aufstellen solltest. Unofficial Chrome overlay for Kanto Tactics.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta property="og:title" content="Kanto Coach – Overlay für Kanto Tactics">
+<meta property="og:description" content="Sagt dir in jeder Runde, was du kaufen, sparen und aufstellen solltest. Deutsch & English.">
+<meta property="og:image" content="https://hrvatska157-art.github.io/kanto-coach/img/overlay-now.png">
+<style>
+:root{--bg:#0f121a;--panel:#171b26;--panel2:#1e2331;--line:#2c3346;--fg:#edf0f6;--fg2:#c3c9d7;--muted:#8d95a8;--acc:#ff5a4c;--gold:#f2bf45;--green:#4fcb88;--blue:#8ab4ff;--r:14px}
+@media (prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#f4f5f8;--panel:#fff;--panel2:#f0f2f6;--line:#dde1e9;--fg:#141824;--fg2:#384055;--muted:#687087}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--blue)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em;text-decoration:none;color:var(--fg)}
+.brand img{width:30px;height:30px}
+.brand b{color:var(--acc)}
+nav.links{margin-left:auto;display:flex;gap:16px;align-items:center}
+nav.links a{color:var(--fg2);text-decoration:none;font-size:14px;font-weight:600}
+nav.links a:hover{color:var(--fg)}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.lang button{border:0;background:transparent;color:var(--fg2);font:700 12.5px system-ui;padding:6px 10px;cursor:pointer}
+.lang button[aria-pressed=true]{background:var(--acc);color:#1a0806}
+.hero{padding:56px 0 24px;display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.08;margin:0 0 14px;letter-spacing:-.01em}
+.hero h1 span{color:var(--acc)}
+.hero p.lead{font-size:18px;color:var(--fg2);margin:0 0 24px}
+.cta{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:11px;font-weight:700;text-decoration:none;border:1px solid var(--line);color:var(--fg);background:var(--panel)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#1a0806}
+.btn small{font-weight:600;opacity:.75}
+.meta{margin-top:14px;color:var(--muted);font-size:13.5px}
+.shot{border-radius:var(--r);border:1px solid var(--line);box-shadow:0 18px 50px rgba(0,0,0,.35);max-width:100%;height:auto;display:block}
+section{padding:36px 0}
+h2{font-size:28px;margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.card h3{margin:0 0 6px;font-size:16.5px}
+.card p{margin:0;color:var(--fg2);font-size:14.5px}
+.card .ic{font-size:20px;margin-bottom:6px}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;max-width:820px;margin:0 auto}.shots .wide{grid-column:1/-1}
+.shots figure{margin:0}
+.shots figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:10px}
+ol.steps li{counter-increment:s;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px 14px 56px;position:relative}
+ol.steps li::before{content:counter(s);position:absolute;left:16px;top:13px;width:26px;height:26px;border-radius:50%;background:var(--acc);color:#1a0806;font-weight:800;display:grid;place-items:center;font-size:14px}
+code,kbd{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:.9em}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+ul.check{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+ul.check li{padding-left:28px;position:relative;color:var(--fg2)}
+ul.check li::before{content:"✓";position:absolute;left:4px;color:var(--green);font-weight:800}
+footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--muted);font-size:13.5px}
+footer p{margin:6px 0}
+[data-en]{display:none}
+html[lang=en] [data-de]{display:none}
+html[lang=en] [data-en]{display:revert}
+@media (max-width:860px){.hero{grid-template-columns:1fr;padding-top:32px}.grid{grid-template-columns:1fr 1fr}.shots,.two{grid-template-columns:1fr}nav.links a.hide-s{display:none}}
+@media (max-width:540px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#"><img src="icon.svg" alt="">KANTO <b>COACH</b></a>
+  <nav class="links">
+    <a class="hide-s" href="#features"><span data-de>Funktionen</span><span data-en>Features</span></a>
+    <a class="hide-s" href="#install"><span data-de>Installieren</span><span data-en>Install</span></a>
+    <a class="hide-s" href="#privacy"><span data-de>Datenschutz</span><span data-en>Privacy</span></a>
+    <a href="https://github.com/hrvatska157-art/kanto-coach">GitHub</a>
+    <span class="lang" role="group" aria-label="Sprache / Language"><button type="button" data-l="de">DE</button><button type="button" data-l="en">EN</button></span>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <h1><span data-de>Gewinne öfter in <span>Kanto Tactics</span>.</span><span data-en>Win more often in <span>Kanto Tactics</span>.</span></h1>
+      <p class="lead" data-de>Kanto Coach ist ein Chrome-Overlay neben dem Spiel. Es liest Shop, Bank, Brett, Items, Level und Gold und sagt dir in jeder Runde, was du kaufen, sparen und aufstellen solltest – und kreist passende Pokémon direkt im Spiel ein.</p>
+      <p class="lead" data-en>Kanto Coach is a Chrome overlay next to the game. It reads your shop, bench, board, items, level and gold and tells you every round what to buy, save and field – and circles matching Pokémon right in the game.</p>
+      <div class="cta">
+        <a class="btn pri" href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip">⬇ <span data-de>Herunterladen</span><span data-en>Download</span> <small>v2.2.0</small></a>
+        <a class="btn" href="#install"><span data-de>So installierst du es</span><span data-en>How to install</span></a>
+      </div>
+      <p class="meta" data-de>Kostenlos · Open Source (MIT) · Deutsch & Englisch · kein Tracking · für Spielversion 40</p>
+      <p class="meta" data-en>Free · open source (MIT) · German & English · no tracking · for game version 40</p>
+    </div>
+    <img class="shot" src="img/overlay-now.png" width="958" height="744" alt="Kanto Coach overlay">
+  </div>
+
+  <section id="features">
+    <h2><span data-de>Was es kann</span><span data-en>What it does</span></h2>
+    <div class="grid">
+      <div class="card"><div class="ic">①</div><h3><span data-de>„Was jetzt?“</span><span data-en>“What now?”</span></h3><p data-de>Nummerierte Schritte mit Begründung: Stern-Käufe, Kern-Pokémon deines Plans, Typ-Stufen, Gold sparen bis zur Zinsgrenze, würfeln, EP kaufen.</p><p data-en>Numbered steps with reasons: star upgrades, core Pokémon of your plan, trait tiers, saving up to the interest cap, rerolling, buying XP.</p></div>
+      <div class="card"><div class="ic">🗺</div><h3><span data-de>Ein Plan für dich</span><span data-en>A plan for you</span></h3><p data-de>PvP: Meta-Comps nach Baubarkeit mit deinem Team. Abenteuer &amp; Turm: Comps mit Typ-Synergie, bewertet nach echten Siegquoten im Modus.</p><p data-en>PvP: meta comps ranked by how buildable they are with your team. Adventure &amp; Tower: comps with type synergy, rated by real win rates in that mode.</p></div>
+      <div class="card"><div class="ic">⇪</div><h3><span data-de>Plan ins Spiel</span><span data-en>Plan into the game</span></h3><p data-de>Ein Klick kopiert den Plan als Team-Code. Im Spiel „Planer → Code einfügen“ – die Aufstellung erscheint als Schatten auf dem Brett.</p><p data-en>One click copies the plan as a team code. In the game “Planner → Paste code” – the placement appears as shadows on the board.</p></div>
+      <div class="card"><div class="ic">◎</div><h3><span data-de>Markierungen im Spiel</span><span data-en>Marks in the game</span></h3><p data-de>KAUFEN, ★★! und +TYP direkt an den Shop-Karten, ZIEL an den Item-Komponenten – nur was du dir leisten kannst.</p><p data-en>BUY, ★★! and +TYPE right on the shop cards, TARGET on item components – only what you can afford.</p></div>
+      <div class="card"><div class="ic">⚔</div><h3><span data-de>Abenteuer &amp; Turm</span><span data-en>Adventure &amp; Tower</span></h3><p data-de>Erkennt Station, Etage und Schwierigkeit, zeigt den nächsten Boss mit Siegquote und warnt vor schweren Kämpfen.</p><p data-en>Detects stop, floor and difficulty, shows the next boss with its win rate and warns before hard fights.</p></div>
+      <div class="card"><div class="ic">🧪</div><h3><span data-de>Items</span><span data-en>Items</span></h3><p data-de>Liest deinen Beutel, zeigt, was du jetzt bauen kannst, und wer welches Item tragen soll.</p><p data-en>Reads your bag, shows what you can build now and who should carry which item.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shots">
+      <figure><img class="shot" src="img/overlay-plan.png" width="385" height="710" alt="" loading="lazy"><figcaption><span data-de>Reiter „Plan“: Begründung, Plan ins Spiel, Aufstellung</span><span data-en>“Plan” tab: reasons, send to game, placement</span></figcaption></figure>
+      <figure><img class="shot" src="img/overlay-items.png" width="385" height="710" alt="" loading="lazy"><figcaption><span data-de>Reiter „Items“: was dein Plan braucht</span><span data-en>“Items” tab: what your plan needs</span></figcaption></figure>
+      <figure class="wide"><img class="shot" src="img/shop-marks.png" width="900" height="170" alt="" loading="lazy"><figcaption><span data-de>Markierungen direkt im Spiel-Shop</span><span data-en>Marks right in the game’s shop</span></figcaption></figure>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2><span data-de>Installieren</span><span data-en>Install</span></h2>
+    <ol class="steps">
+      <li data-de><a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip">ZIP herunterladen</a> und entpacken.</li>
+      <li data-en><a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip">Download the ZIP</a> and unzip it.</li>
+      <li data-de>In Chrome <code>chrome://extensions</code> öffnen und oben rechts den <b>Entwicklermodus</b> einschalten.</li>
+      <li data-en>Open <code>chrome://extensions</code> in Chrome and turn on <b>Developer mode</b> (top right).</li>
+      <li data-de><b>„Entpackte Erweiterung laden“</b> klicken und den Ordner <code>extension</code> auswählen.</li>
+      <li data-en>Click <b>“Load unpacked”</b> and choose the <code>extension</code> folder.</li>
+      <li data-de><a href="https://einoow.com/play/kanto-tactics">Kanto Tactics</a> öffnen – das Overlay erscheint. <kbd>Alt</kbd>+<kbd>K</kbd> blendet es ein und aus, <kbd>Alt</kbd>+<kbd>R</kbd> leert den Shop nach dem Würfeln.</li>
+      <li data-en>Open <a href="https://einoow.com/play/kanto-tactics">Kanto Tactics</a> – the overlay appears. <kbd>Alt</kbd>+<kbd>K</kbd> toggles it, <kbd>Alt</kbd>+<kbd>R</kbd> clears the shop after a reroll.</li>
+    </ol>
+    <p class="meta" data-de>Auch für Edge, Brave und Opera. Update: neue ZIP entpacken, alten Ordner ersetzen, in <code>chrome://extensions</code> auf „Neu laden“ klicken.</p>
+    <p class="meta" data-en>Also works in Edge, Brave and Opera. Update: unzip the new ZIP, replace the old folder, click “Reload” in <code>chrome://extensions</code>.</p>
+  </section>
+
+  <section id="privacy">
+    <div class="two">
+      <div class="card">
+        <h3><span data-de>Fair und privat</span><span data-en>Fair and private</span></h3>
+        <ul class="check" data-de><li>Liest nur, was im Spiel sichtbar ist</li><li>Klickt, kauft und verschickt nichts</li><li>Keine Konten, keine Analyse, kein Tracking</li><li>Alles bleibt lokal in deinem Browser</li></ul>
+        <ul class="check" data-en><li>Reads only what is visible in the game</li><li>Clicks, buys and sends nothing</li><li>No accounts, no analytics, no tracking</li><li>Everything stays local in your browser</li></ul>
+        <p style="margin-top:10px"><a href="https://github.com/hrvatska157-art/kanto-coach/blob/main/PRIVACY.md"><span data-de>Datenschutzerklärung</span><span data-en>Privacy policy</span></a></p>
+      </div>
+      <div class="card">
+        <h3><span data-de>Woher die Zahlen kommen</span><span data-en>Where the numbers come from</span></h3>
+        <p data-de>Meta-Comps, Tierlisten und Siegquoten im Abenteuer und Turm stammen aus der öffentlichen API von einoow.com (Ranked-Spiele der letzten 7 Tage), höchstens stündlich abgefragt und zwischengespeichert. Fällt die Statistik aus, baut der Coach Ersatz-Pläne aus den Spielregeln.</p>
+        <p data-en>Meta comps, tier lists and win rates in adventure and tower come from einoow.com’s public API (ranked games of the last 7 days), fetched at most hourly and cached. If the stats are down, the coach builds fallback plans from the game rules.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <p data-de>Inoffizielles, nicht kommerzielles Fan-Projekt. Nicht verbunden mit einoow.com, Kanto Tactics, Nintendo, Game Freak, Creatures oder The Pokémon Company. Pokémon und alle zugehörigen Namen sind Marken ihrer jeweiligen Inhaber.</p>
+  <p data-en>Unofficial, non-commercial fan project. Not affiliated with einoow.com, Kanto Tactics, Nintendo, Game Freak, Creatures or The Pokémon Company. Pokémon and all related names are trademarks of their respective owners.</p>
+  <p><span data-de>Daten</span><span data-en>Data</span>: Kanto Tactics · einoow.com · <span data-de>Bilder</span><span data-en>Images</span>: <a href="https://github.com/PokeAPI/sprites">PokéAPI/sprites</a> · <a href="https://github.com/hrvatska157-art/kanto-coach">GitHub</a> · MIT · v2.2.0</p>
+</div></footer>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search).get('lang'); var saved = null;
+  try { saved = localStorage.getItem('kc-lang'); } catch (e) {}
+  var lang = q === 'en' || q === 'de' ? q : saved || (/^de\b/i.test(navigator.language || '') ? 'de' : 'en');
+  function set(l) {
+    document.documentElement.lang = l;
+    document.title = l === 'en' ? 'Kanto Coach – overlay for Kanto Tactics' : 'Kanto Coach – Overlay für Kanto Tactics';
+    document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.l === l); });
+    try { localStorage.setItem('kc-lang', l); } catch (e) {}
+  }
+  document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.l); }); });
+  set(lang);
+})();
+</script>
+</body>
+</html>

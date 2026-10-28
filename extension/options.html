@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><title>Kanto Coach · Einstellungen</title><link rel="stylesheet" href="ui.css">
+<style>.wrap{max-width:640px;margin:0 auto;padding:28px 16px}</style></head>
+<body>
+<div class="wrap col">
+  <div class="brand"><img src="icons/icon48.png" alt=""><h1>Kanto <b>Coach</b> · <span id="t-title">Einstellungen</span></h1></div>
+
+  <div class="card col">
+    <h2 id="t-lang">Sprache</h2>
+    <select id="lang"><option value="auto">Automatisch (wie das Spiel) / Automatic (like the game)</option><option value="de">Deutsch</option><option value="en">English</option></select>
+  </div>
+
+  <div class="card col">
+    <h2 id="t-src">Datenquelle</h2>
+    <label><span id="t-server">Adresse deines Coach-Servers (optional)</span><input type="url" id="server" placeholder="http://192.168.1.10:8080"></label>
+    <p class="hint" id="t-serverhint">Läuft der Coach auf deinem Unraid-Server oder PC, trag hier seine Adresse ein. Dann kommen Daten und Bilder von dort (zwischengespeichert). Leer lassen = direkt von einoow.com.</p>
+    <div class="row"><button class="btn pri" id="save">Speichern</button><button class="btn" id="test">Verbindung testen</button><span id="msg" class="hint"></span></div>
+  </div>
+
+  <div class="card col">
+    <h2 id="t-auto">Spiel-Erkennung</h2>
+    <label style="flex-direction:row;align-items:center;gap:8px;color:var(--fg)"><input type="checkbox" id="autoShop"> <span id="t-autolabel">Shop, Level und Gold automatisch erkennen und passende Pokémon im Spiel einkreisen</span></label>
+    <p class="hint" id="t-autohint">Gelesen werden nur die sichtbaren Beschriftungen der Shop-Karten, des Levels und des Golds, die das Spiel für Screenreader setzt. Es wird nichts geklickt, gekauft oder verschickt. Ausgeschaltet trägst du den Shop im Overlay von Hand ein.</p>
+  </div>
+
+  <div class="card col">
+    <h2 id="t-calib">Feld-Schablone</h2>
+    <p class="hint" id="t-calibhint"></p>
+    <div class="row"><button class="btn" id="resetcalib">Ausrichtung löschen</button></div>
+  </div>
+
+  <div class="card col">
+    <h2 id="t-keys">Tastenkürzel</h2>
+    <p class="hint" id="t-keyshint"><kbd>Alt</kbd>+<kbd>K</kbd> blendet das Overlay ein und aus, <kbd>Alt</kbd>+<kbd>R</kbd> leert den Shop nach dem Neu-Würfeln. Ändern kannst du sie unter chrome://extensions/shortcuts.</p>
+    <div class="row"><button class="btn" id="resetpos">Overlay-Position zurücksetzen</button></div>
+  </div>
+
+  <div class="card col">
+    <h2 id="t-about">Über</h2>
+    <p class="hint" id="t-abouttext">Inoffizielles Fan-Tool, nicht mit dem Spiel verbunden. Das Overlay liest nur, was im Spiel sichtbar ist (Shop, Bank, Item-Beutel, Level, Gold), automatisiert nichts und sendet keine Daten über dich. Comps, Werte und Ranglisten kommen ausschließlich über die öffentliche API. Daten: Kanto Tactics · einoow.com. Bilder: PokéAPI-Sprites.</p>
+  </div>
+</div>
+<script src="options.js"></script>
+</body>
+</html>

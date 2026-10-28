@@ -1,0 +1,20 @@
+{
+  "extName": {
+    "message": "Kanto Coach – Overlay"
+  },
+  "extShort": {
+    "message": "Kanto Coach"
+  },
+  "extDesc": {
+    "message": "Unofficial Kanto Tactics overlay: reads shop, bench and items, circles matching Pokémon, shows placement and your target team."
+  },
+  "actionTitle": {
+    "message": "Kanto Coach"
+  },
+  "cmdToggle": {
+    "message": "Show or hide the overlay"
+  },
+  "cmdClear": {
+    "message": "Clear shop (after a reroll)"
+  }
+}
