@@ -155,17 +155,18 @@ html[lang=de] [data-de]{display:revert}
 <script>
 (function () {
   var q = new URLSearchParams(location.search).get('lang'); var saved = null;
-  try { saved = localStorage.getItem('kc-lang'); } catch (e) {}
-  // English is the default; German only on request (?lang=de or the DE button, remembered)
+  // English is the default; German only on request (?lang=de or a click on DE).
+  // Only an explicit click is remembered (new key: older versions saved the browser language automatically).
+  try { saved = localStorage.getItem('kc-lang-choice'); } catch (e) {}
   var lang = q === 'en' || q === 'de' ? q : saved || 'en';
-  function set(l) {
+  function set(l, remember) {
     document.documentElement.lang = l;
     document.title = l === 'en' ? 'Kanto Coach – overlay for Kanto Tactics' : 'Kanto Coach – Overlay für Kanto Tactics';
     document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.l === l); });
-    try { localStorage.setItem('kc-lang', l); } catch (e) {}
+    if (remember) try { localStorage.setItem('kc-lang-choice', l); } catch (e) {}
   }
-  document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.l); }); });
-  set(lang);
+  document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.l, true); }); });
+  set(lang, false);
 })();
 </script>
 </body>
