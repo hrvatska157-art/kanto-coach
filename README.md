@@ -2,77 +2,77 @@
 
 <h1 align="center">Kanto Coach</h1>
 
-<p align="center"><b>Inoffizielles Overlay für <a href="https://einoow.com/play/kanto-tactics">Kanto Tactics</a> – damit du öfter gewinnst.</b><br>
-Deutsch · <a href="README.en.md">English</a> · <a href="https://hrvatska157-art.github.io/kanto-coach/">Webseite</a></p>
+<p align="center"><b>Unofficial overlay for <a href="https://einoow.com/play/kanto-tactics">Kanto Tactics</a> – so you win more often.</b><br>
+English · <a href="README.de.md">Deutsch</a> · <a href="https://hrvatska157-art.github.io/kanto-coach/">Website</a></p>
 
 <p align="center">
-<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (Version 2.2.0)</b></a>
+<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (version 2.2.1)</b></a>
 </p>
 
 ---
 
-Kanto Coach ist eine Chrome-Erweiterung, die neben dem Spiel ein kleines Overlay einblendet. Sie liest, was im Spiel sichtbar ist – Shop, Bank, Brett, Item-Beutel, Level, Gold und Runde – und sagt dir in jeder Runde, **was du jetzt tun solltest**: welches Pokémon du kaufst, wann du sparst, würfelst oder EP kaufst, welcher Plan zu deinem Team passt und wie du aufstellst. Passende Pokémon und Items werden **direkt im Spiel eingekreist**.
+Kanto Coach is a Chrome extension that shows a small overlay next to the game. It reads what is visible in the game – shop, bench, board, item bag, level, gold and round – and tells you every round **what to do now**: which Pokémon to buy, when to save, reroll or buy XP, which plan fits your team and how to place it. Matching Pokémon and items are **circled right in the game**.
 
-<p align="center"><img src="docs/img/overlay-now.png" width="720" alt="Overlay im Duellturm: nächster Boss, erkannter Shop und nummerierte Schritte"></p>
+<p align="center"><img src="docs/img/overlay-now.png" width="720" alt="Overlay in the Battle Tower: next boss, detected shop and numbered steps"></p>
 
-## Funktionen
+## Features
 
-- **„Was jetzt?“** – nummerierte Schritte mit Begründung: Kauf, der einen Stern bringt (★★/★★★), Kern-Pokémon deines Plans, zweite Kopie, Typ-Stufe vollmachen; dazu Tipps zu freien Feldplätzen, Gold sparen bis zur Zinsgrenze, Neu-Würfeln und EP kaufen.
-- **Ein Plan, der zu dir passt** – PvP: Meta-Comps nach Baubarkeit mit deinen Pokémon und deinem Gold. Abenteuer und Duellturm: Comps mit bewiesener Typ-Synergie, bewertet mit den echten Siegquoten in diesem Modus.
-- **Plan ins Spiel übernehmen** – kopiert den Plan als Team-Code. Im Spiel *Planer → „Code einfügen“*: Das Spiel zeigt die Aufstellung als Schatten auf dem Brett und markiert die Shop-Karten selbst.
-- **Markierungen im Spiel** – KAUFEN, ★★!, +TYP an den Shop-Karten und ZIEL an den Item-Komponenten.
-- **Items** – liest deinen Beutel, zeigt, was du bauen kannst und wer welches Item tragen soll.
-- **Abenteuer & Turm** – erkennt Station/Etage und Schwierigkeit, zeigt den nächsten Boss mit Siegquote und warnt vor schweren Kämpfen (z. B. Sabrina, Giovanni, Turm-Etage 50).
-- **Aktuell zum Spiel** – verankerte Formen (⚓), Figuren-Pokémon (Koga, Giovanni, Samurai), Abenteuer-Stufen und alle Neuerungen bis Spielversion 40.
-- **Deutsch und Englisch** – folgt automatisch der Spielsprache; die Erkennung funktioniert in allen 16 Sprachen des Spiels.
+- **“What now?”** – numbered steps with reasons: buys that give a star (★★/★★★), core Pokémon of your plan, second copies, completing a trait tier; plus tips on free board slots, saving gold up to the interest cap, rerolling and buying XP.
+- **A plan that fits you** – PvP: meta comps ranked by how buildable they are with your Pokémon and gold. Adventure and Battle Tower: comps with proven type synergy, rated with the real win rates in that mode.
+- **Send plan to the game** – copies the plan as a team code. In the game, *Planner → “Paste code”*: the game shows the placement as shadows on the board and marks the shop cards itself.
+- **Marks in the game** – BUY, ★★!, +TYPE on shop cards and TARGET on item components.
+- **Items** – reads your bag, shows what you can build and who should carry which item.
+- **Adventure & Tower** – detects stop/floor and difficulty, shows the next boss with its win rate and warns before hard fights (e.g. Sabrina, Giovanni, tower floor 50).
+- **Up to date** – anchored forms (⚓), character Pokémon (Koga, Giovanni, Samurai), adventure difficulties and everything up to game version 40.
+- **German and English** – follows the game language automatically; detection works in all 16 game languages.
 
 <p align="center">
-<img src="docs/img/overlay-plan.png" width="300" alt="Reiter Plan">
-<img src="docs/img/overlay-items.png" width="300" alt="Reiter Items">
+<img src="docs/img/overlay-plan.png" width="300" alt="Plan tab">
+<img src="docs/img/overlay-items.png" width="300" alt="Items tab">
 </p>
-<p align="center"><img src="docs/img/shop-marks.png" width="720" alt="Markierungen KAUFEN direkt an den Shop-Karten im Spiel"></p>
+<p align="center"><img src="docs/img/shop-marks.png" width="720" alt="BUY marks right on the shop cards in the game"></p>
 
-## Installieren
+## Install
 
-1. **[ZIP herunterladen](https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip)** und entpacken (oder dieses Repository klonen – der Ordner `extension/` ist die Erweiterung).
-2. In Chrome `chrome://extensions` öffnen und oben rechts den **Entwicklermodus** einschalten.
-3. **„Entpackte Erweiterung laden“** klicken und den entpackten Ordner `extension` auswählen.
-4. Kanto Tactics unter <https://einoow.com/play/kanto-tactics> öffnen – das Overlay erscheint rechts und lässt sich an der Titelleiste verschieben. **Alt+K** blendet es ein und aus, **Alt+R** leert den Shop nach dem Neu-Würfeln.
+1. **[Download the ZIP](https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip)** and unzip it (or clone this repository – the `extension/` folder is the extension).
+2. Open `chrome://extensions` in Chrome and turn on **Developer mode** (top right).
+3. Click **“Load unpacked”** and choose the unzipped `extension` folder.
+4. Open Kanto Tactics at <https://einoow.com/play/kanto-tactics> – the overlay appears on the right; drag its title bar to move it. **Alt+K** shows/hides it, **Alt+R** clears the shop after a reroll.
 
-Läuft auch in anderen Chromium-Browsern (Edge, Brave, Opera). **Aktualisieren:** neue ZIP entpacken, den alten Ordner ersetzen und in `chrome://extensions` auf „Neu laden“ klicken – Einstellungen bleiben erhalten.
+Also works in other Chromium browsers (Edge, Brave, Opera). **Updating:** unzip the new ZIP, replace the old folder and click “Reload” in `chrome://extensions` – your settings are kept.
 
-## Reiter im Overlay
+## Overlay tabs
 
-| Reiter | Inhalt |
+| Tab | Content |
 |---|---|
-| **Jetzt** | Modus und Runde/Station/Etage, nächster Boss, erkannter Shop und „Was jetzt?“ |
-| **Plan** | dein Plan mit Begründung, „Plan ins Spiel übernehmen“, „Jetzt aufstellen“ für dein Level, Platzierung und Alternativen |
-| **Items** | Beutel, Wunsch-Items deines Plans und was du jetzt bauen kannst |
-| **Team** | deine Pokémon und Kopien; Team-Codes aus dem Spiel einfügen |
+| **Now** | mode and round/stop/floor, next boss, detected shop and “What now?” |
+| **Plan** | your plan with reasons, “Send plan to the game”, “Field now” for your level, placement and alternatives |
+| **Items** | your bag, the items your plan wants and what you can build now |
+| **Team** | your Pokémon and copies; paste team codes from the game |
 
-## Datenschutz und Fairness
+## Privacy and fair play
 
-- Gelesen wird **nur, was im Spiel sichtbar ist** (Bilder und Beschriftungen von Shop, Bank, Brett, Beutel, Level, Gold, Fortschrittsleiste). Keine Spielvariablen, kein Mitlesen des Netzwerkverkehrs.
-- Die Erweiterung **klickt, kauft und verschickt nichts** – jede Entscheidung triffst du selbst. Alle Markierungen lassen Klicks durch.
-- **Keine Konten, keine Analyse, kein Tracking.** Einstellungen und Zwischenstände bleiben lokal in deinem Browser.
-- Statistiken kommen aus der öffentlichen API von einoow.com (höchstens stündlich, zwischengespeichert), Bilder aus dem PokéAPI-Sprites-Repository.
+- Only **what is visible in the game** is read (images and labels of shop, bench, board, bag, level, gold, progress bar). No game variables, no network sniffing.
+- The extension **clicks, buys and sends nothing** – you make every decision. All marks let clicks through.
+- **No accounts, no analytics, no tracking.** Settings and cached data stay in your browser.
+- Stats come from einoow.com’s public API (at most hourly, cached), images from the PokéAPI sprites repository.
 
 Details: [PRIVACY.md](PRIVACY.md)
 
-## Berechtigungen
+## Permissions
 
-| Berechtigung | Wofür |
+| Permission | Why |
 |---|---|
-| `storage` | Einstellungen, zwischengespeicherte Daten und den Austausch zwischen Spiel-Leser und Overlay lokal speichern |
-| `alarms` | Daten höchstens einmal pro Stunde aktualisieren |
-| `activeTab`, `scripting` | das Overlay per Klick aufs Symbol oder Tastenkürzel im aktiven Tab öffnen |
-| `https://einoow.com/*` | Overlay auf der Spielseite und Daten von der öffentlichen API |
-| `https://raw.githubusercontent.com/*` | Pokémon- und Item-Bilder (PokéAPI-Sprites) |
-| optional: eigene Server-Adresse | nur, wenn du in den Einstellungen einen eigenen Kanto-Coach-Server einträgst |
+| `storage` | keep settings, cached data and the exchange between game reader and overlay locally |
+| `alarms` | refresh data at most once an hour |
+| `activeTab`, `scripting` | open the overlay in the active tab from the toolbar icon or shortcut |
+| `https://einoow.com/*` | overlay on the game page and data from the public API |
+| `https://raw.githubusercontent.com/*` | Pokémon and item images (PokéAPI sprites) |
+| optional: your own server address | only if you enter your own Kanto Coach server in the settings |
 
-## Hinweise
+## Notes
 
-Inoffizielles, nicht kommerzielles Fan-Projekt. Nicht verbunden mit einoow.com, Kanto Tactics, Nintendo, Game Freak, Creatures oder The Pokémon Company. Pokémon und alle zugehörigen Namen sind Marken ihrer jeweiligen Inhaber.
-Daten: **Kanto Tactics · einoow.com** (öffentliche API). Bilder: [PokéAPI/sprites](https://github.com/PokeAPI/sprites).
+Unofficial, non-commercial fan project. Not affiliated with einoow.com, Kanto Tactics, Nintendo, Game Freak, Creatures or The Pokémon Company. Pokémon and all related names are trademarks of their respective owners.
+Data: **Kanto Tactics · einoow.com** (public API). Images: [PokéAPI/sprites](https://github.com/PokeAPI/sprites).
 
-Lizenz: [MIT](LICENSE) · Änderungen: [CHANGELOG.md](CHANGELOG.md)
+License: [MIT](LICENSE) · Changes: [CHANGELOG.md](CHANGELOG.md)

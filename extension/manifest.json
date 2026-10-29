@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "short_name": "__MSG_extShort__",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "__MSG_extDesc__",
   "icons": {
     "16": "icons/icon16.png",
@@ -86,5 +86,5 @@
       "description": "__MSG_cmdClear__"
     }
   },
-  "default_locale": "de"
+  "default_locale": "en"
 }

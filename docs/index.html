@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kanto Coach – Overlay für Kanto Tactics</title>
-<meta name="description" content="Inoffizielles Chrome-Overlay für Kanto Tactics: sagt dir in jeder Runde, was du kaufen, sparen und aufstellen solltest. Unofficial Chrome overlay for Kanto Tactics.">
+<title>Kanto Coach – overlay for Kanto Tactics</title>
+<meta name="description" content="Unofficial Chrome overlay for Kanto Tactics: tells you every round what to buy, save and field. English & Deutsch.">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<meta property="og:title" content="Kanto Coach – Overlay für Kanto Tactics">
-<meta property="og:description" content="Sagt dir in jeder Runde, was du kaufen, sparen und aufstellen solltest. Deutsch & English.">
+<meta property="og:title" content="Kanto Coach – overlay for Kanto Tactics">
+<meta property="og:description" content="Tells you every round what to buy, save and field – and circles matching Pokémon right in the game. English & Deutsch.">
 <meta property="og:image" content="https://hrvatska157-art.github.io/kanto-coach/img/overlay-now.png">
 <style>
 :root{--bg:#0f121a;--panel:#171b26;--panel2:#1e2331;--line:#2c3346;--fg:#edf0f6;--fg2:#c3c9d7;--muted:#8d95a8;--acc:#ff5a4c;--gold:#f2bf45;--green:#4fcb88;--blue:#8ab4ff;--r:14px}
@@ -58,9 +58,9 @@ ul.check li{padding-left:28px;position:relative;color:var(--fg2)}
 ul.check li::before{content:"✓";position:absolute;left:4px;color:var(--green);font-weight:800}
 footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--muted);font-size:13.5px}
 footer p{margin:6px 0}
-[data-en]{display:none}
-html[lang=en] [data-de]{display:none}
-html[lang=en] [data-en]{display:revert}
+[data-de]{display:none}
+html[lang=de] [data-en]{display:none}
+html[lang=de] [data-de]{display:revert}
 @media (max-width:860px){.hero{grid-template-columns:1fr;padding-top:32px}.grid{grid-template-columns:1fr 1fr}.shots,.two{grid-template-columns:1fr}nav.links a.hide-s{display:none}}
 @media (max-width:540px){.grid{grid-template-columns:1fr}}
 </style>
@@ -73,7 +73,7 @@ html[lang=en] [data-en]{display:revert}
     <a class="hide-s" href="#install"><span data-de>Installieren</span><span data-en>Install</span></a>
     <a class="hide-s" href="#privacy"><span data-de>Datenschutz</span><span data-en>Privacy</span></a>
     <a href="https://github.com/hrvatska157-art/kanto-coach">GitHub</a>
-    <span class="lang" role="group" aria-label="Sprache / Language"><button type="button" data-l="de">DE</button><button type="button" data-l="en">EN</button></span>
+    <span class="lang" role="group" aria-label="Language / Sprache"><button type="button" data-l="en">EN</button><button type="button" data-l="de">DE</button></span>
   </nav>
 </div></header>
 
@@ -84,7 +84,7 @@ html[lang=en] [data-en]{display:revert}
       <p class="lead" data-de>Kanto Coach ist ein Chrome-Overlay neben dem Spiel. Es liest Shop, Bank, Brett, Items, Level und Gold und sagt dir in jeder Runde, was du kaufen, sparen und aufstellen solltest – und kreist passende Pokémon direkt im Spiel ein.</p>
       <p class="lead" data-en>Kanto Coach is a Chrome overlay next to the game. It reads your shop, bench, board, items, level and gold and tells you every round what to buy, save and field – and circles matching Pokémon right in the game.</p>
       <div class="cta">
-        <a class="btn pri" href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip">⬇ <span data-de>Herunterladen</span><span data-en>Download</span> <small>v2.2.0</small></a>
+        <a class="btn pri" href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip">⬇ <span data-de>Herunterladen</span><span data-en>Download</span> <small>v2.2.1</small></a>
         <a class="btn" href="#install"><span data-de>So installierst du es</span><span data-en>How to install</span></a>
       </div>
       <p class="meta" data-de>Kostenlos · Open Source (MIT) · Deutsch & Englisch · kein Tracking · für Spielversion 40</p>
@@ -149,14 +149,15 @@ html[lang=en] [data-en]{display:revert}
 <footer><div class="wrap">
   <p data-de>Inoffizielles, nicht kommerzielles Fan-Projekt. Nicht verbunden mit einoow.com, Kanto Tactics, Nintendo, Game Freak, Creatures oder The Pokémon Company. Pokémon und alle zugehörigen Namen sind Marken ihrer jeweiligen Inhaber.</p>
   <p data-en>Unofficial, non-commercial fan project. Not affiliated with einoow.com, Kanto Tactics, Nintendo, Game Freak, Creatures or The Pokémon Company. Pokémon and all related names are trademarks of their respective owners.</p>
-  <p><span data-de>Daten</span><span data-en>Data</span>: Kanto Tactics · einoow.com · <span data-de>Bilder</span><span data-en>Images</span>: <a href="https://github.com/PokeAPI/sprites">PokéAPI/sprites</a> · <a href="https://github.com/hrvatska157-art/kanto-coach">GitHub</a> · MIT · v2.2.0</p>
+  <p><span data-de>Daten</span><span data-en>Data</span>: Kanto Tactics · einoow.com · <span data-de>Bilder</span><span data-en>Images</span>: <a href="https://github.com/PokeAPI/sprites">PokéAPI/sprites</a> · <a href="https://github.com/hrvatska157-art/kanto-coach">GitHub</a> · MIT · v2.2.1</p>
 </div></footer>
 
 <script>
 (function () {
   var q = new URLSearchParams(location.search).get('lang'); var saved = null;
   try { saved = localStorage.getItem('kc-lang'); } catch (e) {}
-  var lang = q === 'en' || q === 'de' ? q : saved || (/^de\b/i.test(navigator.language || '') ? 'de' : 'en');
+  // English is the default; German only on request (?lang=de or the DE button, remembered)
+  var lang = q === 'en' || q === 'de' ? q : saved || 'en';
   function set(l) {
     document.documentElement.lang = l;
     document.title = l === 'en' ? 'Kanto Coach – overlay for Kanto Tactics' : 'Kanto Coach – Overlay für Kanto Tactics';
