@@ -13,7 +13,7 @@ English · <a href="README.de.md">Deutsch</a> · <a href="https://hrvatska157-ar
 
 Kanto Coach is a Chrome extension that shows a small overlay next to the game. It reads what is visible in the game – shop, bench, board, item bag, level, gold and round – and tells you every round **what to do now**: which Pokémon to buy, when to save, reroll or buy XP, which plan fits your team and how to place it. Matching Pokémon and items are **circled right in the game**.
 
-<p align="center"><img src="docs/img/overlay-now.png" width="720" alt="Overlay in the Battle Tower: next boss, detected shop and numbered steps"></p>
+<p align="center"><img src="docs/img/overlay-now-en.png" width="720" alt="Overlay in the Battle Tower: next boss, detected shop and numbered steps"></p>
 
 ## Features
 
@@ -27,10 +27,10 @@ Kanto Coach is a Chrome extension that shows a small overlay next to the game. I
 - **German and English** – follows the game language automatically; detection works in all 16 game languages.
 
 <p align="center">
-<img src="docs/img/overlay-plan.png" width="300" alt="Plan tab">
-<img src="docs/img/overlay-items.png" width="300" alt="Items tab">
+<img src="docs/img/overlay-plan-en.png" width="300" alt="Plan tab">
+<img src="docs/img/overlay-items-en.png" width="300" alt="Items tab">
 </p>
-<p align="center"><img src="docs/img/shop-marks.png" width="720" alt="BUY marks right on the shop cards in the game"></p>
+<p align="center"><img src="docs/img/shop-marks-en.png" width="720" alt="BUY marks right on the shop cards in the game"></p>
 
 ## Install
 

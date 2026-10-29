@@ -13,7 +13,7 @@
 
 Kanto Coach ist eine Chrome-Erweiterung, die neben dem Spiel ein kleines Overlay einblendet. Sie liest, was im Spiel sichtbar ist – Shop, Bank, Brett, Item-Beutel, Level, Gold und Runde – und sagt dir in jeder Runde, **was du jetzt tun solltest**: welches Pokémon du kaufst, wann du sparst, würfelst oder EP kaufst, welcher Plan zu deinem Team passt und wie du aufstellst. Passende Pokémon und Items werden **direkt im Spiel eingekreist**.
 
-<p align="center"><img src="docs/img/overlay-now.png" width="720" alt="Overlay im Duellturm: nächster Boss, erkannter Shop und nummerierte Schritte"></p>
+<p align="center"><img src="docs/img/overlay-now-de.png" width="720" alt="Overlay im Duellturm: nächster Boss, erkannter Shop und nummerierte Schritte"></p>
 
 ## Funktionen
 
@@ -27,10 +27,10 @@ Kanto Coach ist eine Chrome-Erweiterung, die neben dem Spiel ein kleines Overlay
 - **Deutsch und Englisch** – folgt automatisch der Spielsprache; die Erkennung funktioniert in allen 16 Sprachen des Spiels.
 
 <p align="center">
-<img src="docs/img/overlay-plan.png" width="300" alt="Reiter Plan">
-<img src="docs/img/overlay-items.png" width="300" alt="Reiter Items">
+<img src="docs/img/overlay-plan-de.png" width="300" alt="Reiter Plan">
+<img src="docs/img/overlay-items-de.png" width="300" alt="Reiter Items">
 </p>
-<p align="center"><img src="docs/img/shop-marks.png" width="720" alt="Markierungen KAUFEN direkt an den Shop-Karten im Spiel"></p>
+<p align="center"><img src="docs/img/shop-marks-de.png" width="720" alt="Markierungen KAUFEN direkt an den Shop-Karten im Spiel"></p>
 
 ## Installieren
 

@@ -8,7 +8,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <meta property="og:title" content="Kanto Coach – overlay for Kanto Tactics">
 <meta property="og:description" content="Tells you every round what to buy, save and field – and circles matching Pokémon right in the game. English & Deutsch.">
-<meta property="og:image" content="https://hrvatska157-art.github.io/kanto-coach/img/overlay-now.png">
+<meta property="og:image" content="https://hrvatska157-art.github.io/kanto-coach/img/overlay-now-en.png">
 <style>
 :root{--bg:#0f121a;--panel:#171b26;--panel2:#1e2331;--line:#2c3346;--fg:#edf0f6;--fg2:#c3c9d7;--muted:#8d95a8;--acc:#ff5a4c;--gold:#f2bf45;--green:#4fcb88;--blue:#8ab4ff;--r:14px}
 @media (prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#f4f5f8;--panel:#fff;--panel2:#f0f2f6;--line:#dde1e9;--fg:#141824;--fg2:#384055;--muted:#687087}}
@@ -61,6 +61,7 @@ footer p{margin:6px 0}
 [data-de]{display:none}
 html[lang=de] [data-en]{display:none}
 html[lang=de] [data-de]{display:revert}
+html[lang=de] img.shot[data-de]{display:block}
 @media (max-width:860px){.hero{grid-template-columns:1fr;padding-top:32px}.grid{grid-template-columns:1fr 1fr}.shots,.two{grid-template-columns:1fr}nav.links a.hide-s{display:none}}
 @media (max-width:540px){.grid{grid-template-columns:1fr}}
 </style>
@@ -90,7 +91,7 @@ html[lang=de] [data-de]{display:revert}
       <p class="meta" data-de>Kostenlos · Open Source (MIT) · Deutsch & Englisch · kein Tracking · für Spielversion 40</p>
       <p class="meta" data-en>Free · open source (MIT) · German & English · no tracking · for game version 40</p>
     </div>
-    <img class="shot" src="img/overlay-now.png" width="958" height="744" alt="Kanto Coach overlay">
+    <img class="shot" data-en src="img/overlay-now-en.png" width="1000" height="754" alt="Kanto Coach overlay"><img class="shot" data-de src="img/overlay-now-de.png" width="958" height="744" alt="Kanto Coach overlay" loading="lazy">
   </div>
 
   <section id="features">
@@ -107,9 +108,9 @@ html[lang=de] [data-de]{display:revert}
 
   <section>
     <div class="shots">
-      <figure><img class="shot" src="img/overlay-plan.png" width="385" height="710" alt="" loading="lazy"><figcaption><span data-de>Reiter „Plan“: Begründung, Plan ins Spiel, Aufstellung</span><span data-en>“Plan” tab: reasons, send to game, placement</span></figcaption></figure>
-      <figure><img class="shot" src="img/overlay-items.png" width="385" height="710" alt="" loading="lazy"><figcaption><span data-de>Reiter „Items“: was dein Plan braucht</span><span data-en>“Items” tab: what your plan needs</span></figcaption></figure>
-      <figure class="wide"><img class="shot" src="img/shop-marks.png" width="900" height="170" alt="" loading="lazy"><figcaption><span data-de>Markierungen direkt im Spiel-Shop</span><span data-en>Marks right in the game’s shop</span></figcaption></figure>
+      <figure><img class="shot" data-en src="img/overlay-plan-en.png" width="385" height="724" alt="" loading="lazy"><img class="shot" data-de src="img/overlay-plan-de.png" width="385" height="710" alt="" loading="lazy"><figcaption><span data-de>Reiter „Plan“: Begründung, Plan ins Spiel, Aufstellung</span><span data-en>“Plan” tab: reasons, send to game, placement</span></figcaption></figure>
+      <figure><img class="shot" data-en src="img/overlay-items-en.png" width="385" height="724" alt="" loading="lazy"><img class="shot" data-de src="img/overlay-items-de.png" width="385" height="710" alt="" loading="lazy"><figcaption><span data-de>Reiter „Items“: was dein Plan braucht</span><span data-en>“Items” tab: what your plan needs</span></figcaption></figure>
+      <figure class="wide"><img class="shot" data-en src="img/shop-marks-en.png" width="900" height="163" alt="" loading="lazy"><img class="shot" data-de src="img/shop-marks-de.png" width="900" height="170" alt="" loading="lazy"><figcaption><span data-de>Markierungen direkt im Spiel-Shop</span><span data-en>Marks right in the game’s shop</span></figcaption></figure>
     </div>
   </section>
 
