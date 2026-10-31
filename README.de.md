@@ -2,11 +2,11 @@
 
 <h1 align="center">Kanto Coach</h1>
 
-<p align="center"><b>Inoffizielles Overlay für <a href="https://einoow.com/play/kanto-tactics">Kanto Tactics</a> – damit du öfter gewinnst.</b><br>
+<p align="center"><b>Inoffizielles Overlay für <a href="https://einoow.com/kanto-tactics">Kanto Tactics</a> – damit du öfter gewinnst.</b><br>
 <a href="README.md">English</a> · Deutsch · <a href="https://hrvatska157-art.github.io/kanto-coach/?lang=de">Webseite</a></p>
 
 <p align="center">
-<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (Version 2.2.1)</b></a>
+<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (Version 2.3.0)</b></a>
 </p>
 
 ---
@@ -23,7 +23,7 @@ Kanto Coach ist eine Chrome-Erweiterung, die neben dem Spiel ein kleines Overlay
 - **Markierungen im Spiel** – KAUFEN, ★★!, +TYP an den Shop-Karten und ZIEL an den Item-Komponenten.
 - **Items** – liest deinen Beutel, zeigt, was du bauen kannst und wer welches Item tragen soll.
 - **Abenteuer & Turm** – erkennt Station/Etage und Schwierigkeit, zeigt den nächsten Boss mit Siegquote und warnt vor schweren Kämpfen (z. B. Sabrina, Giovanni, Turm-Etage 50).
-- **Aktuell zum Spiel** – verankerte Formen (⚓), Figuren-Pokémon (Koga, Giovanni, Samurai), Abenteuer-Stufen und alle Neuerungen bis Spielversion 40.
+- **Aktuell zum Spiel** – verankerte Formen (⚓), Figuren-Pokémon (Koga, Giovanni, Samurai), Abenteuer-Stufen und alle Neuerungen bis Spielversion 41.
 - **Deutsch und Englisch** – folgt automatisch der Spielsprache; die Erkennung funktioniert in allen 16 Sprachen des Spiels.
 
 <p align="center">
@@ -37,7 +37,7 @@ Kanto Coach ist eine Chrome-Erweiterung, die neben dem Spiel ein kleines Overlay
 1. **[ZIP herunterladen](https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip)** und entpacken (oder dieses Repository klonen – der Ordner `extension/` ist die Erweiterung).
 2. In Chrome `chrome://extensions` öffnen und oben rechts den **Entwicklermodus** einschalten.
 3. **„Entpackte Erweiterung laden“** klicken und den entpackten Ordner `extension` auswählen.
-4. Kanto Tactics unter <https://einoow.com/play/kanto-tactics> öffnen – das Overlay erscheint rechts und lässt sich an der Titelleiste verschieben. **Alt+K** blendet es ein und aus, **Alt+R** leert den Shop nach dem Neu-Würfeln.
+4. Kanto Tactics unter <https://einoow.com/kanto-tactics> öffnen – das Overlay erscheint rechts und lässt sich an der Titelleiste verschieben. **Alt+K** blendet es ein und aus, **Alt+R** leert den Shop nach dem Neu-Würfeln.
 
 Läuft auch in anderen Chromium-Browsern (Edge, Brave, Opera). **Aktualisieren:** neue ZIP entpacken, den alten Ordner ersetzen und in `chrome://extensions` auf „Neu laden“ klicken – Einstellungen bleiben erhalten.
 
@@ -66,7 +66,7 @@ Details: [PRIVACY.md](PRIVACY.md)
 | `storage` | Einstellungen, zwischengespeicherte Daten und den Austausch zwischen Spiel-Leser und Overlay lokal speichern |
 | `alarms` | Daten höchstens einmal pro Stunde aktualisieren |
 | `activeTab`, `scripting` | das Overlay per Klick aufs Symbol oder Tastenkürzel im aktiven Tab öffnen |
-| `https://einoow.com/*` | Overlay auf der Spielseite und Daten von der öffentlichen API |
+| `https://einoow.com/*` | Overlay auf den Kanto-Tactics-Seiten (Hub und Modus-Seiten; auf anderen einoow-Seiten inaktiv) und Daten von der öffentlichen API |
 | `https://raw.githubusercontent.com/*` | Pokémon- und Item-Bilder (PokéAPI-Sprites) |
 | optional: eigene Server-Adresse | nur, wenn du in den Einstellungen einen eigenen Kanto-Coach-Server einträgst |
 

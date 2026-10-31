@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.3.0 – 2026-10-31
+**EN**
+- Works with game version 41: Kanto Tactics now runs directly on einoow.com (hub `einoow.com/kanto-tactics` and the mode pages `/pvp`, `/duo`, `/tower`, `/nuzlocke`) instead of inside an iframe, so the game reader did not start any more. The extension now loads on einoow.com and only becomes active on Kanto Tactics pages, also when you switch modes without reloading.
+- Links point to the new hub address.
+- Tested live: PvP against bots (new “Play vs bots”), adventure and tower.
+
+**DE**
+- Funktioniert mit Spielversion 41: Kanto Tactics läuft jetzt direkt auf einoow.com (Hub `einoow.com/kanto-tactics` und die Modus-Seiten `/pvp`, `/duo`, `/tower`, `/nuzlocke`) statt in einem iframe, deshalb startete der Spiel-Leser nicht mehr. Die Erweiterung lädt jetzt auf einoow.com und wird nur auf den Kanto-Tactics-Seiten aktiv – auch wenn du die Modi ohne Neuladen wechselst.
+- Links zeigen auf die neue Hub-Adresse.
+- Live geprüft: PvP gegen Bots (neu „Gegen Bots“), Abenteuer und Turm.
+
 ## 2.2.1 – 2026-10-29
 **EN**
 - English is now the fallback language of the extension (German stays for German browsers).

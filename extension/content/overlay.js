@@ -501,8 +501,14 @@ function boardHtml(units) {
 }
 
 /* ---------- Darstellung ---------- */
+// Seit v41 läuft Kanto Tactics direkt auf einoow.com (Hub /kanto-tactics, /pvp, /duo, /tower, /nuzlocke) und wechselt die Modi
+// ohne Neuladen. Das Overlay wird auf ganz einoow.com geladen und zeigt sich nur, wenn gerade Kanto Tactics läuft.
+const KANTO_PATH = /^\/(kanto-tactics|pvp|duo|tower|nuzlocke|play\/kanto-tactics|playables\/kanto-tactics)(\/|$)/;
+function onKanto() { return KANTO_PATH.test(location.pathname) || !!document.querySelector('.app .ec-lvinfo, .app .cards'); }
+let lastPath = location.pathname;
+setInterval(() => { if (location.pathname !== lastPath) { lastPath = location.pathname; render(); } }, 1000);
 function render() {
-  if (!S.open) { host.style.display = 'none'; return; }
+  if (!S.open || !onKanto()) { host.style.display = 'none'; return; }
   host.style.display = '';
   box.classList.toggle('min', !!S.min);
   const tt = t();

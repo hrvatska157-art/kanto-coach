@@ -376,9 +376,12 @@ function setField(v) { field = { ...field, ...v }; try { chrome.storage.local.se
 // Im Hauptmenü liegt das Spielfeld der letzten Partie unsichtbar hinter der Lobby (.title.lobby) – nicht mitlesen
 function inLobby() { const l = document.querySelector('.title.lobby'); if (!l) return false; const r = l.getBoundingClientRect(); return r.width > innerWidth * 0.6 && r.height > innerHeight * 0.6; }
 let lastMapTry = 0;
+// Seit v41 läuft das Spiel direkt auf einoow.com (Hub und Modus-Seiten, ohne iframe); auf anderen einoow-Seiten nichts tun
+const KANTO_PATH = /^\/(kanto-tactics|pvp|duo|tower|nuzlocke|play\/kanto-tactics|playables\/kanto-tactics)(\/|$)/;
+function onKanto() { return KANTO_PATH.test(location.pathname) || !!document.querySelector('.app .ec-lvinfo, .app .cards'); }
 function scan() {
   timer = null;
-  if (!enabled) { holder.textContent = ''; drawField(); return; }
+  if (!enabled || !onKanto()) { holder.textContent = ''; drawField(); return; }
   attachLayer();
   // Zuordnungstabelle fehlt noch (Hintergrund war beim Start beschäftigt): alle 5 s neu anfragen
   if (!map && Date.now() - lastMapTry > 5000) { lastMapTry = Date.now(); loadMap(); }

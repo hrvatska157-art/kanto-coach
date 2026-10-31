@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "short_name": "__MSG_extShort__",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "__MSG_extDesc__",
   "icons": {
     "16": "icons/icon16.png",
@@ -39,7 +39,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://einoow.com/play/kanto-tactics*"
+        "https://einoow.com/*"
       ],
       "js": [
         "lib/i18n-game.js",
@@ -51,25 +51,13 @@
     },
     {
       "matches": [
-        "https://einoow.com/playables/kanto-tactics/*"
+        "https://einoow.com/*"
       ],
       "js": [
         "content/reader.js"
       ],
       "run_at": "document_idle",
       "all_frames": true
-    },
-    {
-      "matches": [
-        "https://einoow.com/playables/kanto-tactics/*"
-      ],
-      "js": [
-        "lib/i18n-game.js",
-        "lib/core.js",
-        "content/overlay.js"
-      ],
-      "run_at": "document_idle",
-      "all_frames": false
     }
   ],
   "commands": {
