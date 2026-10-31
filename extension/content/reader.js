@@ -163,6 +163,13 @@ function readShop() {
   return out.slice(0, 5);
 }
 function firstInt(s) { const m = /(\d+)/.exec(s || ''); return m ? +m[1] : null; }
+// EP aus der Level-Anzeige: „Level 3: 3 Pokémon auf dem Feld, EP 4 von 8: 1 EP-Kauf bis zum Aufstieg“ -> Zahlen [Level, Plätze, EP, Ziel, Käufe]
+function readXp() {
+  for (const el of document.querySelectorAll('.ec-lvinfo')) {
+    const n = (el.getAttribute('aria-label') || '').match(/\d+/g); if (n && n.length >= 5) return { xp: +n[2], next: +n[3], buys: +n[4] };
+  }
+  return null;
+}
 function readLevel() {
   for (const el of document.querySelectorAll('.ec-lvinfo')) if (visible(el)) { const v = firstInt(el.getAttribute('aria-label')) ?? firstInt((el.querySelector('.ec-lvnum') || {}).textContent); if (v != null) return v; }
   for (const el of document.querySelectorAll('[aria-label^="Level "],[aria-label^="Nivel "]')) if (visible(el)) { const m = /^\S+ (\d+)\s*:/.exec(el.getAttribute('aria-label')); if (m) return +m[1]; }
@@ -279,10 +286,20 @@ function readSeal() {
   const cards = [...document.querySelectorAll('.sx-pick .sx-card')]; if (!cards.length) return null;
   return { labels: cards.map((c) => { const b = c.querySelector('button.sx-take'); return b ? b.getAttribute('aria-label') || '' : ''; }), picked: cards.some((c) => /picked/.test(c.className)) };
 }
+/* Partnerwahl („Wähle!“, Start von Abenteuer/Nuzlocke): button.sp-slot mit Pokémon-Bild, aria „Name, Typen“ */
+function readStarter() {
+  const btns = [...document.querySelectorAll('button.sp-slot')]; if (!btns.length) return null;
+  return { cards: btns.map((b) => { const num = monNum(b); return { num, line: num && map ? (map.base[num] || (map.forms[num] || [])[0] || null) : null }; }) };
+}
+/* Segen des Turms: .modal.tboon mit button.ev-card.tb-card, Bild items/<art>.png (Sonderbonbon = rare-candy, Geschenk = das Item) */
+function readBoon() {
+  const btns = [...document.querySelectorAll('.tboon button.ev-card')]; if (!btns.length) return null;
+  return { arts: btns.map((b) => { const m = RX_ITEM.exec(srcOf(b.querySelector('img'))); return m ? m[1] : null; }), labels: btns.map((b) => (b.getAttribute('aria-label') || '').split(':')[0].trim()), picked: btns.some((b) => /picked/.test(b.className)) };
+}
 // Markierungen vom Overlay (ältere Form: nur Shop-Objekt)
 function parseMarks(v) {
   v = v || {};
-  return v.shop || v.items || v.safari || v.loot || v.seal ? { shop: v.shop || {}, items: v.items || {}, safari: v.safari || null, loot: v.loot || null, seal: v.seal || null, board: v.board || {} } : { shop: v, items: {} };
+  return v.shop || v.items || v.safari || v.loot || v.seal || v.starter || v.btn || v.boon ? { shop: v.shop || {}, items: v.items || {}, safari: v.safari || null, loot: v.loot || null, seal: v.seal || null, starter: v.starter || null, boon: v.boon || null, btn: v.btn || {}, board: v.board || {} } : { shop: v, items: {} };
 }
 
 /* Spielmodus aus der Fortschrittsleiste oben: PvP-Runde, Kampagnen-Station oder Turm-Etage */
@@ -296,7 +313,7 @@ function readMode() {
     // Abenteuer (v35+): Klasse „ph-<art>“ (gyms = Kanto mit 8 Orden) und Stufe .st-lv.lv1–3 = Normal/Veteran/Legende
     const ph = /\bph-([a-z0-9-]+)/.exec(el.className || ''); const lv = document.querySelector('.st-lv[class*="lv"]');
     const lm = lv ? /\blv(\d)\b/.exec(lv.className) : null;
-    const extra = { adv: ph ? ph[1] : null, dif: lm ? +lm[1] : null };
+    const extra = { adv: ph ? ph[1] : null, dif: lm ? +lm[1] : null, nz: !!document.querySelector('.nz-lives') }; // Nuzlocke: eigene Regeln (1 Kauf pro Shop)
     // „Titel · Ort · Station 7 von 38 · 2 von 8 Orden“ – die vorletzte Angabe ist die Station
     for (let i = parts.length - 2; i >= 0; i--) { const m = /(\d+)\D+(\d+)/.exec(parts[i]); if (m) return { mode: 'camp', stop: +m[1], total: +m[2], ...extra }; }
     return { mode: 'camp', stop: null, ...extra };
@@ -331,6 +348,10 @@ function drawMarks(cards) {
   }
   // Safari-Zone: Empfehlung direkt an der Karte (Index wie im Spiel)
   if (marks.safari) document.querySelectorAll(SAFARI_CARD).forEach((b, i) => { const mk = marks.safari[i]; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
+  if (marks.boon) document.querySelectorAll('.tboon button.ev-card').forEach((b, i) => { const mk = marks.boon[i]; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
+  if (marks.starter) document.querySelectorAll('button.sp-slot').forEach((b, i) => { const mk = marks.starter[i]; if (mk && visible(b)) ring(b.getBoundingClientRect(), mk); });
+  // Knöpfe „EP kaufen“ / „Neu würfeln“, wenn der Coach genau das rät
+  for (const [k, sel] of [['xp', '.btn-lvl'], ['roll', '.btn-roll']]) { const mk = marks.btn && marks.btn[k]; const b = mk && document.querySelector(sel); if (b && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); }
   if (marks.seal) document.querySelectorAll('.sx-pick .sx-card').forEach((c, i) => { const mk = marks.seal[i]; const b = c.querySelector('button.sx-take') || c; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
   if (marks.loot) document.querySelectorAll('.itemreward button.ir-card').forEach((b, i) => { const mk = marks.loot[i]; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
   // Brett: wer ein fertiges Item bekommen soll – Hinweis über der Lebensleiste des eigenen Pokémon
@@ -447,13 +468,13 @@ function scan() {
   const cards = readShop();
   drawMarks(cards);
   const level = readLevel(), gold = readGold();
-  const safari = readSafari(); const loot = readLoot(); const seal = readSeal();
-  if (!cards.length && level == null && gold == null && !safari && !loot && !seal) return; // kein Spiel-HUD sichtbar
+  const safari = readSafari(); const loot = readLoot(); const seal = readSeal(); const starter = readStarter(); const boon = readBoon();
+  if (!cards.length && level == null && gold == null && !safari && !loot && !seal && !starter && !boon) return; // kein Spiel-HUD sichtbar
   const bench = readBench(); const board = readBoard(); const it = readItems(cards.length > 0);
   const state = {
     shop: cards.map((c) => c.line), shopInfo: cards.map((c) => ({ line: c.line, num: c.num, cost: c.cost, own: c.own, owner: c.owner, plan: c.plan, name: c.line ? '' : c.name })),
     own: Object.fromEntries(cards.filter((c) => c.line).map((c) => [c.line, c.own])),
-    level, gold, hp: readHp(), interest: readInterest(), safari, loot, seal, game: readMode(), planning: !!document.querySelector('button.fight'), teamN: firstInt((document.querySelector('.teamcount') || { getAttribute: () => '' }).getAttribute('aria-label')), lang: document.documentElement.lang || '', bench, board, items: it.items, itemsSeen: it.seen, itemsHidden: !!it.hidden, itemsCount: it.count || null,
+    level, gold, hp: readHp(), interest: readInterest(), xp: readXp(), safari, loot, seal, starter, boon, game: readMode(), planning: !!document.querySelector('button.fight'), teamN: firstInt((document.querySelector('.teamcount') || { getAttribute: () => '' }).getAttribute('aria-label')), lang: document.documentElement.lang || '', bench, board, items: it.items, itemsSeen: it.seen, itemsHidden: !!it.hidden, itemsCount: it.count || null,
     diag: { cards: cards.filter((c) => !c.empty).length, matched: cards.filter((c) => c.line).length, unknown: cards.filter((c) => !c.line && !c.empty).map((c) => c.num || c.name).slice(0, 5), bench: bench.length, board: board ? board.length : null, calibrated: isCalibrated(), map: !!map },
   };
   const key = JSON.stringify(state);

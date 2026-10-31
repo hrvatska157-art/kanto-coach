@@ -565,6 +565,40 @@ function create(opts) {
     });
     return out.sort((a, b) => b.score - a.score);
   };
+  // Segen des Turms (alle 10 Etagen ab 11): Karte über ihr Bild erkennen (data.boons[].art, beim Geschenk das Item selbst).
+  // Keine Statistik in der API, darum Faustregeln: Komponenten/Items wirken die ganze Partie, Level nur mit wartenden Pokémon,
+  // Trank/Asche nur bei wenig KP. o: { arts: [bild-id], level, hp, want: {itemId: Gewicht}, waiting, lost, floor }
+  K.boonOf = (art) => {
+    if (!art) return null;
+    const b = Object.entries(data.boons || {}).find(([, x]) => x.art === art); if (b) return { id: b[0], item: null };
+    return data.items[art] && data.items[art].k === 'full' ? { id: 'item', item: art } : null;
+  };
+  K.boonPick = (o) => {
+    const lvl = o.level || 0; const hp = o.hp == null ? 100 : o.hp; const want = o.want || {}; const floor = o.floor || 11;
+    const tierV = (id) => { const x = K.itemTier[id]; return x ? ({ S: 10, A: 7, B: 4, C: 1 }[x.tier] || 0) : 4; };
+    const out = [];
+    (o.arts || []).forEach((art, idx) => {
+      const b = K.boonOf(art); if (!b) return; let s = 10; let why = b.id;
+      switch (b.id) {
+        case 'vitamins': s = 30; break;
+        case 'item': s = 24 + tierV(b.item) + (want[b.item] ? 12 : 0); why = want[b.item] ? 'itemPlan' : 'item'; break;
+        case 'candy': s = lvl >= 9 ? 0 : 20 + (o.waiting > 0 || o.lost ? 10 : 0); why = o.waiting > 0 || o.lost ? 'candyNeed' : 'candy'; break;
+        case 'expshare': s = lvl >= 8 ? 4 : 20; break;
+        case 'potion': s = hp <= 50 ? 34 : 8; why = hp <= 50 ? 'potionNeed' : 'potion'; break;
+        case 'ash': s = hp <= 40 ? 30 : 14; break;
+        case 'amulet': s = floor < 40 ? 22 : 12; break;
+        case 'nugget': s = 18; break;
+        case 'egg': s = 22; break;
+        case 'moonstone': s = 20; break;
+        case 'flute': s = 18; break;
+        case 'master': s = 15; break;
+        case 'coincase': s = 14; break;
+        case 'wonder': s = 6; break;
+      }
+      out.push({ idx, id: b.id, item: b.item, score: s, why });
+    });
+    return out.sort((a, b) => b.score - a.score);
+  };
   // Siegel im Spiel erkennen: Name aus der Karte (Spielsprache) gegen en/es und die eigene deutsche Übersetzung.
   // Typ-Siegel („{T}-Herz“) werden über die Vorlage erkannt, der Typ über seinen Namen. Liefert {id, type} oder null.
   const normS = (x) => String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9{}]+/g, '');
@@ -677,9 +711,21 @@ function create(opts) {
     const norm = o.stage != null && o.comp ? K.stageNorm(o.comp, o.stage) : null;
     const missing = plan.filter((u) => !owned[K.base(u.line)]).length;
     if (norm && o.level && o.level < norm.level) tips.push({ k: 'level', stage: o.stage, level: norm.level });
-    if (!buys.some((b) => b.kind !== 'trait' && b.affordable)) {
-      if (gold < cap) tips.push({ k: 'save', cap, max: it.max, gold });
-      else if (missing > 0) tips.push({ k: 'roll', cap, missing });
+    // Abenteuer/Turm (keine Stage-Normen): Gold über der Zinsgrenze arbeitet nicht – in EP oder Sterne stecken.
+    // Nach einer Niederlage (o.lost) zählt Stärke mehr als Zinsen. o.xp = { buys } aus der Level-Anzeige des Spiels.
+    const pve = o.stage == null && !!o.mode && o.mode !== 'pvp';
+    const spare = left - cap; const lvl = o.level || 0;
+    const waiting = o.bench != null ? o.bench : 0; // Plan-/starke Pokémon, die keinen Platz haben
+    let xpTip = null;
+    if (pve && lvl && lvl < 9 && !o.nz) {
+      const need = o.xp && o.xp.buys ? o.xp.buys : 1;
+      if ((spare >= 4 && (waiting > 0 || plan.length > lvl)) || (o.lost && left >= 4)) xpTip = { k: 'xp', buys: Math.max(1, Math.min(need, Math.floor((o.lost ? left : spare) / 4))), need, level: lvl + 1, lost: !!o.lost };
+    }
+    if (xpTip) tips.push(xpTip);
+    if (!buys.some((b) => b.kind !== 'trait' && b.affordable) && !o.nz) {
+      if (gold < cap && !(pve && o.lost)) tips.push({ k: 'save', cap, max: it.max, gold });
+      else if (missing > 0 && gold >= cap) tips.push({ k: 'roll', cap, missing });
+      else if (pve && !xpTip && spare >= 2) tips.push({ k: 'rollStar', cap });
     }
     return { buys, tips, fieldTraits, cap };
   };

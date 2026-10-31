@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.5.0 – 2026-10-31
+**EN**
+- Played through every mode and fixed what got in the way:
+  - Lobby: no more stale shop and tips from the last game – the overlay shows the mode (also Duos and Nuzlocke) and waits for the next game. A new game lets the coach pick a fresh plan.
+  - Gold: in Adventure and the Battle Tower the coach now says when to buy XP (with the number of clicks to the next level) or reroll for ★★ instead of sitting on gold above the interest cap – and marks the “Buy XP” / “Reroll” button in the game. After a lost fight it prefers strength over interest.
+  - Board: “Put X on the board” and “Field X instead of Y” name the Pokémon instead of “1 slot free”.
+  - Items: complete recipes are found before half ones (two components no longer block each other), and if no planned item can be built, the best item from your bag is suggested instead of hoarding components.
+  - Adventure: before hard fights and after a loss a “counter” card shows the three Pokémon players most often win that exact fight with (with win rate); missing ones are marked COUNTER in the shop and fielded first.
+  - Nuzlocke: one buy per shop – exactly one TAKE mark, no saving or reroll tips.
+  - New pick windows: tower boons (“Tower boon”) and the partner pick at the start of Adventure/Nuzlocke get a TAKE mark too.
+  - Battle Tower: “elite” floors are called Elite trainer (not Elite Four); a single item reward is shown without a pick mark.
+- The website (Kanto Coach Hub) has its own page for the extension.
+
+**DE**
+- Alle Modi durchgespielt und behoben, was im Weg war:
+  - Lobby: kein alter Shop und keine alten Tipps aus der letzten Partie mehr – das Overlay zeigt den Modus (auch Partner-PvP und Nuzlocke) und wartet auf das nächste Spiel. Ein neues Spiel lässt den Coach einen frischen Plan wählen.
+  - Gold: Im Abenteuer und im Duellturm sagt der Coach jetzt, wann du EP kaufen (mit Anzahl Klicks bis zum nächsten Level) oder für ★★ neu würfeln sollst, statt Gold über der Zinsgrenze liegen zu lassen – und markiert im Spiel den Knopf „Kaufe XP“ bzw. „Neu würfeln“. Nach einer Niederlage geht Stärke vor Zinsen.
+  - Brett: „X aufs Feld stellen“ und „X statt Y aufstellen“ nennen die Pokémon statt „1 Platz frei“.
+  - Items: Komplette Rezepte werden vor halben gefunden (zwei Komponenten blockieren sich nicht mehr), und wenn kein geplantes Item baubar ist, schlägt der Coach das beste Item aus deinem Beutel vor, statt Komponenten zu horten.
+  - Abenteuer: Vor schweren Kämpfen und nach einer Niederlage zeigt eine „Konter“-Karte die drei Pokémon, mit denen Spieler genau diesen Kampf am häufigsten gewinnen (mit Winrate); fehlende werden im Shop als KONTER markiert und zuerst aufgestellt.
+  - Nuzlocke: ein Kauf pro Shop – genau eine NIMM-Markierung, keine Spar- oder Würfel-Tipps.
+  - Neue Auswahlfenster: Segen des Turms und die Partnerwahl am Start von Abenteuer/Nuzlocke bekommen ebenfalls „NIMM“.
+  - Duellturm: „elite“-Etagen heißen Elite-Trainer (nicht Top Vier); ein einzelnes Item als Belohnung erscheint ohne Wahl-Markierung.
+- Die Website (Kanto Coach Hub) hat eine eigene Seite für die Erweiterung.
+
 ## 2.4.0 – 2026-10-31
 **EN**
 - Faster decisions under the PvP timer: every pick window in the game now gets a clear “TAKE” mark with a short reason in the overlay.

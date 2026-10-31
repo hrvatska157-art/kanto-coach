@@ -6,7 +6,7 @@
 English · <a href="README.de.md">Deutsch</a> · <a href="https://hrvatska157-art.github.io/kanto-coach/">Website</a></p>
 
 <p align="center">
-<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (version 2.4.0)</b></a>
+<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (version 2.5.0)</b></a>
 </p>
 
 ---
@@ -21,7 +21,8 @@ Kanto Coach is a Chrome extension that shows a small overlay next to the game. I
 - **A plan that fits you** – PvP: meta comps ranked by how buildable they are with your Pokémon and gold. Adventure and Battle Tower: comps with proven type synergy, rated with the real win rates in that mode.
 - **Send plan to the game** – copies the plan as a team code. In the game, *Planner → “Paste code”*: the game shows the placement as shadows on the board and marks the shop cards itself.
 - **Marks in the game** – numbered BUY, ★★!, +TYPE on shop cards (“1” first). Item components that belong together share a number and colour; the holder shows the item above its health bar.
-- **Quick picks under the timer** – a clear “TAKE” mark in the Safari Zone, on the item reward (“Pick one!”) and on the seal pick, with a one-line reason in the overlay.
+- **Quick picks under the timer** – a clear “TAKE” mark in the Safari Zone, on the item reward (“Pick one!”), the seal pick, the tower boon and the partner pick, with a one-line reason in the overlay.
+- **Gold and board** – when to buy XP or reroll (the game’s button gets marked), which Pokémon to field or swap, and in Adventure the counter team for hard fights.
 - **Items** – reads your bag, shows what you can build and who should carry which item.
 - **Adventure & Tower** – detects stop/floor and difficulty, shows the next boss with its win rate and warns before hard fights (e.g. Sabrina, Giovanni, tower floor 50).
 - **Up to date** – anchored forms (⚓), character Pokémon (Koga, Giovanni, Samurai), adventure difficulties and everything up to game version 41.
