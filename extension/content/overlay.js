@@ -58,6 +58,14 @@ de: {
   phaseHint: 'Für die Kämpfe in diesem Abschnitt, mit deinen Pokémon als Bonus. Kauf diese Pokémon, wenn sie im Shop liegen.', endHint: 'Ein festes Team für die ganze Kampagne bzw. den Turm. Viele dieser Pokémon kommen erst spät.',
   nextFight: 'Nächster Kampf', coreHint: 'Kombis aus 3 Pokémon, mit denen Spieler diesen Kampf am häufigsten gewinnen (untere Grenze der Siegquote).', noCores: 'Für diesen Kampf gibt es zu wenige Daten zu Kombis.',
   thenPhase: (p) => `Danach (${p}) kommen dazu`, markBuy: 'KAUFEN',
+  markTake: 'NIMM', safariT: 'Safari-Zone: deine Wahl', safariTake: (m, i) => `Nimm ${m}${i ? ' + ' + i : ''}`, safariAlt: (m) => `Sonst: ${m}`, safariWait: 'Merk dir die markierte Karte – wenn du dran bist, sofort nehmen.',
+  sWhy: { star: 'bringt einen Stern-Aufstieg', core: 'Kern-Pokémon deines Plans', plan: 'gehört zu deinem Plan', own: 'hast du schon (Kopie für ★★)', trait: 'vervollständigt einen Typ-Bonus', item: 'das Item braucht dein Plan', full: 'mit fertigem Item', cost: 'teuerste Karte – höchster Wert' },
+  sTag: { star: '★', core: 'PLAN', plan: 'PLAN', item: 'ITEM', trait: '+TYP' },
+  craftStep: (a, b, r) => `${a} auf ${b} ziehen → ${r}`, craftFor: (u) => `im Beutel die beiden mit dieser Nummer aufeinanderziehen, dann ${u} geben (gestrichelt = für später aufheben)`, useStep: (i, u) => `${i} an ${u} geben`, useFor: 'fertig im Beutel – aufs Pokémon ziehen',
+  sealT: 'Siegel-Wahl', sealTake: (n) => `Nimm ${n}`, sealNote: 'Faustregel – die API hat keine Siegel-Statistik.',
+  sealWhy: { eco: 'mehr Gold – je früher, desto mehr bringt es', xp: 'schneller leveln – lohnt sich früh', item: 'Items helfen jedem Team', shop: 'leichter an deine Pokémon kommen', board: 'stärkt deine Aufstellung', later: 'zahlt sich später aus', traitFit: 'passt zu den Typen deines Plans', roleFit: 'passt zu den Rollen in deinem Plan', heroFit: 'passt zu einem Pokémon in deinem Plan', combat: 'Kampf-Bonus für das ganze Team', role: 'Rollen-Bonus', trait: 'Typ-Bonus', rule: 'ändert die Spielregeln – nur mit Plan', risk: 'riskant – kostet KP', miss: 'passt nicht zu deinem Plan' },
+  lootT: 'Item-Wahl', lootTake: (i) => `Nimm ${i}`, lWant: (i, u) => `für ${i} auf ${u} (dein Plan)`, lPair: (r) => `ergibt mit deinem Beutel sofort ${r}`,
+  lWhy: { full: 'fertiges Item – sofort stärker', part: 'Komponente für später', other: 'nützlich, aber nicht fürs Team' },
   whyTeam: (p) => `gehört zu deinem Team für „${p}“`, whyNext: (p) => `wichtig für den nächsten Abschnitt („${p}“)`,
   whyCore2: (o, w, s, b) => `mit deinem ${o}: ${w} % Siege bei ${s} (Spieler ${b} %)`, whyCore1: (o, w, s) => `Kombi mit ${o}: ${w} % Siege bei ${s}`,
   whyStrong: (d) => `stark in der Kampagne (+${d} %)`, whyWeak: (d) => `eher schwach in der Kampagne (${d} %)`,
@@ -132,6 +140,14 @@ en: {
   phaseHint: 'For the fights in this stage, with your Pokémon as a bonus. Buy these Pokémon when they show up in the shop.', endHint: 'One fixed team for the whole campaign or tower. Many of these Pokémon only arrive late.',
   nextFight: 'Next fight', coreHint: 'Combos of 3 Pokémon that players most often win this fight with (lower bound of the win rate).', noCores: 'Too little combo data for this fight.',
   thenPhase: (p) => `Then (${p}) add`, markBuy: 'BUY',
+  markTake: 'TAKE', safariT: 'Safari Zone: your pick', safariTake: (m, i) => `Take ${m}${i ? ' + ' + i : ''}`, safariAlt: (m) => `Otherwise: ${m}`, safariWait: 'Remember the marked card – take it as soon as it is your turn.',
+  sWhy: { star: 'gives a star upgrade', core: 'core Pokémon of your plan', plan: 'part of your plan', own: 'you already have it (copy toward ★★)', trait: 'completes a type bonus', item: 'your plan needs this item', full: 'comes with a finished item', cost: 'most expensive card – highest value' },
+  sTag: { star: '★', core: 'PLAN', plan: 'PLAN', item: 'ITEM', trait: '+TYPE' },
+  craftStep: (a, b, r) => `Drag ${a} onto ${b} → ${r}`, craftFor: (u) => `in the bag, drag the two with this number together, then give it to ${u} (dashed = keep for later)`, useStep: (i, u) => `Give ${i} to ${u}`, useFor: 'ready in the bag – drag it onto the Pokémon',
+  sealT: 'Seal pick', sealTake: (n) => `Take ${n}`, sealNote: 'Rule of thumb – the API has no seal statistics.',
+  sealWhy: { eco: 'more gold – the earlier, the more it pays', xp: 'level faster – worth it early', item: 'items help every team', shop: 'find your Pokémon more easily', board: 'strengthens your positioning', later: 'pays off later', traitFit: 'fits your plan’s types', roleFit: 'fits the roles in your plan', heroFit: 'fits a Pokémon in your plan', combat: 'combat bonus for the whole team', role: 'role bonus', trait: 'type bonus', rule: 'changes the rules – only with a plan', risk: 'risky – costs HP', miss: 'does not fit your plan' },
+  lootT: 'Item pick', lootTake: (i) => `Take ${i}`, lWant: (i, u) => `for ${i} on ${u} (your plan)`, lPair: (r) => `makes ${r} right away with your bag`,
+  lWhy: { full: 'finished item – stronger right away', part: 'component for later', other: 'useful, but not for the team' },
   whyTeam: (p) => `part of your team for “${p}”`, whyNext: (p) => `important for the next stage (“${p}”)`,
   whyCore2: (o, w, s, b) => `with your ${o}: ${w}% wins at ${s} (players ${b}%)`, whyCore1: (o, w, s) => `combo with ${o}: ${w}% wins at ${s}`,
   whyStrong: (d) => `strong in the campaign (+${d}%)`, whyWeak: (d) => `rather weak in the campaign (${d}%)`,
@@ -257,6 +273,9 @@ input[type=search],input[type=text]{width:100%;background:#11141d;border:1px sol
 .step .sn{width:20px;height:20px;border-radius:50%;background:#ff5c4e;color:#1a0806;font:800 11px/20px system-ui;text-align:center}
 .step.tip .sn{background:#3e485e;color:#edf0f6}.step .ti{font-size:16px;width:26px;text-align:center}
 .step b{font-size:13px}.step .sub{display:block}.step.dim{opacity:.55}
+.step.main{background:#2b2230;box-shadow:inset 0 0 0 1.5px #ff5c4e}.step.main b{font-size:14px}.step .rcp{display:flex;align-items:center;gap:1px;font-size:11px;color:#a3abbe}
+.card.hero{border-color:#f2bf45;background:#2a2617}.card.hero b{font-size:14px;display:block}.card.hero .row .sub{display:block}.card.hero .row{gap:8px;flex-wrap:nowrap}
+.it .pn{position:absolute;top:-5px;left:-5px;width:16px;height:16px;border-radius:50%;color:#14100a;font:800 10px/16px system-ui;text-align:center}
 .slot.k-star{border-color:#4fcb88;background:#16281f;box-shadow:0 0 0 1px #4fcb88 inset}.slot.k-trait{border-color:#8ab4ff;background:#172034;box-shadow:0 0 0 1px #8ab4ff inset}
 .slot .tag.t-star{background:#4fcb88;color:#0b1f14}.slot .tag.t-trait{background:#8ab4ff;color:#0b1530;font-size:8px}
 .sub.up{text-transform:uppercase;letter-spacing:.06em;font-weight:700}
@@ -641,12 +660,33 @@ function viewNow() {
     return `<button class="slot ${b ? 'need k-' + b.kind : ''} ${sel === i ? 'sel' : ''}" data-slot="${i}" title="${esc(K.lineFullName(line))}">${b ? `<span class="tag t-${b.kind}">${esc(buyLabel(b))}</span>` : isNew ? `<span class="tag nw">${tt.newTag}</span>` : ''}${own ? `<span class="own">×${own}</span>` : ''}${av(line, 1)}<span class="nm">${esc(K.baseName(line))}</span>${inPlan(line) && !b ? `<span class="fit">${esc(tt.inPlan)}</span>` : gp && !b ? `<span class="fit">${esc(tt.inGamePlan)}</span>` : ''}</button>`;
   }).join('');
   const actions = sel != null && S.shop[sel] ? `<div class="row"><button class="btn pri sm" data-act="bought">${esc(tt.bought)}</button><button class="btn sm" data-act="change">${esc(tt.change)}</button><button class="btn sm" data-act="clearslot">${esc(tt.clear)}</button></div>` : '';
-  const steps = [];
-  for (const b of adv.buys) steps.push(`<div class="step ${b.affordable ? '' : 'dim'}"><span class="sn">${steps.length + 1}</span>${av(b.line, 1, 'sm')}<span><b>${esc(tt.doBuy(K.baseName(b.line)))}</b><span class="sub">${esc(buyWhy(b))}${b.affordable ? '' : ' · ' + esc(tt.noGold)}</span></span></div>`);
-  for (const x of adv.tips) steps.push(`<div class="step tip"><span class="sn">${steps.length + 1}</span><span class="ti">${{ free: '⬆', near: '◆', level: '⇧', save: '💰', roll: '🎲' }[x.k] || '•'}</span><span>${esc(tipText(x))}</span></div>`);
+  const steps = []; let bn = 0;
+  // Nummern wie die Markierungen im Spiel: Shop „1, 2 …“, Item-Paare ①② in derselben Farbe wie im Beutel
+  for (const b of adv.buys) steps.push(`<div class="step ${b.affordable ? '' : 'dim'}"><span class="sn">${b.affordable ? ++bn : '–'}</span>${av(b.line, 1, 'sm')}<span><b>${esc(tt.doBuy(K.baseName(b.line)))}</b><span class="sub">${esc(buyWhy(b))}${b.affordable ? '' : ' · ' + esc(tt.noGold)}</span></span></div>`);
+  for (const x of itemMarks().steps) {
+    const w = x.w; const un = K.unitName(w.unit.line, w.unit.star);
+    if (x.k === 'craft') steps.push(`<div class="step"><span class="sn" style="background:${x.col}">${x.n}</span><span class="rcp">${itemImg(w.use[0])}+${itemImg(w.use[1])}</span><span><b>${esc(tt.craftStep(K.itemName(w.use[0]), K.itemName(w.use[1]), K.itemName(w.id)))}</b><span class="sub">${esc(tt.craftFor(un))}</span></span></div>`);
+    else steps.push(`<div class="step"><span class="sn" style="background:#8ab4ff">⬇</span>${itemImg(w.id, 'ii lg')}<span><b>${esc(tt.useStep(K.itemName(w.id), un))}</b><span class="sub">${esc(tt.useFor)}</span></span></div>`);
+  }
+  for (const x of adv.tips) steps.push(`<div class="step tip"><span class="sn">•</span><span class="ti">${{ free: '⬆', near: '◆', level: '⇧', save: '💰', roll: '🎲' }[x.k] || '•'}</span><span>${esc(tipText(x))}</span></div>`);
+  if (steps.length && !/class="step (dim|tip)/.test(steps[0])) steps[0] = steps[0].replace('class="step', 'class="step main');
+  const sr = safariRec(); let sfHtml = ''; const lr = lootRec();
+  if (lr) {
+    const p = lr[0];
+    sfHtml = `<div class="card hero"><span class="sub up">${esc(tt.lootT)}</span><div class="row">${itemImg(p.id, 'ii lg')}<span><b>${esc(tt.lootTake(K.itemName(p.id)))}</b><span class="sub">${esc(lootWhy(p))}</span></span></div></div>`;
+  }
+  const sl = !lr && sealRec();
+  if (sl) {
+    const p = sl.picks[0]; const nm = (sl.labels[p.idx] || '').split(':')[0];
+    sfHtml = `<div class="card hero"><span class="sub up">${esc(tt.sealT)}</span><b>${esc(tt.sealTake(nm))}</b><span class="sub">${esc(tt.sealWhy[p.why] || '')}${sl.picks[1] ? ' · ' + esc(tt.safariAlt((sl.labels[sl.picks[1].idx] || '').split(':')[0])) : ''}</span><span class="sub">${esc(tt.sealNote)}</span></div>`;
+  }
+  if (sr && !lr && !sl) {
+    const p = sr.picks[0]; const alt = sr.picks[1];
+    sfHtml = `<div class="card hero"><span class="sub up">${esc(tt.safariT)}</span><div class="row">${av(p.line, 1)}${p.item ? itemImg(p.item, 'ii lg') : ''}<span><b>${esc(tt.safariTake(K.baseName(p.line), p.item ? K.itemName(p.item) : ''))}</b><span class="sub">${esc(p.why.map((w) => tt.sWhy[w]).filter(Boolean).join(' · '))}</span></span></div>${alt ? `<span class="sub">${esc(tt.safariAlt(K.baseName(alt.line) + (alt.item ? ' + ' + K.itemName(alt.item) : '')))}</span>` : ''}${sr.myTurn ? '' : `<span class="sub">${esc(tt.safariWait)}</span>`}</div>`;
+  }
   const c = planComp(); const have = plan.filter((u) => ownOf(u.line)).length;
   const live2 = Date.now() - liveTs < 20000;
-  return `${statusLine()}${live2 ? diagLine() : `<p class="hint">${esc(tt.shopHint)}</p>`}<div class="slots">${slots}</div>${actions}
+  return `${statusLine()}${sfHtml}${live2 ? diagLine() : `<p class="hint">${esc(tt.shopHint)}</p>`}<div class="slots">${slots}</div>${actions}
     <div class="sec">${esc(tt.whatNow)}</div>
     ${steps.length ? `<div class="list">${steps.join('')}</div>` : `<p class="hint">${esc(tt.nothingNow)}</p>`}
     ${c ? `<div class="card"><span class="sub up">${esc(tt.yourPlan)}</span><h4>${tierBadge(c.tier)}<span class="t">${esc(K.compTitle(c))}</span></h4>
@@ -701,8 +741,9 @@ function viewItems() {
   const tt = t(); const bagObj = S.items || {}; const ids = Object.keys(bagObj).filter((id) => bagObj[id] > 0);
   const plan = itemPlan(); const wantIds = new Set(plan.wishes.filter((w) => w.status !== 'none').flatMap((w) => w.use));
   const sortKey = (id) => ({ part: 0, full: 1, emblem: 2, tool: 3 }[itemKind(id)] ?? 4);
+  const pm = {}; for (const [id, l] of Object.entries(itemMarks().items)) pm[id] = l.find((m) => m.col) || l[0]; const pair = (id) => { const m = pm[id]; return m && m.col ? ` style="box-shadow:inset 0 0 0 2px ${m.col}"` : ''; };
   const inv = ids.sort((a, b) => sortKey(a) - sortKey(b) || K.itemName(a).localeCompare(K.itemName(b)))
-    .map((id) => `<button class="it ${itemKind(id) === 'part' ? 'part' : ''} ${wantIds.has(id) ? 'want' : ''}" data-itdec="${esc(id)}" title="${esc(K.itemName(id))}">${itemImg(id)}<span>${esc(K.itemName(id))}</span>${bagObj[id] > 1 ? `<b>×${bagObj[id]}</b>` : ''}</button>`).join('');
+    .map((id) => `<button class="it ${itemKind(id) === 'part' ? 'part' : ''} ${wantIds.has(id) ? 'want' : ''}" data-itdec="${esc(id)}" title="${esc(K.itemName(id))}"${pair(id)}>${pm[id] && pm[id].n ? `<span class="pn" style="background:${pm[id].col}">${pm[id].n}</span>` : ''}${itemImg(id)}<span>${esc(K.itemName(id))}</span>${bagObj[id] > 1 ? `<b>×${bagObj[id]}</b>` : ''}</button>`).join('');
   const liveNote = live && isLive() ? (live.itemsHidden ? `<p class="hint warn">${esc(tt.itemsHidden)}</p>` : '') : `<p class="hint">${esc(tt.itemsManual)}</p>`;
   const stTxt = (w) => (w.status === 'ready' ? `<span class="good">${esc(tt.ready)}</span>` : w.status === 'craft' ? `<span class="good">${esc(tt.craftable)}</span>` : w.missing.length === 1 ? `<span class="warn">${esc(tt.needOne(K.itemName(w.missing[0])))}</span>` : w.missing.length === 2 ? `<span class="sub">${esc(tt.needTwo(K.itemName(w.missing[0]), K.itemName(w.missing[1])))}</span>` : '');
   const rcp = (id) => { const r = recipeOf(id); return r ? `<span class="rcp">${itemImg(r[0])}+${itemImg(r[1])}</span>` : ''; };
@@ -818,15 +859,86 @@ window.addEventListener('resize', place);
 /* ---------- Markierungen im Spiel ---------- */
 function pushMarks() {
   if (!K) return;
-  const shop = {}; const items = {};
-  for (const b of advice().buys) if (!shop[b.line] && b.affordable) shop[b.line] = { kind: TAGS[b.kind] || 'comp', label: buyLabel(b) };
-  if (hasTarget()) for (const w of itemPlan().wishes) {
-    if (w.status === 'ready') items[w.id] = items[w.id] || { kind: 'use', label: '→ ' + K.unitName(w.unit.line, w.unit.star) };
-    else if (w.status === 'craft' || w.status === 'half') for (const id of w.use) items[id] = items[id] || { kind: 'craft', label: t().markItem };
+  const shop = {}; let n = 0;
+  // Kaufempfehlungen in Reihenfolge durchnummeriert: „1“ zuerst kaufen
+  for (const b of advice().buys) if (!shop[b.line] && b.affordable) shop[b.line] = { kind: TAGS[b.kind] || 'comp', label: buyLabel(b), n: ++n };
+  const im = itemMarks(); const sr = safariRec(); let safari = null;
+  if (sr) {
+    const tt = t(); safari = {};
+    const tag = (p) => { const w = p.why.find((x) => tt.sTag[x]); return w ? tt.markTake + ' · ' + tt.sTag[w] : tt.markTake; };
+    safari[sr.picks[0].idx] = { kind: 'pick', label: tag(sr.picks[0]), n: 1 };
+    if (sr.picks[1]) safari[sr.picks[1].idx] = { kind: 'pick2', label: '', n: 2 };
   }
-  const out = { shop, items };
+  const lr = lootRec(); let loot = null;
+  if (lr) { loot = {}; loot[lr[0].idx] = { kind: 'pick', label: t().markTake + (lr[0].why[0] === 'want' ? ' · ' + t().sTag.plan : ''), n: 1 }; }
+  const sl = sealRec(); let seal = null;
+  if (sl) { seal = {}; seal[sl.picks[0].idx] = { kind: 'pick', label: t().markTake, n: 1 }; if (sl.picks[1] && sl.picks[1].score > 8) seal[sl.picks[1].idx] = { kind: 'pick2', label: '', n: 2 }; }
+  const out = { shop, items: im.items, safari, loot, seal, board: im.board };
   const key = JSON.stringify(out);
   if (key !== lastMarks) { lastMarks = key; try { chrome.storage.local.set({ kkMarks: out }); } catch (e) {} }
+}
+// Item-Paare: beide Komponenten bekommen dieselbe Nummer und Farbe, der Träger auf dem Brett dieselbe Farbe
+const PAIR_COL = ['#ff8a3d', '#4fcb88', '#b18cff', '#5ec8e5'];
+const CIRC = ['①', '②', '③', '④'];
+// items[id] ist eine Liste: eine Marke je Beutel-Platz mit diesem Item (zwei gleiche Komponenten = zwei Plätze)
+function itemMarks() {
+  const out = { items: {}, board: {}, steps: [] };
+  if (!K || !hasTarget()) return out;
+  const add = (id, mk) => (out.items[id] = out.items[id] || []).push(mk);
+  const wishes = itemPlan().wishes; let n = 0;
+  for (const w of wishes) {
+    const ul = K.base(w.unit.line);
+    if (w.status === 'craft') {
+      if (n >= PAIR_COL.length) continue;
+      const col = PAIR_COL[n++]; const [a, b] = w.use;
+      // Im engen Beutel nur Nummer + Farbe (Schilder würden sich überdecken); den Text zeigt das Overlay und das Brett über dem Träger
+      add(a, { kind: 'craft', col, n }); add(b, { kind: 'craft', col, n });
+      if (!out.board[ul]) out.board[ul] = { col, label: CIRC[n - 1] + ' ' + K.itemName(w.id) };
+      out.steps.push({ k: 'craft', w, n, col });
+    } else if (w.status === 'ready') {
+      add(w.id, { kind: 'use', label: '→ ' + K.unitName(w.unit.line, w.unit.star) });
+      if (!out.board[ul]) out.board[ul] = { label: '⬇ ' + K.itemName(w.id) };
+      out.steps.push({ k: 'use', w });
+    } else if (w.status === 'half') add(w.use[0], { kind: 'keep', dash: true });
+  }
+  return out;
+}
+// Safari-Zone: beste Karte für deinen Plan (Stern-Aufstieg > Plan-Pokémon > gebrauchtes Item > Wert)
+function safariRec() {
+  const sf = live && isLive() && live.safari;
+  if (!K || !K.safariPick || !sf || sf.done || sf.got || sf.cards.some((c) => c.mine)) return null;
+  const picks = K.safariPick({ cards: sf.cards, plan: planUnits(), owned: S.owned, want: itemWants(), board: (live.board || []).map((u) => u.line) });
+  return picks.length ? { picks, myTurn: sf.myTurn } : null;
+}
+// Welche Items der Plan noch braucht: fehlende Komponente eines halben Rezepts zählt am meisten (sofort fertig)
+function itemWants() {
+  const want = {}; const up = (id, v) => { want[id] = Math.max(want[id] || 0, v); };
+  if (hasTarget()) for (const w of itemPlan().wishes) {
+    if (w.status === 'half') { up(w.id, 30); w.missing.forEach((m) => up(m, 32)); }
+    else if (w.status === 'none') { up(w.id, 30); w.missing.forEach((m) => up(m, 22)); }
+  }
+  return want;
+}
+// Item-Belohnung („Wähle eins!“)
+function lootRec() {
+  const lt = live && isLive() && live.loot;
+  if (!K || !K.lootPick || !lt || lt.picked || !lt.items.length) return null;
+  const picks = K.lootPick({ items: lt.items, want: itemWants(), bag: S.items || {} });
+  return picks.length ? picks : null;
+}
+// Siegel-Wahl („Wähle ein Siegel“): Faustregeln, weil die API keine Siegel-Statistik hat
+function sealRec() {
+  const sx = live && isLive() && live.seal;
+  if (!K || !K.sealPick || !sx || sx.picked) return null;
+  const g = live.game; const round = g && g.stage ? g.stage + '-' + g.round : null;
+  const seals = sx.labels.map((l) => K.sealMatch(l, round)); const picks = K.sealPick({ seals, plan: planUnits(), owned: S.owned, stage: g && g.stage ? g.stage : 3 });
+  return picks.length ? { picks, labels: sx.labels } : null;
+}
+function lootWhy(p) {
+  const tt = t();
+  if (p.why[0] === 'want') { const w = hasTarget() && itemPlan().wishes.find((x) => x.id === p.id || x.missing.includes(p.id)); return w ? tt.lWant(K.itemName(w.id), K.unitName(w.unit.line, w.unit.star)) : tt.sWhy.item; }
+  if (p.why[0] === 'pair') return tt.lPair(K.itemName(p.makes));
+  return tt.lWhy[p.why[0]] || '';
 }
 function pushField() {
   if (!K) return;
@@ -847,7 +959,7 @@ function canonLive(l) {
   const shopInfo = (l.shopInfo || []).map((x) => ({ ...x, line: canon(x.line, x.owner) }));
   const own = {}; (l.shopInfo || []).forEach((x, i) => { if (x.line && l.own && l.own[x.line] != null) own[shopInfo[i].line] = l.own[x.line]; });
   return { ...l, shopInfo, shop: shopInfo.map((x) => x.line), own,
-    bench: (l.bench || []).map((u) => ({ ...u, line: canon(u.line) })), board: l.board ? l.board.map((u) => ({ ...u, line: canon(u.line) })) : l.board };
+    bench: (l.bench || []).map((u) => ({ ...u, line: canon(u.line) })), safari: l.safari ? { ...l.safari, cards: l.safari.cards.map((c) => ({ ...c, line: canon(c.line) })) } : null, board: l.board ? l.board.map((u) => ({ ...u, line: canon(u.line) })) : l.board };
 }
 let lastLiveSig = '', lastTab = null;
 function applyLive(raw) {

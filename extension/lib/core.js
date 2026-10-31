@@ -510,6 +510,139 @@ function create(opts) {
       K.compById[id] = c; return c;
     });
   };
+  // Safari-Zone (Karussell): welche Karte (Pokémon + Item) nehmen? Unter Zeitdruck zählt eine klare Reihenfolge.
+  // o: { cards: [{line, item, taken}], plan: [{line, share}], owned: {line: Kopien}, want: {itemId: Gewicht}, board: [line] }
+  // Liefert die freien Karten absteigend bewertet: [{idx, score, why: ['star'|'core'|'plan'|'item'|'trait'|'own'|'cost'], item}]
+  K.safariPick = (o) => {
+    const owned = o.owned || {}; const plan = o.plan || []; const want = o.want || {};
+    const pl = {}; plan.forEach((u, i) => { const b = K.base(u.line); if (!pl[b]) pl[b] = { ...u, rank: i }; });
+    const field = K.traitsFor((o.board || []).map((l) => ({ line: l, items: [] })));
+    const out = [];
+    (o.cards || []).forEach((c, idx) => {
+      if (!c || c.taken || !c.line) return;
+      const b = K.base(c.line); const own = owned[b] || 0; const p = pl[b]; const why = []; let s = 0;
+      if (own % 3 === 2 && own < 9) { s += 60; why.push('star'); }                       // macht einen Stern
+      if (p) { s += p.share >= 80 ? 45 : 32; why.push(p.share >= 80 ? 'core' : 'plan'); }
+      else if (own > 0 && own < 9) { s += 10; if (!why.length) why.push('own'); }
+      if (!p && !own && K.lineTypes(b).some((t) => { const x = field.find((y) => y.type === t); return x && x.next && x.next - x.n === 1; })) { s += 12; why.push('trait'); }
+      const iw = c.item ? want[c.item] || 0 : 0;
+      if (iw) { s += iw; why.push('item'); }
+      else if (c.item && data.items[c.item] && data.items[c.item].k === 'full') { s += 14; why.push('full'); } // fertiges Item ist immer etwas wert
+      else if (c.item && data.items[c.item] && data.items[c.item].k === 'part') s += 6;
+      s += K.lineCost(b) * 1.5; if (!why.length) why.push('cost');
+      out.push({ idx, line: c.line, item: c.item, score: s, why });
+    });
+    return out.sort((a, b) => b.score - a.score);
+  };
+  // Item-Belohnung („Wähle eins!“): welches Item nehmen?
+  // o: { items: [itemId], want: {itemId: Gewicht} (aus dem Plan), bag: {itemId: Anzahl} }
+  // Liefert [{idx, id, score, why: ['want'|'pair'|'full'|'part'|'other'], makes?}] absteigend
+  K.lootPick = (o) => {
+    const want = o.want || {}; const bag = o.bag || {};
+    const tierV = (id) => { const x = K.itemTier[id]; return x ? ({ S: 12, A: 8, B: 4, C: 1 }[x.tier] || 0) : 4; };
+    const out = [];
+    (o.items || []).forEach((id, idx) => {
+      const it = data.items[id]; if (!it) return;
+      let s = 0; const why = []; let makes = null;
+      if (want[id]) { s += want[id] + 10; why.push('want'); }
+      if (it.k === 'full') { s += 14 + tierV(id); if (!why.length) why.push('full'); }
+      else if (it.k === 'part') {
+        // Passt zu einer Komponente im Beutel? Dann entsteht sofort ein fertiges Item
+        let best = null;
+        for (const [a, b, r] of data.recipes || []) {
+          const other = a === id ? b : b === id ? a : null; if (other == null) continue;
+          if (!((bag[other] || 0) > 0)) continue; // das angebotene Item ist neu, also reicht eine passende Komponente im Beutel
+          const v = (want[r] || 0) + tierV(r); if (!best || v > best.v) best = { r, v };
+        }
+        if (best) { s += 8 + best.v; makes = best.r; if (!why.length) why.push('pair'); }
+        else {
+          // Sonst: die Komponente, aus der die stärksten Items entstehen (bei Gleichstand)
+          const flex = Math.max(0, ...(data.recipes || []).filter(([a, b]) => a === id || b === id).map(([, , r]) => tierV(r) + (want[r] ? 6 : 0)));
+          s += 6 + flex * 0.5; if (!why.length) why.push('part');
+        }
+      } else { s += 3; if (!why.length) why.push('other'); }
+      out.push({ idx, id, score: s, why, makes });
+    });
+    return out.sort((a, b) => b.score - a.score);
+  };
+  // Siegel im Spiel erkennen: Name aus der Karte (Spielsprache) gegen en/es und die eigene deutsche Übersetzung.
+  // Typ-Siegel („{T}-Herz“) werden über die Vorlage erkannt, der Typ über seinen Namen. Liefert {id, type} oder null.
+  const normS = (x) => String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9{}]+/g, '');
+  let sealIdx = null;
+  const sealIndex = () => {
+    if (sealIdx) return sealIdx;
+    const sde = (typeof window !== 'undefined' && window.KK_SEALS_DE) || {};
+    const exact = {}; const tpl = [];
+    for (const [id, s] of Object.entries(data.seals || {})) {
+      for (const n of [s.name && s.name.en, s.name && s.name.es, sde[id] && sde[id][0]]) {
+        if (!n) continue;
+        if (s.template === 'type' && n.includes('{T}')) { const [a, b] = normS(n).split('{t}'); tpl.push({ id, a, b }); } else exact[normS(n)] = id;
+      }
+    }
+    const types = Object.keys(data.traits || {}).map((t) => ({ t, names: [data.traits[t].en, data.traits[t].es, DE.types && DE.types[t]].filter(Boolean).map(normS) }));
+    return (sealIdx = { exact, tpl, types });
+  };
+  K.sealMatch = (label, round) => {
+    const n = normS(String(label || '').split(':')[0]); if (!n) return null;
+    const ix = sealIndex();
+    if (ix.exact[n]) return { id: ix.exact[n], type: null };
+    for (const x of ix.tpl) {
+      if (!n.startsWith(x.a) || !n.endsWith(x.b) || n.length <= x.a.length + x.b.length) continue;
+      const mid = n.slice(x.a.length, n.length - x.b.length); const ty = ix.types.find((y) => y.names.includes(mid));
+      if (ty) return { id: x.id, type: ty.t };
+    }
+    // Rückfall (Name anders übersetzt): gleiche Zahlen im Wirkungstext wie genau ein Siegel dieser Runde
+    const nums = (t) => (String(t || '').match(/\d+/g) || []).sort().join(',');
+    const want = nums(String(label).split(':').slice(1).join(':').split('.')[0]);
+    if (!want) return null;
+    const hit = Object.entries(data.seals || {}).filter(([, s]) => s.template !== 'type' && (s.text || []).some((t) => (!round || t.round === round) && nums(t.line && t.line.en) === want));
+    return hit.length === 1 ? { id: hit[0][0], type: null } : null;
+  };
+  // Grobe Rolle einer Linie aus Reichweite und Attacke (die API nennt keine Rollen)
+  K.lineRole = (id) => {
+    const l = data.lines[K.base(id)]; if (!l) return null; const s = l.stars[0]; const kind = s.move && s.move.kind; const hp = s.stats ? s.stats.hp : 0;
+    if (['heal', 'shield', 'buff'].includes(kind) && l.range >= 2) return 'support';
+    if (l.range >= 3) return 'marksman';
+    if (['dash', 'teleport', 'execute'].includes(kind)) return 'assassin';
+    if (l.range <= 1 && (['shield', 'aoeSelf', 'buff'].includes(kind) || hp / Math.max(1, l.c) >= 1000)) return 'tank';
+    return 'fighter';
+  };
+  const ROLE_RX = { tank: /tank/i, marksman: /marksm/i, support: /support/i, fighter: /fighter/i, assassin: /assassin/i };
+  // Siegel-Wahl: keine Statistik in der API, darum Faustregeln. Wirtschaft/EP früh, Typ-/Rollen-Siegel nur, wenn sie zum Plan passen.
+  // o: { seals: [{id, type}], plan: [{line}], owned: {line: n}, stage }  ->  [{idx, id, type, score, why}]
+  K.sealPick = (o) => {
+    const stage = o.stage || 3; const plan = o.plan || []; const owned = o.owned || {};
+    const tr = K.traitsFor(plan.map((u) => ({ line: u.line, items: [] })));
+    const lines = new Set([...plan.map((u) => K.base(u.line)), ...Object.keys(owned).filter((l) => owned[l] > 0)]);
+    const roles = {}; plan.forEach((u) => { const r = K.lineRole(u.line); if (r) roles[r] = (roles[r] || 0) + 1; });
+    const out = [];
+    (o.seals || []).forEach((x, idx) => {
+      if (!x || !x.id) return; const s = (data.seals || {})[x.id]; if (!s) return;
+      const txt = (s.text || []).map((t) => (t.line && t.line.en) || '').join(' ');
+      let sc = 10; let why = s.cat;
+      if (s.cat === 'eco') sc = stage <= 2 ? 30 : stage === 3 ? 24 : 8;
+      else if (s.cat === 'xp') sc = stage <= 2 ? 22 : stage === 3 ? 16 : 6;
+      else if (s.cat === 'item') sc = 28; // Komponenten/fertige Items wirken die ganze Partie
+      else if (s.cat === 'shop') sc = 16;
+      else if (s.cat === 'board') sc = 15;
+      else if (s.cat === 'later') sc = stage <= 3 ? 14 : 6;
+      else if (s.cat === 'trait') {
+        const t = x.type && tr.find((y) => y.type === x.type);
+        sc = !x.type ? 10 : t && t.lv > 0 ? 34 + t.lv * 2 : 3; why = !x.type ? 'trait' : t && t.lv > 0 ? 'traitFit' : 'miss';
+      } else if (s.cat === 'role') {
+        const r = Object.keys(ROLE_RX).filter((k) => ROLE_RX[k].test(txt)); const n = r.reduce((a, k) => a + (roles[k] || 0), 0);
+        sc = r.length ? (n >= 2 ? 30 : n === 1 ? 16 : 3) : 14; why = r.length ? (n >= 1 ? 'roleFit' : 'miss') : 'role';
+      } else if (s.cat === 'hero') { const fit = s.hero && lines.has(s.hero); sc = fit ? 34 : 2; why = fit ? 'heroFit' : 'miss'; }
+      else if (s.cat === 'combat') {
+        const ty = Object.keys(data.traits || {}).filter((t) => new RegExp('\\b' + data.traits[t].en + '\\b').test(txt));
+        const fit = ty.some((t) => tr.some((y) => y.type === t && y.lv > 0));
+        sc = !ty.length ? 18 : fit ? 30 : 6; why = !ty.length ? 'combat' : fit ? 'traitFit' : 'miss';
+      }
+      sc += ((s.rarity || 1) - 1) * 3;
+      out.push({ idx, id: x.id, type: x.type, score: sc, why });
+    });
+    return out.sort((a, b) => b.score - a.score);
+  };
   // Ratgeber: Was kaufe ich, was mache ich mit dem Gold, was fehlt dem Feld?
   // o: { plan: [{line, share, star}], owned, board: [{line, star}], shop: [line], level, gold, stage, comp }
   K.advise = (o) => {

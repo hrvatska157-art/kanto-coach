@@ -87,8 +87,12 @@ layer.innerHTML = `<style>
   :host{all:initial}
   .ring{position:fixed;border-radius:14px;pointer-events:none;box-shadow:0 0 0 3px var(--c),0 0 18px 2px var(--c);animation:p 1.6s ease-in-out infinite}
   .ring.it{border-radius:10px}
+  .ring.dash{box-shadow:none;border:2px dashed var(--c);animation:none;opacity:.8}
   .tag{position:fixed;transform:translate(-50%,-60%);pointer-events:none;background:var(--c);color:#14110a;font:800 11px/1 system-ui,sans-serif;letter-spacing:.04em;padding:4px 7px;border-radius:7px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.5)}
   .tag.it{font-size:9.5px;padding:3px 5px}
+  .tag.unit{transform:translate(-50%,-100%);font-size:10.5px}
+  .num{position:fixed;transform:translate(-45%,-45%);pointer-events:none;width:20px;height:20px;border-radius:50%;background:var(--c);color:#14110a;font:900 12px/20px system-ui,sans-serif;text-align:center;box-shadow:0 0 0 2px #14110a,0 2px 6px rgba(0,0,0,.6)}
+  .num.it{width:17px;height:17px;font-size:10.5px;line-height:17px}
   @keyframes p{50%{box-shadow:0 0 0 3px var(--c),0 0 26px 6px var(--c)}}
   svg{position:fixed;left:0;top:0;overflow:visible;pointer-events:none}
   .fu{position:fixed;transform:translate(-50%,-78%);display:flex;flex-direction:column;align-items:center;pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
@@ -108,7 +112,7 @@ const fsvg = layer.getElementById('fs');
 const fuel = layer.getElementById('fu');
 const edel = layer.getElementById('ed');
 function attachLayer() { if (!layerHost.isConnected && document.body) document.body.appendChild(layerHost); }
-const COLORS = { target: '#f2bf45', upgrade: '#4fcb88', comp: '#8ab4ff', craft: '#f2bf45', use: '#8ab4ff' };
+const COLORS = { target: '#f2bf45', upgrade: '#4fcb88', comp: '#8ab4ff', craft: '#f2bf45', use: '#8ab4ff', pick: '#f2bf45', pick2: '#c9cfdc', keep: '#8d95a8' };
 const ST_COL = { ok: '#4fcb88', own: '#8ab4ff', shop: '#f2bf45', miss: '#c9cfdc' };
 
 /* ---------- Lesen ---------- */
@@ -250,6 +254,37 @@ function readItems(planning) {
   lastItems = {}; return { items: {}, seen: true };
 }
 
+/* Safari-Zone (Karussell im PvP, z. B. Runde 2-4/3-4): Karten mit Pokémon und Item, reihum wählen.
+ * Vier Darstellungen je nach Spieleinstellung: button.sf3-mon (auf dem Brett), .sfv-card (SafariV2), .sft-card (Leiste), .sfs-card (Vollbild).
+ * Gemeinsam: taken = schon weg, mine = deins, can = du darfst jetzt; Item-Bild in .<präfix>-item. */
+const SAFARI_CARD = 'button.sf3-mon, button.sfv-card, button.sft-card, button.sfs-card';
+function readSafari() {
+  const btns = [...document.querySelectorAll(SAFARI_CARD)]; if (!btns.length) return null;
+  const cards = btns.map((b) => {
+    const num = monNum(b); const it = RX_ITEM.exec(srcOf(b.querySelector('.sf3-item img, .sfv-item img, .sft-item img, .sfs-item img')));
+    const line = num && map ? (map.base[num] || (map.forms[num] || [])[0] || null) : null;
+    return { line, num, item: it ? it[1] : null, taken: /taken/.test(b.className), mine: /mine/.test(b.className) };
+  });
+  return { cards, myTurn: !!document.querySelector('.sf3.my-turn, .sfv.me, .sft.me, .sfs.me'), done: !!document.querySelector('.sfv.done, .sft.done, .sfs.done'), got: !!document.querySelector('.sf3-tr.me.done') };
+}
+
+/* Item-Belohnung („Wähle eins!“): .modal.itemreward mit button.ir-card je Item (Bild .ir-ico img.it-ico) */
+function readLoot() {
+  const btns = [...document.querySelectorAll('.itemreward button.ir-card')]; if (!btns.length) return null;
+  const items = btns.map((b) => { const m = RX_ITEM.exec(srcOf(b.querySelector('.ir-ico img, img'))); return m ? m[1] : null; });
+  return { items, picked: btns.some((b) => /picked/.test(b.className)) };
+}
+/* Siegel-Wahl („Wähle ein Siegel“): .sx-pick mit .sx-card > button.sx-take (aria-label „Name: Wirkung“ in Spielsprache) */
+function readSeal() {
+  const cards = [...document.querySelectorAll('.sx-pick .sx-card')]; if (!cards.length) return null;
+  return { labels: cards.map((c) => { const b = c.querySelector('button.sx-take'); return b ? b.getAttribute('aria-label') || '' : ''; }), picked: cards.some((c) => /picked/.test(c.className)) };
+}
+// Markierungen vom Overlay (ältere Form: nur Shop-Objekt)
+function parseMarks(v) {
+  v = v || {};
+  return v.shop || v.items || v.safari || v.loot || v.seal ? { shop: v.shop || {}, items: v.items || {}, safari: v.safari || null, loot: v.loot || null, seal: v.seal || null, board: v.board || {} } : { shop: v, items: {} };
+}
+
 /* Spielmodus aus der Fortschrittsleiste oben: PvP-Runde, Kampagnen-Station oder Turm-Etage */
 function readMode() {
   const tw = document.querySelector('.rtrack.tw');
@@ -270,24 +305,43 @@ function readMode() {
 }
 
 /* ---------- Zeichnen ---------- */
-function ring(r, kind, label, cls = '') {
-  const c = COLORS[kind] || COLORS.comp;
-  const ringEl = document.createElement('div'); ringEl.className = 'ring ' + cls; ringEl.style.setProperty('--c', c);
+// mk: { kind, label, col?, n? } – col überschreibt die Farbe (Item-Paare), n ist eine Nummer im Kreis (Reihenfolge/Paar)
+function ring(r, mk, cls = '') {
+  const c = mk.col || COLORS[mk.kind] || COLORS.comp;
+  const ringEl = document.createElement('div'); ringEl.className = 'ring ' + cls + (mk.dash ? ' dash' : ''); ringEl.style.setProperty('--c', c);
   Object.assign(ringEl.style, { left: r.left - 3 + 'px', top: r.top - 3 + 'px', width: r.width + 6 + 'px', height: r.height + 6 + 'px' });
   holder.append(ringEl);
-  if (label) { const tag = document.createElement('div'); tag.className = 'tag ' + cls; tag.style.setProperty('--c', c); tag.textContent = label; Object.assign(tag.style, { left: r.left + r.width / 2 + 'px', top: r.top + 'px' }); holder.append(tag); }
+  if (mk.label) { const tag = document.createElement('div'); tag.className = 'tag ' + cls; tag.style.setProperty('--c', c); tag.textContent = mk.label; Object.assign(tag.style, { left: r.left + r.width / 2 + 'px', top: r.top + 'px' }); holder.append(tag); }
+  if (mk.n) { const n = document.createElement('div'); n.className = 'num ' + cls; n.style.setProperty('--c', c); n.textContent = mk.n; Object.assign(n.style, { left: r.left + 'px', top: r.top + 'px' }); holder.append(n); }
 }
 // Nur markieren, was wirklich oben liegt – nicht durch Menüs, Siegel-Auswahl oder andere Fenster des Spiels hindurch
 function onTop(el) { const r = el.getBoundingClientRect(); const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height * 0.4); return !!t && (t === el || el.contains(t)); }
 function drawMarks(cards) {
   holder.textContent = '';
   if (!enabled) return;
-  for (const c of cards) { const mk = c.line && marks.shop && marks.shop[c.line]; if (mk && onTop(c.el)) ring(c.el.getBoundingClientRect(), mk.kind, mk.label); }
+  for (const c of cards) { const mk = c.line && marks.shop && marks.shop[c.line]; if (mk && onTop(c.el)) ring(c.el.getBoundingClientRect(), mk); }
   if (marks.items && Object.keys(marks.items).length) {
+    const used = {}; // je Item-ID: wie viele Marken schon vergeben (Liste = eine Marke je Platz, z. B. zwei gleiche Komponenten)
     for (const b of document.querySelectorAll('button.it-slot')) {
       if (b.closest('.it-queue') || !visible(b)) continue;
-      const m = RX_ITEM.exec(srcOf(b.querySelector('img'))); const mk = m && marks.items[m[1]];
-      if (mk && onTop(b)) ring(b.getBoundingClientRect(), mk.kind, mk.label, 'it');
+      const m = RX_ITEM.exec(srcOf(b.querySelector('img'))); const v = m && marks.items[m[1]]; if (!v) continue;
+      const i = used[m[1]] || 0; used[m[1]] = i + 1; const mk = Array.isArray(v) ? v[i] : v;
+      if (mk && onTop(b)) ring(b.getBoundingClientRect(), mk, 'it');
+    }
+  }
+  // Safari-Zone: Empfehlung direkt an der Karte (Index wie im Spiel)
+  if (marks.safari) document.querySelectorAll(SAFARI_CARD).forEach((b, i) => { const mk = marks.safari[i]; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
+  if (marks.seal) document.querySelectorAll('.sx-pick .sx-card').forEach((c, i) => { const mk = marks.seal[i]; const b = c.querySelector('button.sx-take') || c; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
+  if (marks.loot) document.querySelectorAll('.itemreward button.ir-card').forEach((b, i) => { const mk = marks.loot[i]; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
+  // Brett: wer ein fertiges Item bekommen soll – Hinweis über der Lebensleiste des eigenen Pokémon
+  if (marks.board && Object.keys(marks.board).length) {
+    const root = document.querySelector('.units2d'); if (!root) return; const done = new Set();
+    for (const bar of root.querySelectorAll('.ubar.ally[data-uid]')) {
+      const u = root.querySelector(':scope > .unit2d[data-uid="' + bar.dataset.uid + '"] img'); const m = u && RX_MON.exec(srcOf(u)); const f = m && formOf(+m[1], 0);
+      const mk = f && marks.board[f.line]; if (!mk || done.has(f.line)) continue; done.add(f.line);
+      const r = bar.getBoundingClientRect(); if (r.width < 2) continue;
+      const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); if (top && top.closest('.modal, [role="dialog"]')) continue; // nicht durch Fenster des Spiels hindurch
+      const tag = document.createElement('div'); tag.className = 'tag unit'; tag.style.setProperty('--c', mk.col || COLORS.use); tag.textContent = mk.label; Object.assign(tag.style, { left: r.left + r.width / 2 + 'px', top: r.top - 6 + 'px' }); holder.append(tag);
     }
   }
 }
@@ -393,12 +447,13 @@ function scan() {
   const cards = readShop();
   drawMarks(cards);
   const level = readLevel(), gold = readGold();
-  if (!cards.length && level == null && gold == null) return; // kein Spiel-HUD sichtbar
+  const safari = readSafari(); const loot = readLoot(); const seal = readSeal();
+  if (!cards.length && level == null && gold == null && !safari && !loot && !seal) return; // kein Spiel-HUD sichtbar
   const bench = readBench(); const board = readBoard(); const it = readItems(cards.length > 0);
   const state = {
     shop: cards.map((c) => c.line), shopInfo: cards.map((c) => ({ line: c.line, num: c.num, cost: c.cost, own: c.own, owner: c.owner, plan: c.plan, name: c.line ? '' : c.name })),
     own: Object.fromEntries(cards.filter((c) => c.line).map((c) => [c.line, c.own])),
-    level, gold, hp: readHp(), interest: readInterest(), game: readMode(), planning: !!document.querySelector('button.fight'), teamN: firstInt((document.querySelector('.teamcount') || { getAttribute: () => '' }).getAttribute('aria-label')), lang: document.documentElement.lang || '', bench, board, items: it.items, itemsSeen: it.seen, itemsHidden: !!it.hidden, itemsCount: it.count || null,
+    level, gold, hp: readHp(), interest: readInterest(), safari, loot, seal, game: readMode(), planning: !!document.querySelector('button.fight'), teamN: firstInt((document.querySelector('.teamcount') || { getAttribute: () => '' }).getAttribute('aria-label')), lang: document.documentElement.lang || '', bench, board, items: it.items, itemsSeen: it.seen, itemsHidden: !!it.hidden, itemsCount: it.count || null,
     diag: { cards: cards.filter((c) => !c.empty).length, matched: cards.filter((c) => c.line).length, unknown: cards.filter((c) => !c.line && !c.empty).map((c) => c.num || c.name).slice(0, 5), bench: bench.length, board: board ? board.length : null, calibrated: isCalibrated(), map: !!map },
   };
   const key = JSON.stringify(state);
@@ -422,7 +477,7 @@ addEventListener('resize', () => { schedule(); drawFieldSoon(); }); addEventList
 setInterval(schedule, 1500);
 
 chrome.storage.onChanged.addListener((ch, area) => {
-  if (area === 'local' && ch.kkMarks) { const v = ch.kkMarks.newValue || {}; marks = v.shop || v.items ? { shop: v.shop || {}, items: v.items || {} } : { shop: v, items: {} }; schedule(); }
+  if (area === 'local' && ch.kkMarks) { const v = ch.kkMarks.newValue || {}; marks = parseMarks(v); schedule(); }
   if (area === 'local' && ch.kkField) { field = { show: false, edit: false, ...(ch.kkField.newValue || {}) }; drawField(); }
   if (area === 'local' && ch.kkFieldUnits) { fieldUnits = ch.kkFieldUnits.newValue || []; drawField(); }
   if (area === 'local' && ch.kkCalib && !dragging) { calibs = ch.kkCalib.newValue || {}; drawFieldSoon(); }
@@ -437,7 +492,7 @@ async function loadMap() {
   try { const s = await chrome.storage.sync.get({ autoShop: true, lang: 'auto' }); enabled = s.autoShop !== false; langSel = s.lang || 'auto'; } catch (e) {}
   try {
     const l = await chrome.storage.local.get(['kkMarks', 'kkField', 'kkFieldUnits', 'kkCalib']);
-    const v = l.kkMarks || {}; marks = v.shop || v.items ? { shop: v.shop || {}, items: v.items || {} } : { shop: v, items: {} };
+    const v = l.kkMarks || {}; marks = parseMarks(v);
     field = { show: false, edit: false, ...(l.kkField || {}) }; fieldUnits = l.kkFieldUnits || []; calibs = l.kkCalib || {};
   } catch (e) {}
   await loadMap();

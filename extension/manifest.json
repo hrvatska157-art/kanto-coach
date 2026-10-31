@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "short_name": "__MSG_extShort__",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "__MSG_extDesc__",
   "icons": {
     "16": "icons/icon16.png",
@@ -43,6 +43,7 @@
       ],
       "js": [
         "lib/i18n-game.js",
+        "lib/seals-de.js",
         "lib/core.js",
         "content/overlay.js"
       ],

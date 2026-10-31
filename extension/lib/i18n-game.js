@@ -696,8 +696,16 @@ window.KK_DE = {
 "en": "Brock"
 },
 "elite": {
-"de": "Elite",
-"en": "Elite"
+"de": "Top Vier",
+"en": "Elite Four"
+},
+"giovanni": {
+"de": "Giovanni",
+"en": "Giovanni"
+},
+"mewtwo": {
+"de": "Mewtu",
+"en": "Mewtwo"
 },
 "snorlax": {
 "de": "Relaxo",
@@ -1017,6 +1025,7 @@ window.KK_DE = {
 "Bubbles at its target: damage and slows it by #% for #s. Power # (#% Sp. Atk)": "Blasen auf sein Ziel: Schaden und verlangsamt es um #% für # s. Stärke # (#% Sp.-Angr.)",
 "Changes its type to the one that best resists the last ability hit it took and fires a beam of that type at its target. Each Conversion in the fight deals #% more. Power #/#/# (#% Sp. Atk)": "Wechselt zu dem Typ, der der zuletzt erlittenen Fähigkeit am besten widersteht, und feuert einen Strahl dieses Typs auf sein Ziel. Jede Umwandlung im Kampf macht #% mehr. Stärke #/#/# (#% Sp.-Angr.)",
 "Copies the ability of the ally next to it (with no one there, a random one).": "Kopiert die Fähigkeit des Verbündeten neben ihm (ist dort niemand, eine zufällige).",
+"Copies the ability of the ally next to it at #% (with no one there, a random one).": "Kopiert die Fähigkeit des Verbündeten neben ihm mit #% Stärke (ist dort niemand, eine zufällige).",
 "Curls into a ball and rolls # hexes through enemies (pushing them aside), leaving sand for #s: they miss half of their attacks. Hits with its Defense, and each Rollout in the combat hits #% harder. Taunts nearby enemies for #s: they can only attack it. Then returns #% of the damage it has taken to adjacent enemies. Also hits with #% of its Defense (Iron raises it; Choice Band and Protein don’t). Power #/#": "Rollt sich zusammen und rollt # Felder durch die Gegner (schiebt sie beiseite) und hinterlässt # s lang Sand: Gegner darin verfehlen die Hälfte ihrer Angriffe. Trifft mit seiner Verteidigung, jeder Walzer im Kampf trifft #% härter. Verspottet Gegner in der Nähe für # s: Sie können nur noch es angreifen. Gibt dann #% des erlittenen Schadens an benachbarte Gegner zurück. Trifft zusätzlich mit #% seiner Verteidigung (Eisen erhöht es; Wahlband und Protein nicht). Stärke #/#",
 "Dives at its target # times: each dive leaves frost (−#% attack speed, up to −#%) and the last one freezes it for #s if it is left below #% HP. Power #/#/# (#% Attack)": "Stürzt sich # Mal auf sein Ziel: Jeder Sturzflug hinterlässt Frost (−#% Angriffstempo, bis zu −#%), der letzte friert es # s lang ein, wenn es unter #% KP bleibt. Stärke #/#/# (#% Angriff)",
 "Dives onto its target twice: each time it crosses its wings and deals two X slashes that poison and can crit; then returns to its spot. Can be a critical hit. Power #/#/# (#% Attack)": "Stürzt sich zweimal auf sein Ziel: Jedes Mal kreuzt es die Flügel und führt zwei X-Hiebe aus, die vergiften und Volltreffer sein können; danach kehrt es an seinen Platz zurück. Kann ein Volltreffer sein. Stärke #/#/# (#% Angriff)",

@@ -6,7 +6,7 @@
 <a href="README.md">English</a> · Deutsch · <a href="https://hrvatska157-art.github.io/kanto-coach/?lang=de">Webseite</a></p>
 
 <p align="center">
-<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (Version 2.3.0)</b></a>
+<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (Version 2.4.0)</b></a>
 </p>
 
 ---
@@ -20,7 +20,8 @@ Kanto Coach ist eine Chrome-Erweiterung, die neben dem Spiel ein kleines Overlay
 - **„Was jetzt?“** – nummerierte Schritte mit Begründung: Kauf, der einen Stern bringt (★★/★★★), Kern-Pokémon deines Plans, zweite Kopie, Typ-Stufe vollmachen; dazu Tipps zu freien Feldplätzen, Gold sparen bis zur Zinsgrenze, Neu-Würfeln und EP kaufen.
 - **Ein Plan, der zu dir passt** – PvP: Meta-Comps nach Baubarkeit mit deinen Pokémon und deinem Gold. Abenteuer und Duellturm: Comps mit bewiesener Typ-Synergie, bewertet mit den echten Siegquoten in diesem Modus.
 - **Plan ins Spiel übernehmen** – kopiert den Plan als Team-Code. Im Spiel *Planer → „Code einfügen“*: Das Spiel zeigt die Aufstellung als Schatten auf dem Brett und markiert die Shop-Karten selbst.
-- **Markierungen im Spiel** – KAUFEN, ★★!, +TYP an den Shop-Karten und ZIEL an den Item-Komponenten.
+- **Markierungen im Spiel** – durchnummeriert KAUFEN, ★★!, +TYP an den Shop-Karten („1“ zuerst). Zusammengehörige Item-Komponenten tragen dieselbe Nummer und Farbe, der Träger zeigt das Item über seiner Lebensleiste.
+- **Schnell wählen unter Zeitdruck** – klare „NIMM“-Markierung in der Safari-Zone, bei der Item-Belohnung („Wähle eins!“) und bei der Siegel-Wahl, mit einem Satz Begründung im Overlay.
 - **Items** – liest deinen Beutel, zeigt, was du bauen kannst und wer welches Item tragen soll.
 - **Abenteuer & Turm** – erkennt Station/Etage und Schwierigkeit, zeigt den nächsten Boss mit Siegquote und warnt vor schweren Kämpfen (z. B. Sabrina, Giovanni, Turm-Etage 50).
 - **Aktuell zum Spiel** – verankerte Formen (⚓), Figuren-Pokémon (Koga, Giovanni, Samurai), Abenteuer-Stufen und alle Neuerungen bis Spielversion 41.
