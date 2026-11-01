@@ -4,6 +4,15 @@ All versions below 1.0 are **beta** – the extension stays in beta until everyt
 
 Alle Versionen unter 1.0 sind **Beta** – die Erweiterung bleibt Beta, bis alles in jedem Modus sauber läuft. (Frühere Releases hießen 2.x; es sind dieselben Stände wie 0.1–0.7.)
 
+## Autoplay (Windows) – 2026-11-01
+**EN**
+- New: **Kanto Coach Autoplay**, a standalone Windows program (download `kanto-coach-autoplay-windows.zip` from the release, source in `tools/autoplay/`). It plays Adventure, Battle Tower, Nuzlocke and PvP training against bots with the coach's logic and saves a match log after every game.
+- Browsers: Chrome, Edge, Brave, Vivaldi, Opera and Firefox. Line-up by role (tanks front, carries back). Guest by default, optionally your own account (you log in yourself). PvP only as training against bots.
+
+**DE**
+- Neu: **Kanto Coach Autoplay**, ein eigenständiges Windows-Programm (`kanto-coach-autoplay-windows.zip` im Release, Quelltext in `tools/autoplay/`). Es spielt Abenteuer, Duellturm, Nuzlocke und PvP-Training gegen Bots mit der Logik des Coaches und legt nach jeder Partie ein Protokoll ab.
+- Browser: Chrome, Edge, Brave, Vivaldi, Opera und Firefox. Aufstellung nach Rollen (Tanks vorn, Carry hinten). Standard Gast, wahlweise das eigene Konto (Anmeldung durch dich). PvP nur als Training gegen Bots.
+
 ## 0.8.4 Beta – 2026-11-01
 Lessons from the first automated games (a bot followed every coach mark in Adventure, Tower, Nuzlocke and PvP training):
 **EN**

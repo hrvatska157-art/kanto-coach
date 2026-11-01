@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanto Coach Autoplay</title>
+<style>
+:root { --bg:#10131a; --card:#171c26; --card2:#1d2330; --line:#2a3242; --fg:#e8ecf3; --muted:#9aa4b6; --acc:#ff5c4e; --ok:#4fcb88; --warn:#f2bf45; --blue:#8ab4ff; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.45 system-ui, "Segoe UI", sans-serif; }
+header { display:flex; align-items:center; gap:12px; padding:12px 18px; border-bottom:1px solid var(--line); background:#0c0f15; position:sticky; top:0; z-index:5; flex-wrap:wrap; }
+header h1 { font-size:17px; margin:0; letter-spacing:.2px; } header h1 b { color:var(--acc); }
+.ver { color:var(--muted); font-size:12px; }
+.pill { padding:3px 10px; border-radius:999px; font-size:12px; font-weight:700; background:#2a3242; }
+.pill.running { background:#1d4d33; color:#7ff0b0; } .pill.paused { background:#4d4220; color:#ffd77a; } .pill.stopping { background:#4d2420; color:#ff9a8e; }
+.sp { flex:1; }
+button { font:inherit; border:1px solid var(--line); background:var(--card2); color:var(--fg); border-radius:8px; padding:7px 13px; cursor:pointer; }
+button:hover:not(:disabled) { border-color:#4a5672; } button:disabled { opacity:.4; cursor:default; }
+button.pri { background:var(--acc); border-color:var(--acc); color:#fff; font-weight:700; } button.pri:hover:not(:disabled) { filter:brightness(1.1); }
+main { display:grid; grid-template-columns: 330px minmax(0,1fr) 330px; gap:14px; padding:14px 18px; }
+@media (max-width: 1150px) { main { grid-template-columns: 1fr; } }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:14px; }
+.card h2 { font-size:13px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin:0 0 10px; }
+label { display:flex; align-items:center; gap:8px; margin:6px 0; } label.blk { display:block; } label.blk span { display:block; color:var(--muted); font-size:12px; margin-bottom:3px; }
+input[type=number], input[type=text], select { width:100%; background:#0f131b; color:var(--fg); border:1px solid var(--line); border-radius:7px; padding:6px 8px; font:inherit; }
+input[type=checkbox], input[type=radio] { accent-color: var(--acc); width:16px; height:16px; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.mode { border:1px solid var(--line); border-radius:9px; padding:8px 10px; margin-bottom:8px; background:var(--card2); }
+.mode .sub { color:var(--muted); font-size:12px; margin-left:24px; }
+.hint { color:var(--muted); font-size:12px; }
+.shot { width:100%; aspect-ratio: 16/9; background:#0b0e14 center/contain no-repeat; border-radius:10px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--muted); overflow:hidden; }
+.shot img { width:100%; height:100%; object-fit:contain; }
+.kpis { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-top:10px; }
+.kpi { background:var(--card2); border-radius:9px; padding:8px; text-align:center; } .kpi b { display:block; font-size:18px; } .kpi span { color:var(--muted); font-size:11px; }
+.units { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; } .u { background:#252c3b; border-radius:6px; padding:3px 7px; font-size:12px; } .u i { color:var(--warn); font-style:normal; } .u.bench { opacity:.6; }
+.log { font:12px/1.5 ui-monospace, Consolas, monospace; height:420px; overflow:auto; background:#0b0e14; border-radius:9px; padding:8px; white-space:pre-wrap; word-break:break-word; }
+.log .e { color:#ff8a7e; } .log .w { color:var(--warn); } .log .g { color:var(--ok); }
+table { width:100%; border-collapse:collapse; font-size:12.5px; } th, td { text-align:left; padding:5px 6px; border-bottom:1px solid var(--line); } th { color:var(--muted); font-weight:600; }
+.bar { height:6px; background:#2a3242; border-radius:4px; overflow:hidden; } .bar i { display:block; height:100%; background:var(--acc); }
+.tabs { display:flex; gap:6px; margin-bottom:10px; } .tabs button.on { border-color:var(--acc); }
+.err { color:#ff8a7e; font-size:12.5px; margin-top:6px; min-height:1em; }
+a { color:var(--blue); }
+footer { color:var(--muted); font-size:11.5px; padding:4px 18px 18px; }
+</style>
+</head>
+<body>
+<header>
+  <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><polygon points="16,3.8 26.57,9.9 26.57,22.1 16,28.2 5.43,22.1 5.43,9.9" fill="none" stroke="#edf0f6" stroke-width="2.8" stroke-linejoin="round"/><polygon points="16,9.3 17.88,14.11 23.04,14.41 19.04,17.69 20.35,22.69 16,19.9 11.65,22.69 12.96,17.69 8.96,14.41 14.12,14.11" fill="#ff5c4e"/></svg>
+  <h1>Kanto <b>Coach</b> Autoplay</h1><span class="ver">{{VERSION}}</span>
+  <span id="pill" class="pill">bereit</span>
+  <span class="sp"></span>
+  <button id="bStart" class="pri">▶ Start</button>
+  <button id="bPause">⏸ Pause</button>
+  <button id="bSkip" title="Laufende Partie beenden und zur nächsten">⏭ Partie überspringen</button>
+  <button id="bStop">■ Stopp</button>
+  <button id="bQuit" title="Bot anhalten und Programm schließen">Beenden</button>
+</header>
+<main>
+  <section>
+    <div class="card">
+      <h2>Was soll gespielt werden?</h2>
+      <div class="mode"><label><input type="checkbox" name="m" value="adv"> <b>Abenteuer</b></label>
+        <div class="sub grid2" style="margin-top:6px">
+          <label class="blk"><span>Geschichte</span><select id="adv"><option>Kanto</option><option>Safari-Zone</option><option>Nacht in Lavandia</option><option>Team Rocket</option><option>Kurs auf Zinnober</option></select></label>
+          <label class="blk"><span>Stufe</span><select id="dif"><option value="1">Normal</option><option value="2">Veteran</option><option value="3">Legende</option></select></label>
+        </div><div class="sub">Veteran/Legende nur, wenn im Bot-Profil freigeschaltet.</div></div>
+      <div class="mode"><label><input type="checkbox" name="m" value="tower"> <b>Duellturm</b></label><div class="sub">Endlos – ein Aufstieg geht beim nächsten Mal weiter.</div></div>
+      <div class="mode"><label><input type="checkbox" name="m" value="nuz"> <b>Nuzlocke</b></label></div>
+      <div class="mode"><label><input type="checkbox" name="m" value="pvp"> <b>PvP-Training</b></label><div class="sub">Nur „Training · gegen 7 Bots · zählt nicht“ – nie gegen Menschen.</div></div>
+      <p class="hint">Die Modi werden der Reihe nach gespielt.</p>
+    </div>
+    <div class="card">
+      <h2>Konto</h2>
+      <p class="hint" style="margin-top:0">Status: <b id="accState">noch nicht geprüft</b></p>
+      <label><input id="account" type="checkbox"> Mit meinem einoow-Konto spielen</label>
+      <p class="hint">Dann zählen die Ergebnisse für dein Konto (Fortschritt, Turm-Rangliste). Anmelden: Bot-Browser öffnen, dort oben rechts „Anmelden“ – Zugangsdaten gibst du selbst ein, das Programm speichert keine Passwörter. Die Anmeldung bleibt im Bot-Profil.</p>
+      <button id="bBrowser">Bot-Browser öffnen</button>
+      <p class="hint">PvP spielt der Bot auch mit Konto nur im Training gegen Bots.</p>
+    </div>
+    <div class="card">
+      <h2>Einstellungen</h2>
+      <div class="grid2">
+        <label class="blk"><span>Partien</span><input id="games" type="number" min="1" max="500"></label>
+        <label class="blk"><span>Höchstens Stunden</span><input id="hours" type="number" min="0.1" max="48" step="0.5"></label>
+        <label class="blk"><span>Minuten je Partie</span><input id="runMinutes" type="number" min="5" max="240" step="5"></label>
+        <label class="blk"><span>Tempo</span><select id="pace"><option value="0.6">schnell</option><option value="1">normal</option><option value="1.6">gemütlich</option></select></label>
+      </div>
+      <label><input id="arrange" type="checkbox"> Aufstellung nach Rollen (Tanks vorn, Fernkämpfer hinten)</label>
+      <label><input id="shots" type="checkbox"> Bild vom Ende jeder Partie speichern</label>
+      <label><input id="keepOpen" type="checkbox"> Spiel-Chrome nach dem Stopp offen lassen</label>
+      <label class="blk"><span>Spiel-Browser</span><select id="browserSel"><option value="auto">automatisch</option><option value="chrome">Google Chrome</option><option value="edge">Microsoft Edge</option><option value="firefox">Mozilla Firefox</option><option value="brave">Brave</option><option value="vivaldi">Vivaldi</option><option value="opera">Opera</option><option value="path">eigener Pfad …</option></select></label>
+      <label class="blk" id="browserPathL" hidden><span>Pfad zur .exe</span><input id="browser" type="text" placeholder="C:\Program Files\Mozilla Firefox\firefox.exe"></label>
+      <div class="hint" id="brInfo"></div>
+      <div class="err" id="err"></div>
+    </div>
+  </section>
+  <section>
+    <div class="card">
+      <h2 id="liveTitle">Live</h2>
+      <div class="shot" id="shot">Noch nicht gestartet</div>
+      <div class="kpis">
+        <div class="kpi"><b id="kMode">–</b><span>Modus</span></div>
+        <div class="kpi"><b id="kAt">–</b><span id="kAtL">Stand</span></div>
+        <div class="kpi"><b id="kHp">–</b><span id="kHpL">KP</span></div>
+        <div class="kpi"><b id="kGold">–</b><span>Gold</span></div>
+        <div class="kpi"><b id="kLv">–</b><span>Level</span></div>
+        <div class="kpi"><b id="kGame">–</b><span>Partie</span></div>
+      </div>
+      <div class="units" id="units"></div>
+    </div>
+    <div class="card">
+      <div class="tabs"><button data-t="res" class="on">Letzte Partien</button><button data-t="modes">Je Modus</button><button data-t="flags">Auffällig bei Niederlagen</button><span class="sp"></span><button id="bLogs">Protokoll-Ordner öffnen</button></div>
+      <div id="tRes"></div><div id="tModes" hidden></div><div id="tFlags" hidden></div>
+    </div>
+  </section>
+  <section>
+    <div class="card"><h2>Was der Bot tut</h2><div class="log" id="log"></div></div>
+    <div class="card"><h2>So spielt der Bot</h2>
+      <p class="hint" style="margin:0">Eigenes Chrome-Fenster mit eigenem Gast-Profil. Entscheidungen: dieselbe Rechnung wie der Kanto Coach (Plan, Käufe, Aufstellung, Items, Tafeln, Segen, Relikte, EP, Würfeln) – die Erweiterung muss dafür nicht installiert sein. Nach jeder Partie landet ein Protokoll im Ordner, daraus lernt der Coach.</p>
+      <p class="hint">Regeln: als Gast oder – wenn du es einschaltest – mit deinem Konto; PvP nur gegen Bots; klickt nur, was ein Spieler auch klicken würde. Daten über die öffentliche Kanto-Tactics-API (einoow.com: „Free public data to build websites, bots or apps“).</p>
+    </div>
+  </section>
+</main>
+<footer>Inoffizielles Fan-Werkzeug · Daten: Kanto Tactics · einoow.com · nicht mit einoow, Nintendo oder The Pokémon Company verbunden.</footer>
+<script>
+const $ = (id) => document.getElementById(id);
+const MODE = { adv: 'Abenteuer', tower: 'Duellturm', nuz: 'Nuzlocke', pvp: 'PvP-Training', camp: 'Abenteuer' };
+const STATE = { idle: 'bereit', running: 'läuft', paused: 'pausiert', stopping: 'hält an …' };
+let st = null, shotT = null;
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+async function api(p, b) { const r = await fetch(p, b === undefined ? {} : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) }); return r.json(); }
+function readForm() {
+  return { modes: [...document.querySelectorAll('input[name=m]:checked')].map((e) => e.value), adv: $('adv').value, dif: +$('dif').value, games: +$('games').value, hours: +$('hours').value,
+    runMinutes: +$('runMinutes').value, pace: +$('pace').value, shots: $('shots').checked, keepOpen: $('keepOpen').checked, browser: $('browserSel').value === 'path' ? $('browser').value : $('browserSel').value === 'auto' ? '' : $('browserSel').value, account: $('account').checked, arrange: $('arrange').checked };
+}
+function fillForm(s) {
+  document.querySelectorAll('input[name=m]').forEach((e) => { e.checked = s.modes.includes(e.value); });
+  $('adv').value = s.adv; $('dif').value = s.dif; $('games').value = s.games; $('hours').value = s.hours; $('runMinutes').value = s.runMinutes;
+  $('pace').value = String(s.pace); $('shots').checked = s.shots; $('keepOpen').checked = s.keepOpen; const bs = s.browser || ''; const isPath = /[\\/]/.test(bs); $('browserSel').value = isPath ? 'path' : bs || 'auto'; $('browser').value = isPath ? bs : ''; $('browserPathL').hidden = !isPath; $('account').checked = !!s.account; $('arrange').checked = s.arrange !== false;
+}
+let saveT = null; document.querySelectorAll('section input, section select').forEach((e) => e.addEventListener('change', () => { clearTimeout(saveT); saveT = setTimeout(() => api('/api/settings', readForm()), 300); }));
+function render(s) {
+  st = s; const busy = s.state !== 'idle';
+  $('pill').textContent = STATE[s.state] || s.state; $('pill').className = 'pill ' + s.state;
+  $('bStart').disabled = busy; $('bPause').disabled = !busy || s.state === 'stopping'; $('bPause').textContent = s.state === 'paused' ? '▶ Weiter' : '⏸ Pause';
+  $('bSkip').disabled = !busy || !s.cur; $('bStop').disabled = !busy || s.state === 'stopping';
+  document.querySelectorAll('section:first-child input, section:first-child select').forEach((e) => { e.disabled = busy; });
+  const L = s.live; const cur = s.cur;
+  $('kMode').textContent = cur ? MODE[cur.mode] : L ? MODE[L.nz ? 'nuz' : L.mode] || L.mode : '–';
+  $('kAtL').textContent = L && L.mode === 'pvp' ? 'Runde' : L && L.mode === 'tower' ? 'Etage' : 'Station';
+  $('kAt').textContent = L && L.at != null ? L.at : '–';
+  $('kHpL').textContent = L && L.nz ? 'Leben' : 'KP'; $('kHp').textContent = L ? (L.nz ? (L.lives ?? '–') : (L.hp ?? '–')) : '–';
+  $('kGold').textContent = L ? (L.gold ?? '–') : '–'; $('kLv').textContent = L ? (L.level ?? '–') : '–';
+  $('kGame').textContent = cur && s.cfg ? `${cur.no}/${s.cfg.games}` : '–';
+  const u = (x, cls) => `<span class="u ${cls}">${esc(x.name || x.line)} <i>${'★'.repeat(x.star || 1)}</i></span>`;
+  $('units').innerHTML = L ? (L.board || []).map((x) => u(x, '')).join('') + (L.bench || []).map((x) => u(x, 'bench')).join('') : '';
+  $('accState').textContent = s.account == null ? 'noch nicht geprüft' : s.account ? 'angemeldet (Konto)' : 'Gast'; $('bBrowser').disabled = busy;
+  $('brInfo').textContent = (s.browser ? 'Spielt in: ' + s.browser : 'Kein passender Browser gefunden – bitte Chrome, Edge oder Firefox installieren oder Pfad angeben.') + (s.browsers ? ' · installiert: ' + s.browsers.join(', ') : '');
+  if (s.browsers) document.querySelectorAll('#browserSel option').forEach((o) => { if (!['auto', 'path'].includes(o.value)) o.disabled = !s.browsers.includes(o.value); });
+  if (busy && !shotT) { shotT = setInterval(loadShot, 2500); loadShot(); } if (!busy && shotT) { clearInterval(shotT); shotT = null; }
+}
+async function loadShot() { const r = await fetch('/api/shot?t=' + Date.now()); if (r.status !== 200) return; const b = await r.blob(); const url = URL.createObjectURL(b); const img = new Image(); img.onload = () => { $('shot').innerHTML = ''; $('shot').appendChild(img); setTimeout(() => URL.revokeObjectURL(url), 4000); }; img.src = url; }
+function addLog(line) { const d = $('log'); const atEnd = d.scrollTop + d.clientHeight >= d.scrollHeight - 30; const div = document.createElement('div'); div.textContent = line; if (/!!|ERR/.test(line)) div.className = 'e'; else if (/\?\?/.test(line)) div.className = 'w'; else if (/==/.test(line)) div.className = 'g'; d.appendChild(div); while (d.children.length > 400) d.firstChild.remove(); if (atEnd) d.scrollTop = d.scrollHeight; }
+async function loadStats() {
+  const s = await api('/api/stats');
+  $('tRes').innerHTML = s.recent.length ? `<table><tr><th>Start</th><th>Modus</th><th>Ende</th><th>Stand</th><th>Min.</th><th>Runden</th><th></th></tr>${s.recent.map((r) => `<tr><td>${esc(new Date(r.start).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }))}</td><td>${esc(MODE[r.modus] || r.modus)}</td><td>${esc(r.ende)}</td><td>${esc(r.stand)}</td><td>${esc(r.minuten)}</td><td>${esc(r.runden)}</td><td>${r.datei ? `<a href="/logs/${encodeURIComponent(r.datei)}.json">Protokoll</a> · <a href="/logs/${encodeURIComponent(r.datei)}.jpg" target="_blank">Bild</a>` : ''}</td></tr>`).join('')}</table>` : '<p class="hint">Noch keine Partien.</p>';
+  const ms = Object.entries(s.modes);
+  $('tModes').innerHTML = ms.length ? `<table><tr><th>Modus</th><th>Partien</th><th>Kämpfe</th><th>verloren</th><th></th><th>bestes Ergebnis</th><th>PvP-Plätze</th></tr>${ms.map(([m, v]) => { const p = v.fights ? Math.round(100 * v.lost / v.fights) : 0; return `<tr><td>${esc(MODE[m] || m)}</td><td>${v.games}</td><td>${v.fights}</td><td>${p} %</td><td style="width:90px"><div class="bar"><i style="width:${p}%"></i></div></td><td>${esc(v.best ?? '–')}</td><td>${v.places.length ? esc(v.places.join(', ')) + ` (Ø ${(v.places.reduce((a, b) => a + b, 0) / v.places.length).toFixed(1)})` : '–'}</td></tr>`; }).join('')}</table>` : '<p class="hint">Noch keine Protokolle.</p>';
+  $('tFlags').innerHTML = s.flags.length ? `<table><tr><th>Modus</th><th>Merkmal (direkt vor dem Kampf)</th><th>Kämpfe</th><th>davon verloren</th></tr>${s.flags.map((f) => `<tr><td>${esc(MODE[f.mode] || f.mode)}</td><td>${esc(f.flag)}</td><td>${f.n}</td><td>${Math.round(100 * f.lost / f.n)} %</td></tr>`).join('')}</table><p class="hint">Hohe Prozentwerte zeigen, wo der Coach nachgebessert werden sollte.</p>` : '<p class="hint">Noch zu wenig Daten.</p>';
+}
+document.querySelectorAll('.tabs button[data-t]').forEach((b) => b.addEventListener('click', () => { document.querySelectorAll('.tabs button[data-t]').forEach((x) => x.classList.toggle('on', x === b)); $('tRes').hidden = b.dataset.t !== 'res'; $('tModes').hidden = b.dataset.t !== 'modes'; $('tFlags').hidden = b.dataset.t !== 'flags'; }));
+$('bStart').onclick = async () => { $('err').textContent = ''; const r = await api('/api/start', readForm()); if (!r.ok) $('err').textContent = r.error || 'Start nicht möglich'; };
+$('bPause').onclick = () => api(st && st.state === 'paused' ? '/api/resume' : '/api/pause', {});
+$('bSkip').onclick = () => api('/api/skip', {});
+$('bStop').onclick = () => api('/api/stop', {});
+$('bQuit').onclick = async () => { if (confirm('Bot anhalten und Programm beenden?')) { await api('/api/quit', {}); document.body.innerHTML = '<p style="padding:40px">Kanto Coach Autoplay wurde beendet. Du kannst dieses Fenster schließen.</p>'; } };
+$('bLogs').onclick = () => api('/api/open-logs', {});
+$('browserSel').addEventListener('change', () => { $('browserPathL').hidden = $('browserSel').value !== 'path'; });
+$('bBrowser').onclick = async () => { $('err').textContent = ''; const r = await api('/api/browser', readForm()); if (!r.ok) $('err').textContent = r.error || 'Browser nicht geöffnet'; };
+(async () => {
+  const s = await api('/api/status'); fillForm(s.settings); render(s); (s.actions || []).forEach(addLog); loadStats();
+  const es = new EventSource('/api/events');
+  es.addEventListener('status', (e) => render(JSON.parse(e.data)));
+  es.addEventListener('log', (e) => addLog(JSON.parse(e.data)));
+  es.addEventListener('game', () => loadStats());
+})();
+</script>
+</body>
+</html>

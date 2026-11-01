@@ -46,6 +46,18 @@ Kanto Coach ist eine Chrome-Erweiterung, die neben dem Spiel ein kleines Overlay
 
 Läuft auch in anderen Chromium-Browsern (Edge, Brave, Opera). **Aktualisieren:** neue ZIP entpacken, den alten Ordner ersetzen und in `chrome://extensions` auf „Neu laden“ klicken – Einstellungen bleiben erhalten.
 
+## Autoplay (Windows, Beta)
+
+Ein eigenes Programm, das **Kanto Tactics selbst spielt** – mit der Logik des Coaches: Abenteuer (Normal/Veteran/Legende), Duellturm, Nuzlocke und **PvP-Training gegen Bots** – und nach jeder Partie ein Protokoll ablegt. Die Erweiterung braucht es nicht.
+
+- **[Für Windows herunterladen](https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-autoplay-windows.zip)**, entpacken, `KantoCoachAutoplay.exe` doppelklicken (es öffnen sich ein Konsolenfenster und das Programmfenster; Windows kann beim ersten Start warnen, weil die Datei nicht signiert ist).
+- Modi, Abenteuer-Stufe, Anzahl Partien, Zeitlimit und Tempo wählen, **Start** drücken. Live-Bild, jede Aktion und Auswertung je Modus stehen im Programm.
+- Spielt in einem **eigenen Browser-Fenster**: Chrome, Edge, Brave, Vivaldi, Opera oder **Firefox** (WebDriver BiDi).
+- Stellt **nach Rollen** auf: Tanks vorn, Kämpfer in die Mitte, Assassinen an die Flanken, Fernkämpfer hinten in die Ecken (gegen Assassinen hinten in die Mitte).
+- **Standard ist Gast.** Wahlweise „Mit meinem einoow-Konto spielen“ ankreuzen und im Bot-Browser selbst anmelden – das Programm gibt nie ein Passwort ein.
+- **PvP nur als „Training · gegen 7 Bots“** – nie gewertet, nie gegen Menschen.
+- Quelltext: [`tools/autoplay/`](tools/autoplay/) (Node ≥ 22, ohne Abhängigkeiten: `node tools/autoplay/app.js`). Daten und Protokolle: `%LOCALAPPDATA%\KantoCoachAutoplay`.
+
 ## Reiter im Overlay
 
 | Reiter | Inhalt |

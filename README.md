@@ -46,6 +46,18 @@ Kanto Coach is a Chrome extension that shows a small overlay next to the game. I
 
 Also works in other Chromium browsers (Edge, Brave, Opera). **Updating:** unzip the new ZIP, replace the old folder and click “Reload” in `chrome://extensions` – your settings are kept.
 
+## Autoplay (Windows, beta)
+
+A separate program that **plays Kanto Tactics on its own** with the coach's logic – Adventure (Normal/Veteran/Legend), Battle Tower, Nuzlocke and **PvP training against bots** – and saves a match log after every game. It does not need the extension.
+
+- **[Download for Windows](https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-autoplay-windows.zip)**, unzip, double-click `KantoCoachAutoplay.exe` (a console window and the app window open; Windows may warn on first start because the file is not signed).
+- Pick modes, adventure difficulty, number of games, time limit and pace, then press **Start**. Live screenshot, every action and per-mode stats are shown in the app.
+- Plays in its **own browser window**: Chrome, Edge, Brave, Vivaldi, Opera or **Firefox** (WebDriver BiDi).
+- Fields Pokémon **by role**: tanks in front, fighters in the middle, assassins on the flanks, ranged carries in the back corners (back centre against assassins).
+- **Guest by default.** Optionally tick “play with my einoow account” and log in yourself in the bot browser – the program never types a password.
+- **PvP only as “Training · against 7 bots”** – never ranked, never against people.
+- Source: [`tools/autoplay/`](tools/autoplay/) (Node ≥ 22, no dependencies: `node tools/autoplay/app.js`). Data and logs: `%LOCALAPPDATA%\KantoCoachAutoplay`.
+
 ## Overlay tabs
 
 | Tab | Content |

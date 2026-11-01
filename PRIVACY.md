@@ -22,6 +22,8 @@ No data about you is sent with these requests; they are plain downloads of publi
 
 **Deletion:** remove the extension in `chrome://extensions` – this deletes all locally stored data.
 
+**Autoplay program (Windows):** runs only on your PC. It opens its own browser profile, loads the game and the public API from einoow.com and stores settings, its browser profile (including a login, if you log in there yourself), match logs and screenshots in `%LOCALAPPDATA%\KantoCoachAutoplay`. Its control page listens only on `127.0.0.1`. Nothing is sent to the authors or anyone else; delete that folder to remove everything.
+
 ## Deutsch
 
 **Kurz:** Kanto Coach sammelt keine personenbezogenen Daten, hat keine Konten, keine Analyse und kein Tracking und schickt nichts über dich an Dritte.
@@ -41,5 +43,7 @@ Dabei werden keine Daten über dich mitgeschickt; es sind normale Abrufe öffent
 **Zwischenablage:** Nur wenn du „Plan ins Spiel übernehmen“ anklickst, schreibt die Erweiterung einen Team-Code in die Zwischenablage. Sie liest die Zwischenablage nie.
 
 **Löschen:** Erweiterung in `chrome://extensions` entfernen – damit werden alle lokal gespeicherten Daten gelöscht.
+
+**Autoplay-Programm (Windows):** läuft nur auf deinem PC. Es öffnet ein eigenes Browser-Profil, lädt das Spiel und die öffentliche API von einoow.com und speichert Einstellungen, sein Browser-Profil (samt Anmeldung, falls du dich dort selbst anmeldest), Protokolle und Bilder unter `%LOCALAPPDATA%\KantoCoachAutoplay`. Seine Steuerseite lauscht nur auf `127.0.0.1`. Es wird nichts an die Autoren oder sonst jemanden gesendet; zum Entfernen den Ordner löschen.
 
 Contact: <https://github.com/hrvatska157-art/kanto-coach/issues>
