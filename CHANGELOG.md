@@ -1,6 +1,10 @@
 # Changelog
 
-## 2.7.0 Beta – 2026-11-01
+All versions below 1.0 are **beta** – the extension stays in beta until everything runs cleanly in every mode. (Earlier releases were numbered 2.x; they are the same builds as 0.1–0.7.)
+
+Alle Versionen unter 1.0 sind **Beta** – die Erweiterung bleibt Beta, bis alles in jedem Modus sauber läuft. (Frühere Releases hießen 2.x; es sind dieselben Stände wie 0.1–0.7.)
+
+## 0.8.0 Beta – 2026-11-01
 **EN**
 - **New Tower (game version 41):** the Tower shop has every family in its first form – many of them aren’t in the public data yet. The coach now recognizes all 151 Pokémon (no more “not matched: #118”) and takes **cost and types straight from the shop card** (e.g. Tangela costs 3 in the Tower, not 4 like in PvP).
 - **Board advice calculated from the game’s numbers:** “Field now” compares every possible line-up – each Pokémon’s stats (HP, Defense, Attack, speed, crit, ability power and mana), its stars and items, plus the type tiers the line-up forms together (value of each tier from ranked placements). Same calculation for buys: a Pokémon that makes the board measurably stronger gets **“STRONGER”** or **“+TYPE”**, with “instead of X” when the board is full.
@@ -17,7 +21,7 @@
 - **Gegner:** Der Coach liest gegnerische Pokémon auf dem Brett. Turm/Abenteuer: der nächste Gegner (in der Planungsphase sichtbar) – der Typ-Vorteil deiner Attacken (Typ-Tabelle des Spiels, nur Attacken) fließt in die Aufstellung ein. PvP: in Kämpfen gesehene Felder – Kopien deiner Plan-Pokémon bei Gegnern senken die Chance, sie zu finden; die Plan-Wahl rechnet das ein.
 - Kein „Noch 1 Käfer für Käfer 3: halte Ausschau“ mehr, während einer im Shop liegt.
 
-## 2.6.0 – 2026-11-01
+## 0.7.0 Beta – 2026-11-01
 **EN**
 - Logic fixes after many automated test games in every mode (a test Chrome follows every coach mark in the real game):
   - **Items already held** are now actually read from the board (the game shows them as small icons without an image tag – the reader never saw them) and never suggested again (e.g. Scope Lens for a Golbat that already has one, Shell Bell on the item pick for a Parasect that already holds it). At most 3 items per Pokémon.
@@ -31,9 +35,9 @@
   - PvP training games: the planning phase is detected without a ready button (affected swaps, team counts and loss detection).
   - Adventure events (e.g. “Prof. Oak”: Rare Candy, Carbos, Protein) get a TAKE mark too.
   - Lobby shows the mode the hub is currently showing; core Pokémon at ★★ get “copy toward ★★★”.
-- Fixed hidden control characters in some reader patterns from 2.4/2.5 (Safari “taken”, “already picked”).
+- Fixed hidden control characters in some reader patterns from 0.5/0.6 (Safari “taken”, “already picked”).
 - Storage: at most two adventure/tower data sets are kept, so the 10 MB extension storage can’t fill up and block the coach.
-- **Self-update for folder installs:** if a newer version lands in the extension folder (e.g. after unzipping a new release over it), the extension reloads itself within a minute and refreshes open game tabs – no click in chrome://extensions needed anymore (from 2.6 on).
+- **Self-update for folder installs:** if a newer version lands in the extension folder (e.g. after unzipping a new release over it), the extension reloads itself within a minute and refreshes open game tabs – no click in chrome://extensions needed anymore (from 0.7 on).
 
 **DE**
 - Logik-Korrekturen nach vielen automatischen Testpartien in allen Modi (ein Test-Chrome folgt im echten Spiel jeder Markierung des Coaches):
@@ -48,11 +52,11 @@
   - PvP-Training: Planungsphase wird auch ohne Bereit-Knopf erkannt (betraf Tauschen, Teamzählung, Niederlagen).
   - Abenteuer-Ereignisse (z. B. „Prof. Eich“: Sonderbonbon, Carbon, Protein) bekommen ebenfalls „NIMM“.
   - Lobby zeigt den Modus, den die Startseite gerade zeigt; Kern-Pokémon auf ★★ bekommen „Kopie Richtung ★★★“.
-- Versteckte Steuerzeichen in einigen Suchmustern des Lesers aus 2.4/2.5 behoben (Safari „schon genommen“, „schon gewählt“).
+- Versteckte Steuerzeichen in einigen Suchmustern des Lesers aus 0.5/0.6 behoben (Safari „schon genommen“, „schon gewählt“).
 - Speicher: Höchstens zwei Datensätze für Abenteuer/Turm bleiben gespeichert, damit der 10-MB-Speicher der Erweiterung nicht vollläuft und den Coach blockiert.
-- **Selbst-Aktualisierung bei Ordner-Installation:** Liegt eine neuere Version im Ordner der Erweiterung (z. B. neue Release-ZIP darüber entpackt), lädt sie sich innerhalb einer Minute selbst neu und frischt offene Spiel-Tabs auf – kein Klick in chrome://extensions mehr nötig (ab 2.6).
+- **Selbst-Aktualisierung bei Ordner-Installation:** Liegt eine neuere Version im Ordner der Erweiterung (z. B. neue Release-ZIP darüber entpackt), lädt sie sich innerhalb einer Minute selbst neu und frischt offene Spiel-Tabs auf – kein Klick in chrome://extensions mehr nötig (ab 0.7).
 
-## 2.5.0 – 2026-10-31
+## 0.6.0 Beta – 2026-10-31
 **EN**
 - Played through every mode and fixed what got in the way:
   - Lobby: no more stale shop and tips from the last game – the overlay shows the mode (also Duos and Nuzlocke) and waits for the next game. A new game lets the coach pick a fresh plan.
@@ -77,7 +81,7 @@
   - Duellturm: „elite“-Etagen heißen Elite-Trainer (nicht Top Vier); ein einzelnes Item als Belohnung erscheint ohne Wahl-Markierung.
 - Die Website (Kanto Coach Hub) hat eine eigene Seite für die Erweiterung.
 
-## 2.4.0 – 2026-10-31
+## 0.5.0 Beta – 2026-10-31
 **EN**
 - Faster decisions under the PvP timer: every pick window in the game now gets a clear “TAKE” mark with a short reason in the overlay.
   - Safari Zone: best card “1 TAKE”, second choice “2” (both Safari layouts).
@@ -96,7 +100,7 @@
 - Shop: Kaufempfehlungen sind im Spiel und in „Was jetzt?“ durchnummeriert („1“, „2“ …), der erste Schritt ist hervorgehoben.
 - „Was jetzt?“ zeigt Item-Schritte („A auf B ziehen → Item für Pokémon“).
 
-## 2.3.0 – 2026-10-31
+## 0.4.0 Beta – 2026-10-31
 **EN**
 - Works with game version 41: Kanto Tactics now runs directly on einoow.com (hub `einoow.com/kanto-tactics` and the mode pages `/pvp`, `/duo`, `/tower`, `/nuzlocke`) instead of inside an iframe, so the game reader did not start any more. The extension now loads on einoow.com and only becomes active on Kanto Tactics pages, also when you switch modes without reloading.
 - Links point to the new hub address.
@@ -107,7 +111,7 @@
 - Links zeigen auf die neue Hub-Adresse.
 - Live geprüft: PvP gegen Bots (neu „Gegen Bots“), Abenteuer und Turm.
 
-## 2.2.1 – 2026-10-29
+## 0.3.1 Beta – 2026-10-29
 **EN**
 - English is now the fallback language of the extension (German stays for German browsers).
 - Project page and README are English-first; German is still available.
@@ -116,7 +120,7 @@
 - Englisch ist jetzt die Rückfall-Sprache der Erweiterung (Deutsch bleibt für deutsche Browser).
 - Projektseite und README sind jetzt zuerst auf Englisch; Deutsch gibt es weiterhin.
 
-## 2.2.0 – 2026-10-28
+## 0.3.0 Beta – 2026-10-28
 **EN**
 - Battle Tower and adventure: next boss with win rate, warnings up to 5 floors ahead; the tower always uses its own data.
 - In-game marks hide behind the game’s menus and dialogs.
@@ -131,7 +135,7 @@
 - Neues Logo (Spielfeld-Hex mit Stern).
 - Live geprüft in PvP (Freundesraum), Abenteuer und Turm.
 
-## 2.1.0 – 2026-10-28
+## 0.2.0 Beta – 2026-10-28
 **EN**
 - Game version 40: anchored forms (⚓), character Pokémon, adventure difficulties (Normal/Veteran), interest cap read from the game (+4 in adventure).
 - “Send plan to the game”: team code for the game’s planner.
@@ -144,5 +148,5 @@
 - Ersatz-Pläne mit Typ-Synergie, wenn die Statistik der API ausfällt.
 - Robuster Start: Zeitlimit für Abrufe, Lobby wird erkannt.
 
-## 2.0.0 – 2026-10-24
+## 0.1.0 Beta – 2026-10-24
 - First published version: overlay with Now/Plan/Items/Team, automatic detection of shop, bench, board and items, marks in the game. · Erste veröffentlichte Version.
