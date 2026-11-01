@@ -679,23 +679,33 @@ function create(opts) {
   };
   // Ratgeber: Was kaufe ich, was mache ich mit dem Gold, was fehlt dem Feld?
   // o: { plan: [{line, share, star}], owned, board: [{line, star}], shop: [line], level, gold, stage, comp }
+  // Ziel-Level im PvP: aus der Statistik der Comp (norm), sonst übliche Werte (Stage 2 → 5, 3 → 7, 4 → 8, ab 5 → 9)
+  const pvpGoal = (stage, norm) => Math.min(9, norm ? norm.level : ({ 1: 3, 2: 5, 3: 7, 4: 8 }[stage || 3] || 9));
   K.advise = (o) => {
     const owned = o.owned || {}; const plan = o.plan || []; const pl = {}; plan.forEach((u, i) => { const b = K.base(u.line); if (!pl[b]) pl[b] = { ...u, rank: i }; });
     const boardLines = [...new Set((o.board || []).map((u) => K.base(u.line)))];
     const fieldTraits = K.traitsFor(boardLines.map((l) => ({ line: l, items: [] })));
     const gold = o.gold || 0; const buys = [];
-    const counted = {};
+    const counted = {}; let room = o.benchFree != null ? o.benchFree : null; // freie Bankplätze (null = unbekannt)
     (o.shop || []).forEach((line, slot) => {
       if (!line) return; const cost = K.lineCost(line) || 1; const own = (owned[line] || 0) + (counted[line] || 0);
       const inPlan = pl[line]; const onField = boardLines.includes(line);
       let kind = '', prio = 0, why = '';
-      if (own % 3 === 2 && own < 9 && (inPlan || onField || own >= 2)) { kind = 'star'; prio = inPlan ? 100 : 80; why = own >= 8 ? 'star3' : 'star2'; }
+      // Stern-Aufstieg: Liegt die Karte live im Spiel, sagt das Spiel selbst, ob der Kauf verschmilzt (Klasse merge m2|m3);
+      // nur ohne Live-Stand (Shop von Hand) wird aus den gezählten Kopien geschätzt
+      const mg = o.merge && o.merge[slot] != null ? o.merge[slot] : null;
+      const star = mg != null ? mg > 0 && !counted[line] : own % 3 === 2 && own < 9;
+      if (star && (inPlan || onField || own >= 2 || mg)) { kind = 'star'; prio = inPlan ? 100 : 80; why = mg === 3 || (mg == null && own >= 8) ? 'star3' : 'star2'; }
       else if (inPlan && own === 0) { kind = 'buy'; prio = 70 - inPlan.rank * 2 + (inPlan.share >= 80 ? 8 : 0); why = inPlan.share >= 80 ? 'core' : 'plan'; }
       else if (inPlan && own % 3 === 1 && own < 9) { kind = 'buy'; prio = 50 - inPlan.rank; why = 'pair'; } // ab ★★★ (9 Kopien) bringt eine weitere nichts
-      else if (!onField && !own) {
+      else if (inPlan && inPlan.share >= 80 && own >= 3 && own < 9 && own % 3 === 0) { kind = 'buy'; prio = 40 - inPlan.rank; why = 'toward3'; } // Kern schon ★★: weiter Richtung ★★★
+      // Typ-Käufe nur, wenn das Pokémon auch aufs Feld kann (freier Platz) und auf der Bank Platz ist – sonst wird es gleich wieder verkauft
+      else if (!onField && !own && (o.benchN == null || o.benchN < 7) && (o.teamN == null || !o.level || o.teamN < o.level)) {
         const hit = K.lineTypes(line).map((t) => fieldTraits.find((x) => x.type === t)).find((x) => x && x.next && x.next - x.n === 1);
         if (hit) { kind = 'trait'; prio = 30; why = 'trait'; buys.push({ line, slot, cost, kind, prio, why, trait: hit.type, next: hit.next }); counted[line] = (counted[line] || 0) + 1; return; }
       }
+      // Volle Bank: Das Spiel nimmt nur noch Käufe an, die sofort verschmelzen – alles andere erst nach einem Verkauf
+      if (kind && kind !== 'star' && room != null) { if (room <= 0) kind = ''; else room--; }
       if (kind) { buys.push({ line, slot, cost, kind, prio, why }); counted[line] = (counted[line] || 0) + 1; }
     });
     buys.sort((a, b) => b.prio - a.prio);
@@ -718,14 +728,40 @@ function create(opts) {
     const waiting = o.bench != null ? o.bench : 0; // Plan-/starke Pokémon, die keinen Platz haben
     let xpTip = null;
     if (pve && lvl && lvl < 9 && !o.nz) {
-      const need = o.xp && o.xp.buys ? o.xp.buys : 1;
-      if ((spare >= 4 && (waiting > 0 || plan.length > lvl)) || (o.lost && left >= 4)) xpTip = { k: 'xp', buys: Math.max(1, Math.min(need, Math.floor((o.lost ? left : spare) / 4))), need, level: lvl + 1, lost: !!o.lost };
+      // EP nur, wenn der Aufstieg mit diesem Gold jetzt erreichbar ist – halbe Wege kosten Zinsen und bringen keinen Platz
+      const need = o.xp && o.xp.buys ? o.xp.buys : 1; const budget = o.lost ? left : spare;
+      if (((spare >= 4 && (waiting > 0 || plan.length > lvl)) || (o.lost && left >= 4)) && need * 4 <= budget) xpTip = { k: 'xp', buys: need, need, level: lvl + 1, lost: !!o.lost };
+      else if (o.lost && left >= 2) tips.push({ k: 'lostRoll', missing: plan.filter((u) => !owned[K.base(u.line)]).length });
     }
     if (xpTip) tips.push(xpTip);
     if (!buys.some((b) => b.kind !== 'trait' && b.affordable) && !o.nz) {
       if (gold < cap && !(pve && o.lost)) tips.push({ k: 'save', cap, max: it.max, gold });
       else if (missing > 0 && gold >= cap) tips.push({ k: 'roll', cap, missing });
       else if (pve && !xpTip && spare >= 2) tips.push({ k: 'rollStar', cap });
+    }
+    // PvP hinter dem üblichen Level der Stage: Aufstieg auch knapp unter der Zinsgrenze (höchstens 1 Zins-Punkt weniger) –
+    // ein Platz weniger als die Gegner kostet mehr KP als der Zins bringt
+    if (!pve && !o.nz && lvl && lvl < pvpGoal(o.stage, norm) && !tips.some((x) => x.k === 'xp' || x.k === 'level')) {
+      const need = o.xp && o.xp.buys ? o.xp.buys : 1;
+      if (need * 4 <= left && left - need * 4 >= cap - it.step) {
+        for (let i = tips.length - 1; i >= 0; i--) if (tips[i].k === 'roll') tips.splice(i, 1); // erst leveln, Würfeln würde unter die Zinsgrenze führen
+        tips.push({ k: 'xp', buys: need, need, level: lvl + 1, lost: false });
+      }
+    }
+    // PvP: Auch nach allen Käufen deutlich über der Zinsgrenze -> Gold arbeiten lassen (fehlende Plan-Pokémon suchen, sonst leveln)
+    if (!pve && !o.nz && spare >= 10 && !tips.some((x) => x.k === 'roll' || x.k === 'level' || x.k === 'xp')) {
+      // EP nur bis zum üblichen Level dieser Stage (Statistik, sonst Stage + 3); danach bringen ★★/★★★ mehr als ein weiterer Platz
+      const goal = pvpGoal(o.stage, norm);
+      if (missing > 0) tips.push({ k: 'roll', cap, missing });
+      else if (lvl && lvl < goal && (o.xp && o.xp.buys ? o.xp.buys : 1) * 4 <= spare) { const need = o.xp && o.xp.buys ? o.xp.buys : 1; tips.push({ k: 'xp', buys: need, need, level: lvl + 1, lost: false }); }
+      else tips.push({ k: 'rollStar', cap });
+    }
+    // PvP mit wenig KP: Zinsen sind egal, jetzt zählt jeder Kampf – erst den Level-Aufstieg (falls bezahlbar und unter dem Ziel), dann würfeln
+    if (!pve && !o.nz && o.hp != null && o.hp <= 30 && left >= 4) {
+      for (let i = tips.length - 1; i >= 0; i--) if (tips[i].k === 'save' || tips[i].k === 'roll' || tips[i].k === 'rollStar') tips.splice(i, 1);
+      const need = o.xp && o.xp.buys ? o.xp.buys : 1;
+      if (lvl && lvl < pvpGoal(o.stage, norm) && need * 4 <= left && !tips.some((x) => x.k === 'xp')) tips.unshift({ k: 'xp', buys: need, need, level: lvl + 1, lost: true });
+      tips.unshift({ k: 'allin', hp: o.hp, missing });
     }
     return { buys, tips, fieldTraits, cap };
   };

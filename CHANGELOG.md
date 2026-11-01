@@ -1,5 +1,40 @@
 # Changelog
 
+## 2.6.0 – 2026-11-01
+**EN**
+- Logic fixes after many automated test games in every mode (a test Chrome follows every coach mark in the real game):
+  - **Items already held** are now actually read from the board (the game shows them as small icons without an image tag – the reader never saw them) and never suggested again (e.g. Scope Lens for a Golbat that already has one, Shell Bell on the item pick for a Parasect that already holds it). At most 3 items per Pokémon.
+  - **★★! only when the game itself says the card merges** (the card’s own “merge” mark). A bought copy was sometimes counted twice, which showed ★★! on cards that only had 1 of 3.
+  - **The coach no longer stopped reading** after a while: the game can clear shared page timers, which froze the reader in quiet moments (e.g. while a pick window was open). The reader now has several independent clocks and heals itself.
+  - Items are only planned for Pokémon you actually have and field; holders aren’t swapped out right after getting an item. Finished items no plan needs are given to the best fitting Pokémon instead of lying in the bag.
+  - PvP level targets without stats: level 5 in stage 2, 7 in stage 3, 8 in stage 4 – also slightly below the interest cap when you’re behind.
+  - Board: stable placement advice (no more back-and-forth between equal Pokémon), item holders and ★★ count more; **“FIELD IT”, “1 IN / 1 OUT” and “SELL” marks** right on the bench and board.
+  - Full bench: only buys that merge; trait buys only with a free board slot (no more buy-then-sell).
+  - XP only when the level-up is reachable this turn; in PvP only up to the usual level of the stage, then reroll for ★★. With low HP in PvP: spend gold instead of saving.
+  - PvP training games: the planning phase is detected without a ready button (affected swaps, team counts and loss detection).
+  - Adventure events (e.g. “Prof. Oak”: Rare Candy, Carbos, Protein) get a TAKE mark too.
+  - Lobby shows the mode the hub is currently showing; core Pokémon at ★★ get “copy toward ★★★”.
+- Fixed hidden control characters in some reader patterns from 2.4/2.5 (Safari “taken”, “already picked”).
+- Storage: at most two adventure/tower data sets are kept, so the 10 MB extension storage can’t fill up and block the coach.
+- **Self-update for folder installs:** if a newer version lands in the extension folder (e.g. after unzipping a new release over it), the extension reloads itself within a minute and refreshes open game tabs – no click in chrome://extensions needed anymore (from 2.6 on).
+
+**DE**
+- Logik-Korrekturen nach vielen automatischen Testpartien in allen Modi (ein Test-Chrome folgt im echten Spiel jeder Markierung des Coaches):
+  - **Getragene Items** werden jetzt wirklich vom Brett gelesen (das Spiel zeigt sie als kleine Symbole ohne Bild-Element – der Leser hat sie nie gesehen) und nicht noch einmal vorgeschlagen (z. B. Scope-Linse für ein Golbat, das schon eine hat, Muschelglocke bei der Item-Wahl für ein Parasek, das sie schon trägt). Höchstens 3 Items pro Pokémon.
+  - **★★! nur, wenn das Spiel selbst sagt, dass die Karte verschmilzt** (eigene „merge“-Markierung der Karte). Eine gekaufte Kopie wurde teils doppelt gezählt – daher ★★! auf Karten mit „1 von 3“.
+  - **Der Coach hörte nicht mehr auf mitzulesen:** Das Spiel kann geteilte Timer der Seite abräumen, dann stand der Leser in ruhigen Momenten still (z. B. bei offenem Auswahlfenster). Jetzt mehrere unabhängige Taktgeber mit Selbstheilung.
+  - Items nur noch für Pokémon, die du hast und aufstellst; Träger werden nicht direkt danach ausgetauscht. Fertige Items, die kein Plan braucht, gehen an das passendste Pokémon, statt im Beutel zu liegen.
+  - PvP-Level ohne Statistik: Level 5 in Stage 2, 7 in Stage 3, 8 in Stage 4 – auch knapp unter der Zinsgrenze, wenn du hinterherhinkst.
+  - Brett: stabile Aufstell-Empfehlung (kein Hin und Her zwischen gleich starken Pokémon), Item-Träger und ★★ zählen mehr; **„AUFS FELD“, „1 REIN / 1 RAUS“ und „VERKAUFEN“** direkt an Bank und Brett.
+  - Volle Bank: nur noch Käufe, die verschmelzen; Typ-Käufe nur mit freiem Platz auf dem Brett (kein Kaufen-dann-Verkaufen mehr).
+  - EP nur, wenn der Aufstieg in dieser Runde erreichbar ist; im PvP nur bis zum üblichen Level der Stage, danach für ★★ würfeln. Mit wenig KP im PvP: Gold einsetzen statt sparen.
+  - PvP-Training: Planungsphase wird auch ohne Bereit-Knopf erkannt (betraf Tauschen, Teamzählung, Niederlagen).
+  - Abenteuer-Ereignisse (z. B. „Prof. Eich“: Sonderbonbon, Carbon, Protein) bekommen ebenfalls „NIMM“.
+  - Lobby zeigt den Modus, den die Startseite gerade zeigt; Kern-Pokémon auf ★★ bekommen „Kopie Richtung ★★★“.
+- Versteckte Steuerzeichen in einigen Suchmustern des Lesers aus 2.4/2.5 behoben (Safari „schon genommen“, „schon gewählt“).
+- Speicher: Höchstens zwei Datensätze für Abenteuer/Turm bleiben gespeichert, damit der 10-MB-Speicher der Erweiterung nicht vollläuft und den Coach blockiert.
+- **Selbst-Aktualisierung bei Ordner-Installation:** Liegt eine neuere Version im Ordner der Erweiterung (z. B. neue Release-ZIP darüber entpackt), lädt sie sich innerhalb einer Minute selbst neu und frischt offene Spiel-Tabs auf – kein Klick in chrome://extensions mehr nötig (ab 2.6).
+
 ## 2.5.0 – 2026-10-31
 **EN**
 - Played through every mode and fixed what got in the way:

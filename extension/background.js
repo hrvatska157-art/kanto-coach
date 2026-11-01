@@ -54,6 +54,11 @@ async function getCamp(dif, force) {
   try {
     const s = await settings(); const q = 'campana.json' + (dif ? '?dif=' + dif : '');
     const r = await fetchFile(q, s);
+    // Speicher der Erweiterung hat 10 MB, eine Schwierigkeit braucht ~3 MB: höchstens zwei behalten (diese + die zuletzt geladene andere),
+    // sonst ist der Speicher voll und Spielstand/Markierungen (kkLive, kkMarks) können nicht mehr geschrieben werden
+    const all = await chrome.storage.local.get(null);
+    const old = Object.keys(all).filter((x) => x.startsWith('camp:') && x !== k).sort((a, b) => ((all[b] && all[b].at) || 0) - ((all[a] && all[a].at) || 0)).slice(1);
+    if (old.length) await chrome.storage.local.remove(old);
     await chrome.storage.local.set({ [k]: { json: r.json, at: Date.now() } });
     return r.json;
   } catch (e) { if (cached) return cached.json; throw e; }
@@ -84,6 +89,7 @@ async function sprite(kind, name) {
 }
 
 chrome.runtime.onMessage.addListener((msg, sender, reply) => {
+  checkDiskUpdate(); // jede Anfrage aus dem Spiel ist eine Gelegenheit, auf eine neue Version im Ordner zu prüfen
   (async () => {
     try {
       if (msg.type === 'getData') reply({ ok: true, ...(await getData(msg.force)) });
@@ -158,5 +164,26 @@ chrome.commands.onCommand.addListener(async (cmd, tab) => {
 });
 
 chrome.alarms.create('refresh', { periodInMinutes: 60 });
-chrome.alarms.onAlarm.addListener((a) => { if (a.name === 'refresh') getData(true).catch(() => {}); });
+chrome.alarms.onAlarm.addListener((a) => { if (a.name === 'refresh') getData(true).catch(() => {}); if (a.name === 'disk') checkDiskUpdate(); });
 chrome.runtime.onInstalled.addListener(() => { getData(true).catch(() => {}); });
+
+/* Entpackt installiert (Ordner): Liegt dort eine neuere Version, lädt sich die Erweiterung selbst neu und spielt die neuen
+ * Skripte in offene Spiel-Tabs ein – kein Klick in chrome://extensions nötig. (Bei der Erweiterung aus dem Web Store wäre
+ * die Datei immer gleich, dann passiert nichts.) */
+let lastDiskCheck = 0;
+async function checkDiskUpdate() {
+  if (Date.now() - lastDiskCheck < 20000) return; lastDiskCheck = Date.now();
+  try {
+    const m = await (await fetch(chrome.runtime.getURL('manifest.json'), { cache: 'no-store' })).json();
+    if (m.version && m.version !== chrome.runtime.getManifest().version) chrome.runtime.reload();
+  } catch (e) { /* Datei gerade im Umbau – nächster Versuch */ }
+}
+chrome.alarms.create('disk', { periodInMinutes: 1 });
+chrome.runtime.onInstalled.addListener(async (d) => {
+  if (d.reason !== 'update') return;
+  // Nach dem Neuladen laufen die alten Skripte in offenen Tabs verwaist weiter – neue einspielen (sie räumen die alten weg)
+  const tabs = await chrome.tabs.query({ url: 'https://einoow.com/*' }).catch(() => []);
+  for (const t of tabs) for (const c of chrome.runtime.getManifest().content_scripts || []) {
+    try { await chrome.scripting.executeScript({ target: { tabId: t.id, allFrames: !!c.all_frames }, files: c.js }); } catch (e) { /* Tab ohne Zugriff */ }
+  }
+});

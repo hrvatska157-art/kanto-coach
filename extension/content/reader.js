@@ -79,6 +79,9 @@ function hom() {
 function isCalibrated() { return Object.keys(calibs).length > 0; }
 
 /* ---------- Markierungsebene ---------- */
+// Nach einem Update die Ebene der alten Version entfernen; eine verwaiste (alte) Instanz zeichnet nichts mehr
+document.querySelectorAll('#kk-coach-marks').forEach((e) => e.remove());
+const orphan = () => { try { return !(chrome.runtime && chrome.runtime.id); } catch (e) { return true; } };
 const layerHost = document.createElement('div');
 layerHost.id = 'kk-coach-marks';
 layerHost.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2147483645';
@@ -149,7 +152,7 @@ function readShop() {
   const slots = document.querySelectorAll('.cards > .card.empty, .cards > .cardwrap');
   for (const s of (slots.length ? slots : document.querySelectorAll('button.card'))) {
     if (!visible(s)) continue;
-    if (/\bempty\b/.test(s.className)) { out.push({ el: s, empty: true, num: 0, line: null, cost: 0, own: 0, owner: false, plan: false, name: '' }); continue; }
+    if (/\bempty\b/.test(s.className)) { out.push({ el: s, empty: true, num: 0, line: null, cost: 0, own: 0, merge: 0, owner: false, plan: false, name: '' }); continue; }
     const b = s.matches('button.card') ? s : s.querySelector('button.card'); if (!b) continue;
     const label = b.getAttribute('aria-label') || '';
     const num = monNum(b); const owner = !!b.querySelector('.c-trainer');
@@ -158,12 +161,14 @@ function readShop() {
     if (!line) line = lineByName(label);
     const cm = /\bc(\d)\b/.exec(b.className || '');
     // „plan“: Das Spiel markiert selbst Karten, die in seinem Planer stehen (z. B. nach „Code einfügen“)
-    out.push({ el: b, num, line, cost: cm ? +cm[1] : 0, own: ownFromCard(b, label), owner, plan: /\bplan\b/.test(b.className || '') || !!b.querySelector('.c-plan'), name: label.replace(/\s*\(.*$/, '').slice(0, 60) });
+    out.push({ el: b, num, line, cost: cm ? +cm[1] : 0, own: ownFromCard(b, label), merge: (/\bmerge\b/.test(b.className || '') && +((/\bm(\d)\b/.exec(b.className) || [])[1] || 2)) || 0, owner, plan: /\bplan\b/.test(b.className || '') || !!b.querySelector('.c-plan'), name: label.replace(/\s*\(.*$/, '').slice(0, 60) });
   }
   return out.slice(0, 5);
 }
 function firstInt(s) { const m = /(\d+)/.exec(s || ''); return m ? +m[1] : null; }
 // EP aus der Level-Anzeige: „Level 3: 3 Pokémon auf dem Feld, EP 4 von 8: 1 EP-Kauf bis zum Aufstieg“ -> Zahlen [Level, Plätze, EP, Ziel, Käufe]
+// Planungsphase: Knopf „Kämpfen“ (Abenteuer/Turm, Freundesraum) oder die PvP-Uhr im Planungsmodus (.pt-timer.plan, z. B. Training ohne Bereit-Knopf)
+function inPlanning() { return !!document.querySelector('button.fight') || !!document.querySelector('.pt-timer.plan'); }
 function readXp() {
   for (const el of document.querySelectorAll('.ec-lvinfo')) {
     const n = (el.getAttribute('aria-label') || '').match(/\d+/g); if (n && n.length >= 5) return { xp: +n[2], next: +n[3], buys: +n[4] };
@@ -215,7 +220,8 @@ function readBoard() {
   const bars = {};
   for (const b of root.querySelectorAll('.ubar[data-uid]')) {
     const ps = b.querySelector('.pstars'); const sm = ps ? /\bs(\d)\b/.exec(ps.className) : null;
-    const items = [...b.querySelectorAll('.uitems img')].map((im) => (RX_ITEM.exec(srcOf(im)) || [])[1]).filter(Boolean);
+    // Getragene Items: v41 zeigt sie als <i class="uit" data-itip="<id>"> (Bild nur als CSS-Variable), ältere Versionen als <img>
+    const items = [...b.querySelectorAll('.uitems [data-itip], .uitems img')].map((e) => (e.dataset && e.dataset.itip) || (RX_ITEM.exec(srcOf(e)) || [])[1]).filter(Boolean);
     bars[b.dataset.uid] = { ally: b.classList.contains('ally'), foe: b.classList.contains('foe'), star: sm ? +sm[1] : 0, items };
   }
   const H = isCalibrated() ? hom() : null; const Hi = H && invert(H);
@@ -270,7 +276,7 @@ function readSafari() {
   const cards = btns.map((b) => {
     const num = monNum(b); const it = RX_ITEM.exec(srcOf(b.querySelector('.sf3-item img, .sfv-item img, .sft-item img, .sfs-item img')));
     const line = num && map ? (map.base[num] || (map.forms[num] || [])[0] || null) : null;
-    return { line, num, item: it ? it[1] : null, taken: /taken/.test(b.className), mine: /mine/.test(b.className) };
+    return { line, num, item: it ? it[1] : null, taken: /\btaken\b/.test(b.className), mine: /\bmine\b/.test(b.className) };
   });
   return { cards, myTurn: !!document.querySelector('.sf3.my-turn, .sfv.me, .sft.me, .sfs.me'), done: !!document.querySelector('.sfv.done, .sft.done, .sfs.done'), got: !!document.querySelector('.sf3-tr.me.done') };
 }
@@ -279,12 +285,12 @@ function readSafari() {
 function readLoot() {
   const btns = [...document.querySelectorAll('.itemreward button.ir-card')]; if (!btns.length) return null;
   const items = btns.map((b) => { const m = RX_ITEM.exec(srcOf(b.querySelector('.ir-ico img, img'))); return m ? m[1] : null; });
-  return { items, picked: btns.some((b) => /picked/.test(b.className)) };
+  return { items, picked: btns.some((b) => /\bpicked\b/.test(b.className)) };
 }
 /* Siegel-Wahl („Wähle ein Siegel“): .sx-pick mit .sx-card > button.sx-take (aria-label „Name: Wirkung“ in Spielsprache) */
 function readSeal() {
   const cards = [...document.querySelectorAll('.sx-pick .sx-card')]; if (!cards.length) return null;
-  return { labels: cards.map((c) => { const b = c.querySelector('button.sx-take'); return b ? b.getAttribute('aria-label') || '' : ''; }), picked: cards.some((c) => /picked/.test(c.className)) };
+  return { labels: cards.map((c) => { const b = c.querySelector('button.sx-take'); return b ? b.getAttribute('aria-label') || '' : ''; }), picked: cards.some((c) => /\bpicked\b/.test(c.className)) };
 }
 /* Partnerwahl („Wähle!“, Start von Abenteuer/Nuzlocke): button.sp-slot mit Pokémon-Bild, aria „Name, Typen“ */
 function readStarter() {
@@ -294,12 +300,19 @@ function readStarter() {
 /* Segen des Turms: .modal.tboon mit button.ev-card.tb-card, Bild items/<art>.png (Sonderbonbon = rare-candy, Geschenk = das Item) */
 function readBoon() {
   const btns = [...document.querySelectorAll('.tboon button.ev-card')]; if (!btns.length) return null;
-  return { arts: btns.map((b) => { const m = RX_ITEM.exec(srcOf(b.querySelector('img'))); return m ? m[1] : null; }), labels: btns.map((b) => (b.getAttribute('aria-label') || '').split(':')[0].trim()), picked: btns.some((b) => /picked/.test(b.className)) };
+  return { arts: btns.map((b) => { const m = RX_ITEM.exec(srcOf(b.querySelector('img'))); return m ? m[1] : null; }), labels: btns.map((b) => (b.getAttribute('aria-label') || '').split(':')[0].trim()), picked: btns.some((b) => /\bpicked\b/.test(b.className)) };
+}
+/* Ereignis im Abenteuer („Prof. Eich“ u. a.): .modal.evround (ohne .tboon) mit button.ev-card – Item-Bild, Pokémon-Bild oder nur Symbol (🍬 = EP) */
+function readEvent() {
+  const btns = [...document.querySelectorAll('.evround:not(.tboon) button.ev-card')]; if (!btns.length) return null;
+  return { cards: btns.map((b) => { const it = RX_ITEM.exec(srcOf(b.querySelector('img'))); const num = monNum(b);
+    return { item: it ? it[1] : null, line: num && map ? (map.base[num] || (map.forms[num] || [])[0] || null) : null, xp: !it && !num && /🍬/.test(b.textContent || ''), label: (b.getAttribute('aria-label') || '').split(':')[0].trim() }; }),
+    picked: btns.some((b) => /\bpicked\b/.test(b.className)) };
 }
 // Markierungen vom Overlay (ältere Form: nur Shop-Objekt)
 function parseMarks(v) {
   v = v || {};
-  return v.shop || v.items || v.safari || v.loot || v.seal || v.starter || v.btn || v.boon ? { shop: v.shop || {}, items: v.items || {}, safari: v.safari || null, loot: v.loot || null, seal: v.seal || null, starter: v.starter || null, boon: v.boon || null, btn: v.btn || {}, board: v.board || {} } : { shop: v, items: {} };
+  return v.shop || v.items || v.safari || v.loot || v.seal || v.starter || v.btn || v.boon || v.field || v.event ? { shop: v.shop || {}, items: v.items || {}, safari: v.safari || null, loot: v.loot || null, seal: v.seal || null, starter: v.starter || null, boon: v.boon || null, event: v.event || null, field: v.field || null, btn: v.btn || {}, board: v.board || {} } : { shop: v, items: {} };
 }
 
 /* Spielmodus aus der Fortschrittsleiste oben: PvP-Runde, Kampagnen-Station oder Turm-Etage */
@@ -348,12 +361,33 @@ function drawMarks(cards) {
   }
   // Safari-Zone: Empfehlung direkt an der Karte (Index wie im Spiel)
   if (marks.safari) document.querySelectorAll(SAFARI_CARD).forEach((b, i) => { const mk = marks.safari[i]; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
+  if (marks.event) document.querySelectorAll('.evround:not(.tboon) button.ev-card').forEach((b, i) => { const mk = marks.event[i]; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
   if (marks.boon) document.querySelectorAll('.tboon button.ev-card').forEach((b, i) => { const mk = marks.boon[i]; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
   if (marks.starter) document.querySelectorAll('button.sp-slot').forEach((b, i) => { const mk = marks.starter[i]; if (mk && visible(b)) ring(b.getBoundingClientRect(), mk); });
   // Knöpfe „EP kaufen“ / „Neu würfeln“, wenn der Coach genau das rät
   for (const [k, sel] of [['xp', '.btn-lvl'], ['roll', '.btn-roll']]) { const mk = marks.btn && marks.btn[k]; const b = mk && document.querySelector(sel); if (b && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); }
   if (marks.seal) document.querySelectorAll('.sx-pick .sx-card').forEach((c, i) => { const mk = marks.seal[i]; const b = c.querySelector('button.sx-take') || c; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
   if (marks.loot) document.querySelectorAll('.itemreward button.ir-card').forEach((b, i) => { const mk = marks.loot[i]; if (mk && visible(b) && onTop(b)) ring(b.getBoundingClientRect(), mk); });
+  // Aufstellung: Bank-Pokémon, das aufs Feld soll („AUFS FELD“ / „1 REIN“), und Pokémon auf dem Brett, das dafür raus soll („1 RAUS“)
+  if (marks.field) {
+    const fin = marks.field.in || {}; const fout = marks.field.out || {}; const doneIn = new Set();
+    for (const sl of document.querySelectorAll('.bench .slot.filled[data-bench]')) {
+      if (sl.closest('.looking') || !visible(sl)) continue;
+      const st = sl.querySelector('.pstars'); const sm = st ? /\bs(\d)\b/.exec(st.className) : null; const f = formOf(monNum(sl), sm ? +sm[1] : 0);
+      const mk = f && (fin[f.line] || (marks.field.sell || {})[f.line]); if (!mk || doneIn.has(f.line) || !onTop(sl)) continue; doneIn.add(f.line); ring(sl.getBoundingClientRect(), mk, 'it');
+    }
+    const root = document.querySelector('.units2d');
+    if (root && Object.keys(fout).length) {
+      const done = new Set();
+      for (const bar of root.querySelectorAll('.ubar.ally[data-uid]')) {
+        const u = root.querySelector(':scope > .unit2d[data-uid="' + bar.dataset.uid + '"] img'); const m = u && RX_MON.exec(srcOf(u)); const f = m && formOf(+m[1], 0);
+        const mk = f && fout[f.line]; if (!mk || done.has(f.line)) continue; done.add(f.line);
+        const r = bar.getBoundingClientRect(); if (r.width < 2) continue;
+        const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); if (top && top.closest('.modal, [role="dialog"]')) continue;
+        const tag = document.createElement('div'); tag.className = 'tag unit'; tag.style.setProperty('--c', mk.col || COLORS.keep); tag.textContent = mk.label; Object.assign(tag.style, { left: r.left + r.width / 2 + 'px', top: r.top - 26 + 'px' }); holder.append(tag);
+      }
+    }
+  }
   // Brett: wer ein fertiges Item bekommen soll – Hinweis über der Lebensleiste des eigenen Pokémon
   if (marks.board && Object.keys(marks.board).length) {
     const root = document.querySelector('.units2d'); if (!root) return; const done = new Set();
@@ -454,35 +488,44 @@ let lastMapTry = 0;
 // Seit v41 läuft das Spiel direkt auf einoow.com (Hub und Modus-Seiten, ohne iframe); auf anderen einoow-Seiten nichts tun
 const KANTO_PATH = /^\/(kanto-tactics|pvp|duo|tower|nuzlocke|play\/kanto-tactics|playables\/kanto-tactics)(\/|$)/;
 function onKanto() { return KANTO_PATH.test(location.pathname) || !!document.querySelector('.app .ec-lvinfo, .app .cards'); }
+// Selbstdiagnose (nur in der Umgebung der Erweiterung sichtbar): Durchläufe, letzter Ausstieg, letzter Fehler
+const dbg = (window.__kkReaderDbg = { n: 0, at: '', err: '' });
 function scan() {
-  timer = null;
-  if (!enabled || !onKanto()) { holder.textContent = ''; drawField(); return; }
+  timer = null; dbg.n++;
+  try { scanOnce(); } catch (e) { dbg.err = (e && e.message) + ' ' + String(e && e.stack).split('\n').slice(1, 3).join(' '); }
+}
+function scanOnce() {
+  if (orphan()) { dbg.at = 'verwaist'; layerHost.remove(); return; } // Erweiterung wurde neu geladen – die neue Instanz übernimmt
+  if (!enabled || !onKanto()) { dbg.at = 'aus'; holder.textContent = ''; drawField(); return; }
   attachLayer();
   // Zuordnungstabelle fehlt noch (Hintergrund war beim Start beschäftigt): alle 5 s neu anfragen
   if (!map && Date.now() - lastMapTry > 5000) { lastMapTry = Date.now(); loadMap(); }
   if (inLobby()) {
-    holder.textContent = '';
+    dbg.at = 'lobby'; holder.textContent = '';
     if (last !== 'lobby') { last = 'lobby'; try { chrome.storage.local.set({ kkLive: { lobby: true, ts: Date.now() } }); } catch (e) {} }
     return;
   }
   const cards = readShop();
   drawMarks(cards);
   const level = readLevel(), gold = readGold();
-  const safari = readSafari(); const loot = readLoot(); const seal = readSeal(); const starter = readStarter(); const boon = readBoon();
-  if (!cards.length && level == null && gold == null && !safari && !loot && !seal && !starter && !boon) return; // kein Spiel-HUD sichtbar
+  const safari = readSafari(); const loot = readLoot(); const seal = readSeal(); const starter = readStarter(); const boon = readBoon(); const event = readEvent();
+  if (!cards.length && level == null && gold == null && !safari && !loot && !seal && !starter && !boon && !event) { dbg.at = 'kein HUD'; return; } // kein Spiel-HUD sichtbar
   const bench = readBench(); const board = readBoard(); const it = readItems(cards.length > 0);
   const state = {
-    shop: cards.map((c) => c.line), shopInfo: cards.map((c) => ({ line: c.line, num: c.num, cost: c.cost, own: c.own, owner: c.owner, plan: c.plan, name: c.line ? '' : c.name })),
+    shop: cards.map((c) => c.line), shopInfo: cards.map((c) => ({ line: c.line, num: c.num, cost: c.cost, own: c.own, merge: c.merge, owner: c.owner, plan: c.plan, name: c.line ? '' : c.name })),
     own: Object.fromEntries(cards.filter((c) => c.line).map((c) => [c.line, c.own])),
-    level, gold, hp: readHp(), interest: readInterest(), xp: readXp(), safari, loot, seal, starter, boon, game: readMode(), planning: !!document.querySelector('button.fight'), teamN: firstInt((document.querySelector('.teamcount') || { getAttribute: () => '' }).getAttribute('aria-label')), lang: document.documentElement.lang || '', bench, board, items: it.items, itemsSeen: it.seen, itemsHidden: !!it.hidden, itemsCount: it.count || null,
+    level, gold, hp: readHp(), interest: readInterest(), benchCap: document.querySelectorAll('.bench .slot[data-bench]').length || null, xp: readXp(), safari, loot, seal, starter, boon, event, game: readMode(), planning: inPlanning(), teamN: firstInt((document.querySelector('.teamcount') || { getAttribute: () => '' }).getAttribute('aria-label')), lang: document.documentElement.lang || '', bench, board, items: it.items, itemsSeen: it.seen, itemsHidden: !!it.hidden, itemsCount: it.count || null,
     diag: { cards: cards.filter((c) => !c.empty).length, matched: cards.filter((c) => c.line).length, unknown: cards.filter((c) => !c.line && !c.empty).map((c) => c.num || c.name).slice(0, 5), bench: bench.length, board: board ? board.length : null, calibrated: isCalibrated(), map: !!map },
   };
-  const key = JSON.stringify(state);
+  const key = JSON.stringify(state); dbg.at = 'ok ' + Date.now();
   if (key !== last) { last = key; try { chrome.storage.local.set({ kkLive: { ...state, ts: Date.now() } }); } catch (e) { /* Erweiterung neu geladen */ } }
   else if (Date.now() - lastBeat > 8000) { lastBeat = Date.now(); try { chrome.storage.local.set({ kkLive: { ...state, ts: Date.now() } }); } catch (e) {} }
 }
 let lastBeat = 0;
-function schedule() { if (!timer) timer = setTimeout(scan, 120); }
+// Timer-Nummern teilt sich die Erweiterung mit der Seite: Räumt das Spiel Timer ab, bliebe „timer“ für immer gesetzt
+// und der Leser stünde still. Darum: ein gesetzter, aber seit 1 s nicht ausgeführter Timer gilt als verloren.
+let timerAt = 0;
+function schedule() { dbg.sch = (dbg.sch || 0) + 1; if (timer && Date.now() - timerAt > 1000) timer = null; if (!timer) { timerAt = Date.now(); timer = setTimeout(scan, 120); } }
 
 /* Käufe mitzählen: nur Beobachten, das Spiel bearbeitet den Klick ganz normal weiter */
 document.addEventListener('click', (e) => {
@@ -493,9 +536,13 @@ document.addEventListener('click', (e) => {
   schedule();
 }, true);
 
-new MutationObserver(schedule).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-label', 'class', 'disabled', 'src'] });
+new MutationObserver(schedule).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-label', 'class', 'disabled', 'src'] });
 addEventListener('resize', () => { schedule(); drawFieldSoon(); }); addEventListener('scroll', schedule, true);
-setInterval(schedule, 1500);
+for (const ev of ['pointerup', 'keyup', 'visibilitychange']) addEventListener(ev, schedule, true);
+// Mehrere unabhängige Taktgeber, damit der Leser nie stehen bleibt (siehe schedule): Intervall, sich selbst neu planender Timer, Bildwiederholung
+let beatInt = setInterval(schedule, 1500); let lastTick = Date.now();
+(function chain() { lastTick = Date.now(); schedule(); setTimeout(chain, 1500); })();
+(function frame(i) { if (i % 90 === 0) { schedule(); if (Date.now() - lastTick > 4000) { clearInterval(beatInt); beatInt = setInterval(schedule, 1500); (function chain() { lastTick = Date.now(); schedule(); setTimeout(chain, 1500); })(); } } requestAnimationFrame(() => frame(i + 1)); })(1);
 
 chrome.storage.onChanged.addListener((ch, area) => {
   if (area === 'local' && ch.kkMarks) { const v = ch.kkMarks.newValue || {}; marks = parseMarks(v); schedule(); }

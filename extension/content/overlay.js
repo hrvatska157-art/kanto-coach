@@ -12,7 +12,7 @@ const L = {
 de: {
   title: 'Kanto Coach', lvl: 'Lv', gold: 'Gold', tabs: { now: 'Jetzt', plan: 'Plan', items: 'Items', team: 'Team' },
   whatNow: 'Was jetzt?', nothingNow: 'Gerade nichts zu tun. Kämpfen!', doBuy: (n) => `${n} kaufen`, noGold: 'zu wenig Gold', inPlan: 'im Plan',
-  wStar: (n) => `macht ein Pokémon ${'★'.repeat(n)} – das stärkt dein Team am meisten`, wCore: 'Kern-Pokémon deines Plans', wPlan: 'gehört zu deinem Plan', wPair: '2. Kopie: auf dem Weg zu ★★',
+  wStar: (n) => `macht ein Pokémon ${'★'.repeat(n)} – das stärkt dein Team am meisten`, wToward3: 'Kern-Pokémon schon ★★: Kopie auf dem Weg zu ★★★', wCore: 'Kern-Pokémon deines Plans', wPlan: 'gehört zu deinem Plan', wPair: '2. Kopie: auf dem Weg zu ★★',
   wTrait: (ty, n) => `bringt ${ty} auf ${n} (Typ-Bonus aktiv)`,
   tFree: (n) => `${n} ${n === 1 ? 'Platz' : 'Plätze'} auf dem Feld frei – stell Pokémon von der Bank auf`, tNear: (ty, n) => `Noch 1 ${ty} für ${ty} ${n}: halte im Shop danach Ausschau`,
   tLevel: (s, l) => `Spieler mit diesem Plan sind in Stage ${s} meist Level ${l}: EP kaufen`, tSave: (c, m) => `Nichts kaufen, Gold sparen: ab ${c} Gold bekommst du +${m} Zinsen pro Runde`,
@@ -74,9 +74,14 @@ de: {
   swapStep: (a, b) => `${a} statt ${b} aufstellen`, swapSub: 'stärker für deinen Plan – Pokémon auf dem Brett tauschen',
   slamStep: (a, b, r) => `${a} auf ${b} ziehen → ${r}`, slamFor: (u) => `nicht horten: jetzt bauen und ${u} geben – ein fertiges Item ist stärker als Komponenten im Beutel`,
   tXp: (n, l, need, lost) => `${lost ? 'Letzten Kampf verloren' : 'Gold über der Zinsgrenze'}: EP kaufen (${n}× 4 Gold${need <= n ? ` → Level ${l}` : ''}) – ${lost ? 'mehr Pokémon auf dem Feld schlägt Zinsen' : 'dann passt ein Pokémon mehr aufs Feld'}`,
+  tAllin: (hp, m) => `Nur noch ${hp} KP: Zinsen sind jetzt egal – Gold einsetzen: ${m > 0 ? 'neu würfeln für fehlende Plan-Pokémon und ★★' : 'neu würfeln für ★★'}, EP kaufen, um mehr aufs Feld zu stellen.`,
+  tLostRoll: (m) => `Letzten Kampf verloren, der nächste Level ist noch zu teuer: neu würfeln für ${m > 0 ? 'fehlende Plan-Pokémon und ' : ''}★★ – das macht dein Team jetzt stärker`,
+  tSell: (n) => `Bank (fast) voll: ${n.join(', ')} verkaufen (passen nicht zum Plan) – gibt Platz und Gold`,
   tRollStar: (c) => `Plan komplett und über ${c} Gold: neu würfeln für ★★ (nicht unter ${c} Gold fallen)`,
+  markPlace: 'AUFS FELD', markIn: 'REIN', markOut: 'RAUS', markSell: 'VERKAUFEN',
   markXp: (n) => (n > 1 ? `EP ×${n}` : 'EP!'), markRoll: 'WÜRFELN', markCounter: 'KONTER',
   counterT: (b) => `Konter für ${b}`, counterSub: (lo, w, n, lost) => `Spieler gewinnen mit diesen drei mindestens ${lo} % (${n} Partien), sonst ${w} %.${lost ? ' Im Shop als KONTER markiert.' : ''}`,
+  evT: 'Ereignis', evXp: 'EP – lohnt sich, wenn du bald leveln willst', evXpNeed: 'EP – Pokémon warten auf einen Platz bzw. letzter Kampf verloren',
   boonT: 'Segen des Turms', boonNote: 'Faustregel – die API hat keine Statistik zu Segen.',
   boonWhy: { vitamins: '4 Komponenten = 2 fertige Items für die ganze Partie', item: 'fertiges Item – sofort stärker', itemPlan: 'genau das Item, das dein Plan braucht', candy: '+1 Level', candyNeed: '+1 Level – Plan-Pokémon warten auf einen Platz', expshare: 'mehr EP auf Dauer', potion: 'nur wichtig, wenn die KP knapp werden', potionNeed: 'deine KP sind knapp – +40 KP', ash: 'Absicherung gegen zwei Niederlagen', amulet: 'mehr Gold pro Kampf – früh am meisten wert', nugget: '+25 Gold sofort', egg: 'seltenes Pokémon ★★', moonstone: 'stärkt dein bestes 1★', flute: 'schnellerer Start in jeden Kampf', master: 'Ass des nächsten Bosses', coincase: 'günstiger würfeln', wonder: 'riskant: tauscht alle Pokémon' },
   lootT: 'Item-Wahl', lootTake: (i) => `Nimm ${i}`, lWant: (i, u) => `für ${i} auf ${u} (dein Plan)`, lPair: (r) => `ergibt mit deinem Beutel sofort ${r}`,
@@ -109,7 +114,7 @@ de: {
 en: {
   title: 'Kanto Coach', lvl: 'Lv', gold: 'Gold', tabs: { now: 'Now', plan: 'Plan', items: 'Items', team: 'Team' },
   whatNow: 'What now?', nothingNow: 'Nothing to do right now. Fight!', doBuy: (n) => `Buy ${n}`, noGold: 'not enough gold', inPlan: 'in plan',
-  wStar: (n) => `makes a Pokémon ${'★'.repeat(n)} – the biggest boost for your team`, wCore: 'core Pokémon of your plan', wPlan: 'part of your plan', wPair: '2nd copy: on the way to ★★',
+  wStar: (n) => `makes a Pokémon ${'★'.repeat(n)} – the biggest boost for your team`, wToward3: 'core Pokémon already ★★: copy toward ★★★', wCore: 'core Pokémon of your plan', wPlan: 'part of your plan', wPair: '2nd copy: on the way to ★★',
   wTrait: (ty, n) => `brings ${ty} to ${n} (type bonus active)`,
   tFree: (n) => `${n} free ${n === 1 ? 'slot' : 'slots'} on the board – field Pokémon from the bench`, tNear: (ty, n) => `1 more ${ty} for ${ty} ${n}: look out for one in the shop`,
   tLevel: (s, l) => `Players with this plan are usually level ${l} in stage ${s}: buy XP`, tSave: (c, m) => `Buy nothing, save gold: from ${c} gold you get +${m} interest per round`,
@@ -171,9 +176,14 @@ en: {
   swapStep: (a, b) => `Field ${a} instead of ${b}`, swapSub: 'stronger for your plan – swap them on the board',
   slamStep: (a, b, r) => `Drag ${a} onto ${b} → ${r}`, slamFor: (u) => `don’t hoard: build it now and give it to ${u} – a finished item beats components in the bag`,
   tXp: (n, l, need, lost) => `${lost ? 'Lost the last fight' : 'Gold above the interest cap'}: buy XP (${n}× 4 gold${need <= n ? ` → level ${l}` : ''}) – ${lost ? 'more Pokémon on the board beats interest' : 'then one more Pokémon fits on the board'}`,
+  tAllin: (hp, m) => `Only ${hp} HP left: interest doesn’t matter now – spend gold: ${m > 0 ? 'reroll for missing plan Pokémon and ★★' : 'reroll for ★★'}, buy XP to field more.`,
+  tLostRoll: (m) => `Lost the last fight and the next level is still too expensive: reroll for ${m > 0 ? 'missing plan Pokémon and ' : ''}★★ – that makes your team stronger now`,
+  tSell: (n) => `Bench almost full: sell ${n.join(', ')} (not in your plan) – frees space and gives gold`,
   tRollStar: (c) => `Plan complete and above ${c} gold: reroll for ★★ (don’t drop below ${c} gold)`,
+  markPlace: 'FIELD IT', markIn: 'IN', markOut: 'OUT', markSell: 'SELL',
   markXp: (n) => (n > 1 ? `XP ×${n}` : 'XP!'), markRoll: 'REROLL', markCounter: 'COUNTER',
   counterT: (b) => `Counter for ${b}`, counterSub: (lo, w, n, lost) => `Players win with these three at least ${lo}% of the time (${n} games), otherwise ${w}%.${lost ? ' Marked COUNTER in the shop.' : ''}`,
+  evT: 'Event', evXp: 'XP – worth it if you want to level soon', evXpNeed: 'XP – Pokémon are waiting for a slot or you lost the last fight',
   boonT: 'Tower boon', boonNote: 'Rule of thumb – the API has no boon statistics.',
   boonWhy: { vitamins: '4 components = 2 finished items for the whole run', item: 'finished item – stronger right away', itemPlan: 'exactly the item your plan needs', candy: '+1 level', candyNeed: '+1 level – plan Pokémon are waiting for a slot', expshare: 'more XP over time', potion: 'only matters when HP gets low', potionNeed: 'your HP is low – +40 HP', ash: 'insurance against two losses', amulet: 'more gold per battle – worth most early', nugget: '+25 gold now', egg: 'rare Pokémon ★★', moonstone: 'powers up your best 1★', flute: 'faster start in every fight', master: 'the next boss’s ace', coincase: 'cheaper rerolls', wonder: 'risky: swaps all your Pokémon' },
   lootT: 'Item pick', lootTake: (i) => `Take ${i}`, lWant: (i, u) => `for ${i} on ${u} (your plan)`, lPair: (r) => `makes ${r} right away with your bag`,
@@ -344,8 +354,11 @@ const COST = { 0: '#7a8296', 1: '#7d8699', 2: '#2f9a5d', 3: '#2f74cc', 4: '#9a52
 const starsOf = (copies) => (copies >= 9 ? 3 : copies >= 3 ? 2 : 1);
 
 /* ---------- Grundgerüst ---------- */
+// Nach einem Update (neu eingespielte Skripte) das Overlay der alten Version entfernen; verwaiste Instanzen räumen sich selbst weg
+document.querySelectorAll('#kk-coach-overlay').forEach((e) => e.remove());
 const host = document.createElement('div');
 host.id = 'kk-coach-overlay';
+const orphanCheck = setInterval(() => { let ok = false; try { ok = !!(chrome.runtime && chrome.runtime.id); } catch (e) { ok = false; } if (!ok) { clearInterval(orphanCheck); host.remove(); } }, 3000);
 const root = host.attachShadow({ mode: 'open' });
 root.innerHTML = `<style>${CSS}</style><div class="kk" id="kk" role="dialog" aria-label="Kanto Coach"></div>`;
 (document.body || document.documentElement).appendChild(host);
@@ -395,18 +408,25 @@ function resolveLang() {
 function syncLang() { const l = resolveLang(); if (l !== lang) { lang = l; if (K) K.setLang(lang); render(); } }
 function detectedMode() {
   const g = live && isLive() && live.game; if (g && g.mode) return g.mode;
-  // In der Lobby: Modus aus der Seite (v41: /pvp, /duo, /tower, /nuzlocke, /kanto-tactics = Abenteuer)
+  // In der Lobby: zuerst der Modus, den die Startseite gerade zeigt (.hub-hero.m-adv|m-pvp|m-pareja|m-tower|m-nuzlocke),
+  // sonst die Adresse (/kanto-tactics zeigt den zuletzt gewählten Modus, darum nur als Rückfall)
+  const hm = hubMode(); if (hm) return hm.mode;
   const p = location.pathname;
   if (/^\/tower/.test(p)) return 'tower';
   if (/^\/(pvp|duo)/.test(p)) return 'pvp';
   if (/^\/(nuzlocke|kanto-tactics)/.test(p)) return 'camp';
   return null;
 }
+function hubMode() {
+  const h = document.querySelector('.hub-hero'); const m = h && /\bm-([a-z]+)\b/.exec(h.className || ''); if (!m) return null;
+  return { adv: { mode: 'camp' }, pvp: { mode: 'pvp' }, pareja: { mode: 'pvp', duo: true }, tower: { mode: 'tower' }, nuzlocke: { mode: 'camp', nz: true } }[m[1]] || null;
+}
 // Anzeigename: Partner-PvP und Nuzlocke laufen intern als PvP bzw. Abenteuer
 function modeLabel() {
   const tt = t(); const m = gm(); const g = live && isLive() && live.game;
-  if (m === 'pvp' && /^\/duo/.test(location.pathname)) return tt.modeDuo;
-  if (m === 'camp' && ((g && g.nz) || (!g && /^\/nuzlocke/.test(location.pathname)))) return tt.modeNz;
+  const hm = !g && hubMode();
+  if (m === 'pvp' && ((hm && hm.duo) || (!hm && /^\/duo/.test(location.pathname)))) return tt.modeDuo;
+  if (m === 'camp' && ((g && g.nz) || (hm && hm.nz) || (!g && !hm && /^\/nuzlocke/.test(location.pathname)))) return tt.modeNz;
   return tt.modes[m];
 }
 const isNz = () => { const g = live && isLive() && live.game; return !!(g && g.nz); };
@@ -489,15 +509,26 @@ function targetBoard() { const c = planComp(); return c ? K.buildBoard(c) : []; 
 // Was jetzt aufs Feld gehört: Plan-Pokémon, die du hast, dann eigene Pokémon mit passenden Typen
 function fieldNow() {
   const lvl = Math.max(1, S.level || 1); const plan = planUnits(); const owned = S.owned;
-  // Vor einem schweren Abenteuer-Kampf zuerst die Konter-Pokémon, die du hast
-  const ctr = counterCore(); const first = ctr ? ctr.lines.filter((l) => ownOf(l)).map((l) => ({ line: l, star: starsOf(ownOf(l)), plan: true })) : [];
-  const picks = [...first, ...plan.filter((u) => ownOf(u.line) && !first.some((f) => f.line === K.base(u.line))).map((u) => ({ line: u.line, star: starsOf(ownOf(u.line)), plan: true }))].slice(0, lvl);
-  const types = new Set(plan.flatMap((u) => K.lineTypes(u.line)));
-  const rest = Object.keys(owned).filter((l) => owned[l] > 0 && !plan.some((u) => K.base(u.line) === l) && !first.some((f) => f.line === l))
-    .map((l) => ({ line: l, star: starsOf(owned[l]), shared: K.lineTypes(l).filter((x) => types.has(x)).length }))
-    .sort((a, b) => b.shared - a.shared || b.star - a.star || K.lineCost(b.line) - K.lineCost(a.line));
-  for (const r of rest) { if (picks.length >= lvl) break; picks.push({ ...r, plan: false }); }
-  return picks;
+  // Bewertung statt fester Reihenfolge: Konter (Abenteuer) > Plan > Sterne > Kosten > passende Typen.
+  // Wer schon auf dem Brett steht, gewinnt Gleichstände – sonst pendelt der Tausch-Vorschlag zwischen gleich starken Pokémon.
+  const ctr = counterCore(); const ctrSet = new Set(ctr ? ctr.lines.map((l) => K.base(l)) : []);
+  const planSet = new Set(plan.map((u) => K.base(u.line))); const types = new Set(plan.flatMap((u) => K.lineTypes(u.line)));
+  const onBoard = new Set((live && isLive() && Array.isArray(live.board) ? live.board : []).map((u) => K.base(u.line)));
+  const STAR = [0, 1.5, 4.5, 9]; const held = heldItems();
+  return Object.keys(owned).filter((l) => owned[l] > 0).map((l) => {
+    const star = starsOf(owned[l]); const shared = K.lineTypes(l).filter((x) => types.has(x)).length;
+    // getragene Items machen ein Pokémon deutlich stärker – Item-Träger nicht auf die Bank schicken
+    const its = (held[l] || []).length;
+    const score = (ctrSet.has(l) ? 6 : 0) + (planSet.has(l) ? 3 : 0) + STAR[Math.min(3, star)] + (K.lineCost(l) || 1) * 0.8 + shared * 0.7 + its * 2 + (onBoard.has(l) ? 0.3 : 0);
+    return { line: l, star, plan: planSet.has(l) || ctrSet.has(l), score };
+  }).sort((a, b) => b.score - a.score || a.line.localeCompare(b.line)).slice(0, lvl);
+}
+// Volle Bank: Pokémon, die weder im Plan noch in der empfohlenen Aufstellung sind (und keine ★★) – Platz und Gold
+function sellList() {
+  const lv = live && isLive() ? live : null; if (!lv || !lv.planning || !Array.isArray(lv.bench)) return [];
+  const cap = lv.benchCap || 9; if (lv.bench.length < cap - 2) return [];
+  const keep = new Set([...planUnits().map((u) => K.base(u.line)), ...fieldNow().map((u) => K.base(u.line))]);
+  return [...new Set(lv.bench.filter((u) => (u.star || 1) < 2 && !keep.has(K.base(u.line))).map((u) => K.base(u.line)))].slice(0, 3);
 }
 // Wer aufs Feld soll: Empfehlung (fieldNow) gegen das echte Brett – freie Plätze füllen, sonst tauschen
 function fieldSteps() {
@@ -523,8 +554,9 @@ function advice() {
   if (!K) return { buys: [], tips: [] };
   const c = planComp(); const lv = live && isLive() ? live : null; const board = lv && Array.isArray(lv.board) && lv.planning ? lv.board : fieldNow();
   const waiting = c ? Math.max(0, planUnits().filter((u) => ownOf(u.line)).length - (S.level || 0)) : 0;
-  const adv = K.advise({ plan: c ? planUnits() : [], owned: S.owned, board, shop: S.shop, level: S.level, gold: S.gold, teamN: lv && lv.planning ? lv.teamN : null, stage: pvpStage(), comp: c, interest: (lv && lv.interest) || null,
-    mode: gm(), xp: lv && lv.xp, lost: lostBy > 0, nz: isNz(), bench: waiting });
+  const adv = K.advise({ plan: c ? planUnits() : [], owned: S.owned, board, shop: S.shop, level: S.level, gold: S.gold, teamN: lv && lv.planning ? lv.teamN : null, stage: pvpStage(), comp: c, interest: (lv && lv.interest) || null, merge: lv && lv.shopInfo ? lv.shopInfo.map((x) => (x ? x.merge || 0 : 0)) : null,
+    mode: gm(), xp: lv && lv.xp, lost: lostBy > 0, nz: isNz(), bench: waiting, hp: lv ? lv.hp : null, benchN: lv && Array.isArray(lv.bench) ? lv.bench.length : null,
+    benchFree: lv && Array.isArray(lv.bench) && lv.benchCap ? lv.benchCap - lv.bench.length : null });
   // Nuzlocke: pro Shop nur ein Kauf (1 von 3) – genau eine Karte empfehlen
   if (isNz()) {
     const pk = K.safariPick({ cards: S.shop.map((line) => ({ line })), plan: c ? planUnits() : [], owned: S.owned, board: board.map((u) => u.line) })[0];
@@ -561,15 +593,47 @@ function craftable(pool) {
   return out.sort((x, y) => tv(x.r) - tv(y.r));
 }
 // Verteilt deinen Beutel auf die Wunsch-Items der Ziel-Comp (Carrys zuerst)
+// Getragene Items je Linie: Brett (immer sichtbar) und Bank (falls das Spiel sie dort zeigt); gemerkt, damit sie
+// auch während des Kampfs und hinter Auswahlfenstern bekannt bleiben
+let heldMemo = {};
+function heldItems() {
+  if (live && isLive() && (Array.isArray(live.board) || Array.isArray(live.bench))) {
+    const h = {}; for (const u of [...(live.board || []), ...(live.bench || [])]) if (u.items && u.items.length) { const b = K.base(u.line); h[b] = [...(h[b] || []), ...u.items]; }
+    // Die Bank zeigt keine Items: Wer gerade auf der Bank steht, behält die zuletzt auf dem Brett gesehenen
+    const onBoard = new Set((live.board || []).map((u) => K.base(u.line)));
+    for (const u of live.bench || []) { const b = K.base(u.line); if (!h[b] && !onBoard.has(b) && heldMemo[b]) h[b] = heldMemo[b]; }
+    if (Array.isArray(live.board) && live.board.length) heldMemo = h;
+  }
+  return heldMemo;
+}
 function itemPlan() {
   const pool = { ...(S.items || {}) }; const wishes = [];
   const c = targetComp(); const prio = {};
   // Wer die Items in dieser Comp wirklich trägt: Summe der Item-Anteile je Einheit
   if (c) for (const u of c.units) prio[u.line] = Math.max(prio[u.line] || 0, (u.items || []).slice(0, 3).reduce((a, x) => a + (x.share || 0), 0));
-  const units = targetBoard().filter((u) => (u.items || []).length && (prio[u.line] || 0) > 0).sort((a, b) => (prio[b.line] || 0) - (prio[a.line] || 0)).slice(0, 3);
-  for (const u of units) for (const id of u.items.slice(0, 3)) {
-    if (itemKind(id) === 'part' || itemKind(id) === 'tool') continue;
-    wishes.push({ id, unit: u, status: 'none', missing: [], use: [] });
+  let units = targetBoard().filter((u) => (u.items || []).length && (prio[u.line] || 0) > 0).sort((a, b) => (prio[b.line] || 0) - (prio[a.line] || 0)).slice(0, 3);
+  // Items nur für Pokémon, die du hast – sonst liegen sie im Beutel. Fehlen Plan-Träger, bekommen die stärksten eigenen
+  // Pokémon auf dem Brett ihre meistgespielten Items (aus der Statistik).
+  if (live && isLive() && Array.isArray(live.board) && live.board.length) {
+    const onField = new Set(fieldNow().map((u) => K.base(u.line)));
+    const mine = units.filter((u) => ownOf(u.line) > 0 && onField.has(K.base(u.line)));
+    if (mine.length < units.length) {
+      const taken = new Set(mine.map((u) => K.base(u.line)));
+      // aus der empfohlenen Aufstellung (die bleiben auf dem Feld), stärkste zuerst – nicht vom aktuellen Brett, sonst wird der Träger gleich danach ausgetauscht
+      const extra = fieldNow().filter((u) => !taken.has(K.base(u.line)))
+        .map((u) => ({ line: K.base(u.line), star: u.star || 1, items: K.topItemsFor ? K.topItemsFor(K.base(u.line), 6).filter((id) => itemKind(id) === 'full').slice(0, 3) : [] }))
+        .filter((u) => u.items.length).filter((u, i, a) => a.findIndex((x) => x.line === u.line) === i);
+      units = [...mine, ...extra].slice(0, 3);
+    }
+  }
+  // Was die Pokémon schon tragen (aus dem Spiel gelesen): nicht noch einmal vorschlagen, höchstens 3 Items pro Pokémon
+  const held = heldItems();
+  for (const u of units) {
+    const h = held[K.base(u.line)] || []; let free = 3 - h.length;
+    for (const id of u.items.slice(0, 3)) {
+      if (itemKind(id) === 'part' || itemKind(id) === 'tool' || h.includes(id) || free <= 0) continue;
+      free--; wishes.push({ id, unit: u, status: 'none', missing: [], use: [] });
+    }
   }
   // 1. fertige Items im Beutel, 2. komplette Rezepte, 3. halbe Rezepte – jeweils in der Reihenfolge der Carrys
   // (sonst blockiert ein halbes Rezept die Komponente, die woanders sofort ein fertiges Item ergäbe)
@@ -676,7 +740,7 @@ function buyLabel(b) { const tt = t(); return b.kind === 'pick' ? tt.markTake : 
 function buyWhy(b) {
   const tt = t();
   if (b.why === 'star2') return tt.wStar(2); if (b.why === 'star3') return tt.wStar(3);
-  if (b.why === 'core') return tt.wCore; if (b.why === 'plan') return tt.wPlan; if (b.why === 'pair') return tt.wPair;
+  if (b.why === 'core') return tt.wCore; if (b.why === 'plan') return tt.wPlan; if (b.why === 'pair') return tt.wPair; if (b.why === 'toward3') return tt.wToward3;
   if (b.why === 'trait') return tt.wTrait(K.typeName(b.trait), b.next);
   if (b.why === 'nz') return tt.nzWhy + ' · ' + b.reason.map((w) => tt.sWhy[w]).filter(Boolean).join(' · ');
   return '';
@@ -690,6 +754,9 @@ function tipText(x) {
   if (x.k === 'roll') return tt.tRoll(x.cap);
   if (x.k === 'xp') return tt.tXp(x.buys, x.level, x.need, x.lost);
   if (x.k === 'rollStar') return tt.tRollStar(x.cap);
+  if (x.k === 'allin') return tt.tAllin(x.hp, x.missing);
+  if (x.k === 'lostRoll') return tt.tLostRoll(x.missing);
+  if (x.k === 'sell') return tt.tSell(x.names);
   return '';
 }
 function stopNm(raw) { const x = K.stopName(raw); return gm() === 'tower' && x.key === 'elite' ? t().eliteTrainer : x.name; }
@@ -733,7 +800,7 @@ async function copyGamePlan() {
   toast(ok ? t().gamePlanOk : code);
 }
 function viewLobby() {
-  const tt = t(); const c = planComp(); const m = gm(); const nz = /^\/nuzlocke/.test(location.pathname);
+  const tt = t(); const c = planComp(); const m = gm(); const hm = hubMode(); const nz = hm ? !!hm.nz : /^\/nuzlocke/.test(location.pathname);
   return `<div class="status"><b>${esc(modeLabel())}</b><span class="sub">${esc(tt.lobbySub)}</span></div>
     <div class="card"><b>${esc(tt.lobbyT)}</b><span class="sub">${esc(nz ? tt.lobbyNz : tt.lobbyTip[m] || '')}</span></div>
     ${c ? `<div class="card"><span class="sub up">${esc(tt.yourPlan)}</span><h4>${tierBadge(c.tier)}<span class="t">${esc(K.compTitle(c))}</span></h4><div class="row">${planUnits().map((u) => av(u.line, u.star || 1, 'xs')).join('')}</div><div class="row" style="justify-content:space-between"><span class="sub">${esc(tt.lobbyPlan)}</span><button class="btn sm" data-tab="plan">${esc(tt.openPlan)}</button></div></div>` : ''}
@@ -755,6 +822,7 @@ function viewNow() {
   // Nummern wie die Markierungen im Spiel: Shop „1, 2 …“, Item-Paare ①② in derselben Farbe wie im Beutel
   for (const b of adv.buys) steps.push(`<div class="step ${b.affordable ? '' : 'dim'}"><span class="sn">${b.affordable ? ++bn : '–'}</span>${av(b.line, 1, 'sm')}<span><b>${esc(tt.doBuy(K.baseName(b.line)))}</b><span class="sub">${esc(buyWhy(b))}${b.affordable ? '' : ' · ' + esc(tt.noGold)}</span></span></div>`);
   const fs = fieldSteps();
+  const sells = sellList(); if (sells.length) adv.tips.push({ k: 'sell', names: sells.map((l) => K.baseName(l)) });
   for (const x of fs) steps.push(x.k === 'place'
     ? `<div class="step"><span class="sn" style="background:#4fcb88">⬆</span>${av(x.line, starsOf(ownOf(x.line)) || 1, 'sm')}<span><b>${esc(tt.placeStep(K.baseName(x.line)))}</b><span class="sub">${esc(tt.placeSub)}</span></span></div>`
     : `<div class="step"><span class="sn" style="background:#4fcb88">⇄</span>${av(x.line, starsOf(ownOf(x.line)) || 1, 'sm')}<span><b>${esc(tt.swapStep(K.baseName(x.line), K.baseName(x.out)))}</b><span class="sub">${esc(tt.swapSub)}</span></span></div>`);
@@ -764,7 +832,7 @@ function viewNow() {
     else if (x.k === 'craft') steps.push(`<div class="step"><span class="sn" style="background:${x.col}">${x.n}</span><span class="rcp">${itemImg(w.use[0])}+${itemImg(w.use[1])}</span><span><b>${esc(tt.craftStep(K.itemName(w.use[0]), K.itemName(w.use[1]), K.itemName(w.id)))}</b><span class="sub">${esc(tt.craftFor(un))}</span></span></div>`);
     else steps.push(`<div class="step"><span class="sn" style="background:#8ab4ff">⬇</span>${itemImg(w.id, 'ii lg')}<span><b>${esc(tt.useStep(K.itemName(w.id), un))}</b><span class="sub">${esc(tt.useFor)}</span></span></div>`);
   }
-  for (const x of adv.tips) if (!(x.k === 'free' && fs.length)) steps.push(`<div class="step tip${x.k === 'xp' || x.k === 'rollStar' ? ' act' : ''}"><span class="sn">•</span><span class="ti">${{ free: '⬆', near: '◆', level: '⇧', save: '💰', roll: '🎲', xp: '⇧', rollStar: '🎲' }[x.k] || '•'}</span><span>${esc(tipText(x))}</span></div>`);
+  for (const x of adv.tips) if (!(x.k === 'free' && fs.length)) steps.push(`<div class="step tip${x.k === 'xp' || x.k === 'rollStar' || x.k === 'allin' || x.k === 'lostRoll' ? ' act' : ''}"><span class="sn">•</span><span class="ti">${{ free: '⬆', near: '◆', level: '⇧', save: '💰', roll: '🎲', xp: '⇧', rollStar: '🎲', allin: '🔥', lostRoll: '🎲', sell: '🪙' }[x.k] || '•'}</span><span>${esc(tipText(x))}</span></div>`);
   if (steps.length && !/class="step (dim|tip)/.test(steps[0])) steps[0] = steps[0].replace('class="step', 'class="step main');
   const sr = safariRec(); let sfHtml = ''; const lr = lootRec(); const stp = starterRec();
   if (stp) {
@@ -784,13 +852,18 @@ function viewNow() {
     const p = sr.picks[0]; const alt = sr.picks[1];
     sfHtml = `<div class="card hero"><span class="sub up">${esc(tt.safariT)}</span><div class="row">${av(p.line, 1)}${p.item ? itemImg(p.item, 'ii lg') : ''}<span><b>${esc(tt.safariTake(K.baseName(p.line), p.item ? K.itemName(p.item) : ''))}</b><span class="sub">${esc(p.why.map((w) => tt.sWhy[w]).filter(Boolean).join(' · '))}</span></span></div>${alt ? `<span class="sub">${esc(tt.safariAlt(K.baseName(alt.line) + (alt.item ? ' + ' + K.itemName(alt.item) : '')))}</span>` : ''}${sr.myTurn ? '' : `<span class="sub">${esc(tt.safariWait)}</span>`}</div>`;
   }
+  const er = eventRec();
+  if (er) {
+    const p = er.picks[0]; const c = er.cards[p.idx];
+    sfHtml = `<div class="card hero"><span class="sub up">${esc(tt.evT)}</span><div class="row">${c.item ? itemImg(c.item, 'ii lg') : c.line ? av(c.line, 1) : ''}<span><b>${esc(tt.sealTake(c.label || (c.item ? K.itemName(c.item) : c.line ? K.baseName(c.line) : '')))}</b><span class="sub">${esc(eventWhy(p))}</span></span></div></div>`;
+  }
   const br = boonRec();
   if (br) {
     const p = br.picks[0]; const alt = br.picks[1];
     sfHtml = `<div class="card hero"><span class="sub up">${esc(tt.boonT)}</span><div class="row">${itemImg(p.item || (D.data.boons[p.id] || {}).art || '', 'ii lg')}<span><b>${esc(tt.sealTake(br.labels[p.idx] || p.id))}</b><span class="sub">${esc(tt.boonWhy[p.why] || '')}${alt ? ' · ' + esc(tt.safariAlt(br.labels[alt.idx] || alt.id)) : ''}</span></span></div><span class="sub">${esc(tt.boonNote)}</span></div>`;
   }
   const ctr = counterCore();
-  if (ctr && !sfHtml) sfHtml = `<div class="card ctr"><span class="sub up">${esc(tt.counterT(stopNm(ctr.st.stop)))}</span><div class="row">${ctr.lines.map((l) => av(l, 1, 'sm' + (ownOf(l) ? '' : inShop(l) ? ' shop' : ' miss'))).join('')}<span class="sub">${esc(ctr.lines.map((l) => K.baseName(l)).join(' + '))}</span></div><span class="sub">${esc(tt.counterSub(num(ctr.lo, 0), num(ctr.st.win, 0), ctr.n, lostBy > 0))}</span></div>`;
+  if (ctr && !sfHtml) sfHtml = `<div class="card ctr"><span class="sub up">${esc(tt.counterT(stopNm(ctr.st.stop)))}</span><div class="row">${ctr.lines.map((l) => av(l, 1, 'sm' + (ownOf(l) ? '' : inShop(l) ? ' shop' : ' miss'))).join('')}<span class="sub">${esc(ctr.lines.map((l) => K.baseName(l)).join(' + '))}</span></div><span class="sub">${esc(tt.counterSub(num(ctr.lo, 0), num(ctr.st.win, 0), ctr.n, ctr.lines.some((l) => !ownOf(l) && inShop(l))))}</span></div>`;
   const c = planComp(); const have = plan.filter((u) => ownOf(u.line)).length;
   const live2 = Date.now() - liveTs < 20000;
   return `${statusLine()}${sfHtml}${live2 ? diagLine() : `<p class="hint">${esc(tt.shopHint)}</p>`}<div class="slots">${slots}</div>${actions}
@@ -971,12 +1044,15 @@ function pushMarks() {
   const shop = {}; let n = 0; const adv = advice(); const tt = t();
   // Kaufempfehlungen in Reihenfolge durchnummeriert: „1“ zuerst kaufen
   for (const b of adv.buys) if (!shop[b.line] && b.affordable) shop[b.line] = { kind: TAGS[b.kind] || 'comp', label: buyLabel(b), n: ++n };
-  const ctr = lostBy > 0 && counterCore();
+  const ctr = counterCore();
   if (ctr) for (const l of ctr.lines) if (!shop[l] && !ownOf(l) && inShop(l)) shop[l] = { kind: 'comp', label: tt.markCounter };
   // Knöpfe im Spiel: EP kaufen / Neu würfeln, wenn genau das der Rat ist
   const btn = {}; const xt = adv.tips.find((x) => x.k === 'xp');
   if (xt) btn.xp = { kind: 'upgrade', label: tt.markXp(xt.buys) };
-  if (adv.tips.some((x) => x.k === 'roll' || x.k === 'rollStar')) btn.roll = { kind: 'comp', label: tt.markRoll };
+  else if (adv.tips.some((x) => x.k === 'level')) btn.xp = { kind: 'upgrade', label: tt.markXp(1) };
+  if (adv.tips.some((x) => x.k === 'roll' || x.k === 'rollStar' || x.k === 'allin' || x.k === 'lostRoll')) btn.roll = { kind: 'comp', label: tt.markRoll };
+  const er = eventRec(); let event = null;
+  if (er && er.picks.length > 1) { event = {}; event[er.picks[0].idx] = { kind: 'pick', label: tt.markTake, n: 1 }; }
   const br = boonRec(); let boon = null;
   if (br) { boon = {}; boon[br.picks[0].idx] = { kind: 'pick', label: tt.markTake, n: 1 }; if (br.picks[1]) boon[br.picks[1].idx] = { kind: 'pick2', label: '', n: 2 }; }
   const stp = starterRec(); let starter = null;
@@ -992,7 +1068,17 @@ function pushMarks() {
   if (lr && lr.length > 1) { loot = {}; loot[lr[0].idx] = { kind: 'pick', label: t().markTake + (lr[0].why[0] === 'want' ? ' · ' + t().sTag.plan : ''), n: 1 }; }
   const sl = sealRec(); let seal = null;
   if (sl) { seal = {}; seal[sl.picks[0].idx] = { kind: 'pick', label: t().markTake, n: 1 }; if (sl.picks[1] && sl.picks[1].score > 8) seal[sl.picks[1].idx] = { kind: 'pick2', label: '', n: 2 }; }
-  const out = { shop, items: im.items, safari, loot, seal, starter, boon, btn, board: im.board };
+  // Aufstellung im Spiel markieren: Bank „AUFS FELD“ / „1 REIN“, Brett „1 RAUS“ (gleiche Nummer = tauschen)
+  let field = null; const fsx = fieldSteps(); const sells = sellList();
+  if (sells.length) { field = { in: {}, out: {}, sell: {} }; for (const l of sells) field.sell[l] = { kind: 'keep', col: '#ff5c4e', label: tt.markSell }; }
+  if (fsx.length) {
+    field = { in: {}, out: {}, ...(field || {}) }; let k = 0;
+    for (const x of fsx) {
+      if (x.k === 'place') field.in[x.line] = { kind: 'upgrade', label: tt.markPlace };
+      else { k++; field.in[x.line] = { kind: 'upgrade', label: tt.markIn, n: k }; field.out[x.out] = { kind: 'keep', col: '#ff8a3d', label: k + ' ' + tt.markOut }; }
+    }
+  }
+  const out = { shop, items: im.items, safari, loot, seal, starter, boon, event, field, btn, board: im.board };
   const key = JSON.stringify(out);
   if (key !== lastMarks) { lastMarks = key; try { chrome.storage.local.set({ kkMarks: out }); } catch (e) {} }
 }
@@ -1004,7 +1090,7 @@ function itemMarks() {
   const out = { items: {}, board: {}, steps: [] };
   if (!K || !hasTarget()) return out;
   const add = (id, mk) => (out.items[id] = out.items[id] || []).push(mk);
-  const wishes = itemPlan().wishes; let n = 0;
+  const ip = itemPlan(); const wishes = ip.wishes; let n = 0;
   for (const w of wishes) {
     const ul = K.base(w.unit.line);
     if (w.status === 'craft') {
@@ -1020,10 +1106,23 @@ function itemMarks() {
       out.steps.push({ k: 'use', w });
     } else if (w.status === 'half') add(w.use[0], { kind: 'keep', dash: true });
   }
+  // Fertige Items im Beutel, die kein Plan-Wunsch braucht: nicht liegen lassen – dem passendsten Pokémon auf dem Feld geben
+  // (wer dieses Item laut Statistik am häufigsten trägt, sonst das stärkste mit freiem Platz)
+  const held = heldItems(); const fieldU = fieldNow();
+  const holderFor = (id) => fieldU.filter((u) => { const h = held[K.base(u.line)] || []; return h.length < 3 && !(id && h.includes(id)); })
+    .map((u) => ({ u, s: ((id && K.lineItems[K.base(u.line)]) ? K.lineItems[K.base(u.line)][id] || 0 : 0) * 10 + (u.star || 1) * 2 + (K.lineCost(u.line) || 1) }))
+    .sort((a, b) => b.s - a.s).map((x) => x.u)[0] || null;
+  for (const [id, cnt] of Object.entries(ip.pool || {})) {
+    if (!(cnt > 0) || itemKind(id) !== 'full' || out.items[id]) continue;
+    const u = holderFor(id); if (!u) continue; const ul = K.base(u.line);
+    add(id, { kind: 'use', label: '→ ' + K.unitName(u.line, u.star) });
+    if (!out.board[ul]) out.board[ul] = { label: '⬇ ' + K.itemName(id) };
+    out.steps.push({ k: 'use', w: { id, unit: { line: u.line, star: u.star }, use: [id] } });
+  }
   // Kein Rezept des Plans komplett, aber im Beutel ergeben zwei Komponenten ein Item: jetzt bauen statt horten
   if (!out.steps.some((x) => x.k === 'craft') && n < PAIR_COL.length) {
     const pool = { ...(S.items || {}) }; for (const w of wishes) if (w.status === 'half') pool[w.use[0]] = (pool[w.use[0]] || 0) - 1;
-    const best = craftable(pool)[0]; const holder = (wishes[0] && wishes[0].unit) || planUnits()[0];
+    const best = craftable(pool)[0]; const holder = (wishes[0] && wishes[0].unit) || holderFor(best && best.r);
     if (best && holder) {
       const col = PAIR_COL[n++]; add(best.a, { kind: 'craft', col, n }); add(best.b, { kind: 'craft', col, n });
       const ul = K.base(holder.line); if (!out.board[ul]) out.board[ul] = { col, label: CIRC[n - 1] + ' ' + K.itemName(best.r) };
@@ -1054,6 +1153,27 @@ function boonRec() {
   const c = planComp(); const g = live.game;
   const picks = K.boonPick({ arts: bo.arts, level: S.level, hp: live.hp, want: itemWants(), waiting: c ? Math.max(0, planUnits().filter((u) => ownOf(u.line)).length - (S.level || 0)) : 0, lost: lostBy > 0, floor: g && g.stop });
   return picks.length ? { picks, labels: bo.labels } : null;
+}
+// Ereignis im Abenteuer: Items wie bei der Item-Wahl, Pokémon wie in der Safari-Zone, Sonderbonbon nur mit Bedarf
+function eventRec() {
+  const ev = live && isLive() && live.event; if (!K || !ev || ev.picked || !ev.cards.length) return null;
+  const want = itemWants(); const items = ev.cards.map((c) => c.item).filter(Boolean);
+  const lp = items.length ? K.lootPick({ items, want, bag: S.items || {} }) : [];
+  const waiting = planComp() ? Math.max(0, planUnits().filter((u) => ownOf(u.line)).length - (S.level || 0)) : 0;
+  const picks = ev.cards.map((c, idx) => {
+    if (c.item) { const p = lp.find((x) => x.id === c.item); return { idx, score: p ? p.score : 6, kind: 'item', p }; }
+    if (c.line) { const p = K.safariPick({ cards: [{ line: c.line }], plan: planUnits(), owned: S.owned })[0]; return { idx, score: p ? p.score : 8, kind: 'mon', p }; }
+    if (c.xp) return { idx, score: 18 + (lostBy > 0 || waiting > 0 ? 12 : 0), kind: 'xp', need: lostBy > 0 || waiting > 0 };
+    return { idx, score: 8, kind: 'other' };
+  }).sort((a, b) => b.score - a.score);
+  return picks.length ? { picks, cards: ev.cards } : null;
+}
+function eventWhy(p) {
+  const tt = t();
+  if (p.kind === 'item' && p.p) return lootWhy(p.p);
+  if (p.kind === 'mon' && p.p) return p.p.why.map((w) => tt.sWhy[w]).filter(Boolean).join(' · ');
+  if (p.kind === 'xp') return p.need ? tt.evXpNeed : tt.evXp;
+  return '';
 }
 // Partnerwahl (Start von Abenteuer/Nuzlocke)
 function starterRec() {
@@ -1129,6 +1249,8 @@ function applyLive(raw) {
   if (l.planning && Array.isArray(l.board) && (l.teamN == null || l.board.length >= l.teamN)) {
     // In der Planungsphase sind Bank und Brett vollständig sichtbar: Das ist dein Team, genau so (auch nach Tausch-Segen, Verkauf oder Verschmelzen)
     S.owned = { ...copies };
+    // Die Shop-Karte nennt die Kopien des Spiels selbst („du hast 1 von 3“) – das gilt vor unserer Zählung
+    for (const [line, n] of Object.entries(l.own || {})) if (n > 0) S.owned[line] = n;
   } else {
     // Sonst ergänzen: Die Shop-Karte sagt, wie viele Kopien du hast (0 = keine)
     for (const [line, n] of Object.entries(l.own || {})) { if (n > 0) S.owned[line] = Math.max(n, copies[line] || 0); else if (!copies[line]) delete S.owned[line]; }
@@ -1152,9 +1274,14 @@ chrome.storage.onChanged.addListener((ch, area) => {
   if (area === 'local' && ch.kkLive && ch.kkLive.newValue) applyLive(ch.kkLive.newValue);
   if (area === 'local' && ch.kkCalib) { calibrated = Object.keys(ch.kkCalib.newValue || {}).length > 0; render(); }
   if (area === 'local' && ch.kkField && ch.kkField.newValue && !!ch.kkField.newValue.show !== !!S.fieldShow) { S.fieldShow = !!ch.kkField.newValue.show; persist(); render(); }
-  if (area === 'local' && ch.kkBought && ch.kkBought.newValue) { const l = canon(ch.kkBought.newValue.line); S.owned[l] = (S.owned[l] || 0) + 1; persist(); render(); }
+  // Kauf-Meldung nur ohne Live-Stand zählen: mit Live-Stand stecken Bank, Brett und Shop-Karte schon im nächsten Update
+  // (sonst kommt die Kopie doppelt dazu, wenn die Meldung nach dem Update eintrifft – daraus wurden falsche „★★!“)
+  if (area === 'local' && ch.kkBought && ch.kkBought.newValue && !isLive()) { const l = canon(ch.kkBought.newValue.line); S.owned[l] = (S.owned[l] || 0) + 1; persist(); render(); }
 });
 setInterval(() => { if (liveTs && Date.now() - liveTs > 20000 && Date.now() - liveTs < 26000) render(); }, 5000);
+// Lobby: Wechselt die Startseite den Modus (Abenteuer, PvP, Turm …), Anzeige nachziehen
+let lastHub = '';
+setInterval(() => { if (isLive()) return; const h = JSON.stringify(hubMode()); if (h !== lastHub) { lastHub = h; render(); } }, 1500);
 
 /* ---------- Start ---------- */
 async function loadData(force) {
