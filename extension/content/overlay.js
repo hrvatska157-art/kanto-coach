@@ -76,7 +76,7 @@ de: {
   nzWhy: 'Nuzlocke: nur 1 von 3', starterT: 'Partnerwahl', lootOneT: 'Item',
   placeStep: (n) => `${n} aufs Feld stellen`, placeSub: 'freier Platz – aus deinem Plan bzw. passend zu deinen Typen',
   swapStep: (a, b) => `${a} statt ${b} aufstellen`, swapSub: (g) => `Feld ${g} % stärker (gerechnet mit Werten, Typ-Stufen, Items und Tafeln) – auf dem Brett tauschen`,
-  slamStep: (a, b, r) => `${a} auf ${b} ziehen → ${r}`, slamFor: (u) => `nicht horten: jetzt bauen und ${u} geben – ein fertiges Item ist stärker als Komponenten im Beutel`, slamHeal: (u) => `ab Etage 50 heilen die Gegner stark: Anticura (−30 % Heilung) bauen und ${u} geben`, useType: (t, g) => `gibt den Typ ${t} – Feld ${g} % stärker (zählt für die Typ-Stufe)`, useRelic: 'Signatur-Reliquie: wirkt nur bei diesem Pokémon',
+  slamStep: (a, b, r) => `${a} auf ${b} ziehen → ${r}`, tXpGoal: (b, l, s, g) => `EP kaufen (${b}× → Level ${l}): an Station ${s} sollte man Level ${g} haben (Fahrplan aus vielen Legende-Läufen) – nur die nötigen EP, der Rest ins Würfeln`, tLegend: { brock: (x) => `Legende-Kontrollpunkt Rocko: Du hast ${x.n} von 2 ★★, deren Attacke Gestein/Boden sehr effektiv trifft (z. B. Nidorino, Schillok, Digdri). Mit weniger verlieren die meisten Läufe hier – jetzt gezielt danach würfeln.`, koga: (x) => `Legende-Kontrollpunkt Koga (Station 16): ${x.s3 ? `nur ${x.hp} KP` : 'noch kein ★★★'} – 31 % der Testläufe endeten hier. Vorher ein ★★★ bauen (Hauptlinie zuerst würfeln).`, tanks: () => 'Legende-Kontrollpunkt Pyro (Station 26): Relaxo ★★ (Bodyslam wählen) und Bisasam ★★ (verankert) als zwei Spott-Tanks gegenüber Arkani – fehlt einer, verlieren die meisten Läufe dort.' }, tFoeAssassin: (n) => `Der nächste Gegner hat Assassinen (${n}) – sie springen in deine hinteren Reihen, am liebsten in die Ecken: Carry nicht in die Ecke, ein billiges Pokémon als Köder dorthin`, tFoeHeal: (n) => `Der nächste Gegner heilt (${n}) – Giftstich oder Heiß-Orb (Anticura) auf ein Pokémon, das viel trifft`, slamFor: (u) => `nicht horten: jetzt bauen und ${u} geben – ein fertiges Item ist stärker als Komponenten im Beutel`, slamHeal: (u, h) => `${h ? `Der Gegner heilt (${h})` : 'Ab Etage 50 heilen die Gegner stark'}: Anticura (−30 % Heilung) bauen und ${u} geben – mehr Schaden allein gewinnt dort nicht`, useType: (t, g) => `gibt den Typ ${t} – Feld ${g} % stärker (zählt für die Typ-Stufe)`, useRelic: 'Signatur-Reliquie: wirkt nur bei diesem Pokémon',
   tXpAdd: (n, l, who, g) => `EP kaufen (${n}× 4 Gold → Level ${l}) und ${who} aufstellen: dein Feld wird ${g} % stärker – das schlägt die Zinsen`,
   tXp: (n, l, need, lost) => `${lost ? 'Letzten Kampf verloren' : 'Gold über der Zinsgrenze'}: EP kaufen (${n}× 4 Gold${need <= n ? ` → Level ${l}` : ''}) – ${lost ? 'mehr Pokémon auf dem Feld schlägt Zinsen' : 'dann passt ein Pokémon mehr aufs Feld'}`,
   tAllin: (hp, m) => `Nur noch ${hp} KP: Zinsen sind jetzt egal – Gold einsetzen: ${m > 0 ? 'neu würfeln für fehlende Plan-Pokémon und ★★' : 'neu würfeln für ★★'}, EP kaufen, um mehr aufs Feld zu stellen.`,
@@ -88,7 +88,9 @@ de: {
   counterT: (b) => `Konter für ${b}`, counterSub: (lo, w, n, lost) => `Spieler gewinnen mit diesen drei mindestens ${lo} % (${n} Partien), sonst ${w} %.${lost ? ' Im Shop als KONTER markiert.' : ''}`,
   evT: 'Ereignis', evXp: 'EP – lohnt sich, wenn du bald leveln willst', evXpNeed: 'EP – Pokémon warten auf einen Platz bzw. letzter Kampf verloren',
   boonT: 'Segen des Turms', boonNote: 'Faustregel – die API hat keine Statistik zu Segen.',
-  boonWhy: { vitamins: '4 Komponenten = 2 fertige Items für die ganze Partie', item: 'fertiges Item – sofort stärker', itemPlan: 'genau das Item, das dein Plan braucht', candy: '+1 Level', candyNeed: '+1 Level – Plan-Pokémon warten auf einen Platz', expshare: 'mehr EP auf Dauer', potion: 'nur wichtig, wenn die KP knapp werden', potionNeed: 'deine KP sind knapp – +40 KP', ash: 'Absicherung gegen zwei Niederlagen', amulet: 'mehr Gold pro Kampf – früh am meisten wert', nugget: '+25 Gold sofort', egg: 'seltenes Pokémon ★★', moonstone: 'stärkt dein bestes 1★', flute: 'schnellerer Start in jeden Kampf', master: 'Ass des nächsten Bosses', coincase: 'günstiger würfeln', wonder: 'riskant: tauscht alle Pokémon' },
+  relicT: 'Relikt', relicNote: 'Gerechnet mit deinem Brett (Typ-Stufen, Werte). Auch ein unnützes Relikt ist besser als „Keins“ – du kannst es verkaufen.',
+  relicType: (t, u, g) => `gibt ${u} den Typ ${t} – Feld ${g} % stärker`, relicSig: (n) => `Signatur-Item für dein ${n} auf dem Feld`, relicSigBench: (n) => `Signatur-Item für ${n} (steht gerade auf der Bank)`, relicNone: 'bringt deinem Feld gerade nichts – zum Verkaufen',
+  boonWhy: { vitamins: '4 Komponenten = 2 fertige Items für die ganze Partie', item: 'fertiges Item – sofort stärker', itemPlan: 'genau das Item, das dein Plan braucht', candy: '+1 Level', candyLevel: 'ab Etage 41 ein ganzes Level – ein Platz mehr auf dem Feld', candyXp: 'vor Etage 41 nur ein paar EP', hpup: 'mehr max. KP für den ganzen Aufstieg – Niederlagen kosten KP', leftovers: 'KP zurück nach jeder gewonnenen Etage', team: 'mehr KP für dein jetziges Team', trail: 'nächstes Koloss-Geschenk mit +1★', fbag: 'mehr Marken für Reliquien beim Händler', candyNeed: '+1 Level – Plan-Pokémon warten auf einen Platz', expshare: 'mehr EP auf Dauer', potion: 'nur wichtig, wenn die KP knapp werden', potionNeed: 'deine KP sind knapp – +40 KP', ash: 'Niederlagen ohne KP-Verlust – im Turm einer der besten Segen', amulet: 'mehr Gold pro Kampf – früh am meisten wert', nugget: '+25 Gold sofort', egg: 'seltenes Pokémon ★★', moonstone: 'stärkt dein bestes 1★', flute: 'schnellerer Start in jeden Kampf', master: 'Ass des nächsten Bosses', coincase: 'günstiger würfeln', wonder: 'riskant: tauscht alle Pokémon' },
   lootT: 'Item-Wahl', lootTake: (i) => `Nimm ${i}`, lWant: (i, u) => `für ${i} auf ${u} (dein Plan)`, lPair: (r) => `ergibt mit deinem Beutel sofort ${r}`,
   lWhy: { full: 'fertiges Item – sofort stärker', part: 'Komponente für später', other: 'nützlich, aber nicht fürs Team' },
   whyTeam: (p) => `gehört zu deinem Team für „${p}“`, whyNext: (p) => `wichtig für den nächsten Abschnitt („${p}“)`,
@@ -183,7 +185,7 @@ en: {
   nzWhy: 'Nuzlocke: only 1 of 3', starterT: 'Partner pick', lootOneT: 'Item',
   placeStep: (n) => `Put ${n} on the board`, placeSub: 'free slot – from your plan or matching your types',
   swapStep: (a, b) => `Field ${a} instead of ${b}`, swapSub: (g) => `board ${g}% stronger (from stats, type tiers, items and plates) – swap them on the board`,
-  slamStep: (a, b, r) => `Drag ${a} onto ${b} → ${r}`, slamFor: (u) => `don’t hoard: build it now and give it to ${u} – a finished item beats components in the bag`, slamHeal: (u) => `from floor 50 enemies heal a lot: build Heal Block (−30% healing) and give it to ${u}`, useType: (t, g) => `adds the ${t} type – board ${g}% stronger (counts for the type tier)`, useRelic: 'signature relic: only works on this Pokémon',
+  slamStep: (a, b, r) => `Drag ${a} onto ${b} → ${r}`, tXpGoal: (b, l, s, g) => `Buy XP (${b}× → level ${l}): at stop ${s} you want level ${g} (schedule from many Legend runs) – only the XP you need, the rest into rerolls`, tLegend: { brock: (x) => `Legend checkpoint Brock: you have ${x.n} of 2 ★★ whose ability hits Rock/Ground super effectively (e.g. Nidorino, Wartortle, Dugtrio). With fewer, most runs lose here – reroll for them now.`, koga: (x) => `Legend checkpoint Koga (stop 16): ${x.s3 ? `only ${x.hp} HP` : 'no ★★★ yet'} – 31% of test runs ended here. Build a ★★★ first (reroll your main line).`, tanks: () => 'Legend checkpoint Blaine (stop 26): Snorlax ★★ (pick Body Slam) and Bulbasaur ★★ (anchored) as two taunt tanks across from Arcanine – missing one, most runs lose there.' }, tFoeAssassin: (n) => `The next enemy has assassins (${n}) – they jump into your back rows, corners first: keep your carry out of the corner, put a cheap Pokémon there as bait`, tFoeHeal: (n) => `The next enemy heals (${n}) – Poison Barb or Flame Orb (Heal Block) on a Pokémon that hits often`, slamFor: (u) => `don’t hoard: build it now and give it to ${u} – a finished item beats components in the bag`, slamHeal: (u, h) => `${h ? `The enemy heals (${h})` : 'From floor 50 enemies heal a lot'}: build Heal Block (−30% healing) and give it to ${u} – more damage alone won’t win there`, useType: (t, g) => `adds the ${t} type – board ${g}% stronger (counts for the type tier)`, useRelic: 'signature relic: only works on this Pokémon',
   tXpAdd: (n, l, who, g) => `Buy XP (${n}× 4 gold → level ${l}) and field ${who}: your board gets ${g}% stronger – worth more than interest`,
   tXp: (n, l, need, lost) => `${lost ? 'Lost the last fight' : 'Gold above the interest cap'}: buy XP (${n}× 4 gold${need <= n ? ` → level ${l}` : ''}) – ${lost ? 'more Pokémon on the board beats interest' : 'then one more Pokémon fits on the board'}`,
   tAllin: (hp, m) => `Only ${hp} HP left: interest doesn’t matter now – spend gold: ${m > 0 ? 'reroll for missing plan Pokémon and ★★' : 'reroll for ★★'}, buy XP to field more.`,
@@ -195,7 +197,9 @@ en: {
   counterT: (b) => `Counter for ${b}`, counterSub: (lo, w, n, lost) => `Players win with these three at least ${lo}% of the time (${n} games), otherwise ${w}%.${lost ? ' Marked COUNTER in the shop.' : ''}`,
   evT: 'Event', evXp: 'XP – worth it if you want to level soon', evXpNeed: 'XP – Pokémon are waiting for a slot or you lost the last fight',
   boonT: 'Tower boon', boonNote: 'Rule of thumb – the API has no boon statistics.',
-  boonWhy: { vitamins: '4 components = 2 finished items for the whole run', item: 'finished item – stronger right away', itemPlan: 'exactly the item your plan needs', candy: '+1 level', candyNeed: '+1 level – plan Pokémon are waiting for a slot', expshare: 'more XP over time', potion: 'only matters when HP gets low', potionNeed: 'your HP is low – +40 HP', ash: 'insurance against two losses', amulet: 'more gold per battle – worth most early', nugget: '+25 gold now', egg: 'rare Pokémon ★★', moonstone: 'powers up your best 1★', flute: 'faster start in every fight', master: 'the next boss’s ace', coincase: 'cheaper rerolls', wonder: 'risky: swaps all your Pokémon' },
+  relicT: 'Relic', relicNote: 'Calculated with your board (type tiers, stats). Even a useless relic beats “None” – you can sell it.',
+  relicType: (t, u, g) => `gives ${u} the ${t} type – board ${g}% stronger`, relicSig: (n) => `signature item for your ${n} on the board`, relicSigBench: (n) => `signature item for ${n} (on the bench right now)`, relicNone: 'does nothing for your board right now – sell it',
+  boonWhy: { vitamins: '4 components = 2 finished items for the whole run', item: 'finished item – stronger right away', itemPlan: 'exactly the item your plan needs', candy: '+1 level', candyLevel: 'from floor 41 a full level – one more slot on the board', candyXp: 'before floor 41 only a little XP', hpup: 'more max HP for the whole climb – losses cost HP', leftovers: 'HP back after every floor you win', team: 'more HP for your current team', trail: 'next colossus gift with +1★', fbag: 'more tokens for relics at the merchant', candyNeed: '+1 level – plan Pokémon are waiting for a slot', expshare: 'more XP over time', potion: 'only matters when HP gets low', potionNeed: 'your HP is low – +40 HP', ash: 'losses without losing HP – one of the best Tower blessings', amulet: 'more gold per battle – worth most early', nugget: '+25 gold now', egg: 'rare Pokémon ★★', moonstone: 'powers up your best 1★', flute: 'faster start in every fight', master: 'the next boss’s ace', coincase: 'cheaper rerolls', wonder: 'risky: swaps all your Pokémon' },
   lootT: 'Item pick', lootTake: (i) => `Take ${i}`, lWant: (i, u) => `for ${i} on ${u} (your plan)`, lPair: (r) => `makes ${r} right away with your bag`,
   lWhy: { full: 'finished item – stronger right away', part: 'component for later', other: 'useful, but not for the team' },
   whyTeam: (p) => `part of your team for “${p}”`, whyNext: (p) => `important for the next stage (“${p}”)`,
@@ -600,7 +604,7 @@ function advice() {
   const c = planComp(); const lv = live && isLive() ? live : null; const board = lv && Array.isArray(lv.board) && lv.planning ? lv.board : fieldNow();
   const waiting = c ? Math.max(0, planUnits().filter((u) => ownOf(u.line)).length - (S.level || 0)) : 0;
   const adv = K.advise({ plan: c ? planUnits() : [], owned: S.owned, board, shop: S.shop, level: S.level, gold: S.gold, teamN: lv && lv.planning ? lv.teamN : null, stage: pvpStage(), comp: c, interest: (lv && lv.interest) || null, merge: lv && lv.shopInfo ? lv.shopInfo.map((x) => (x ? x.merge || 0 : 0)) : null,
-    mode: gm(), xp: lv && lv.xp, lost: lostBy > 0, nz: isNz(), bench: waiting, hp: lv ? lv.hp : null, benchN: lv && Array.isArray(lv.bench) ? lv.bench.length : null,
+    mode: gm(), stop: lv && lv.game && lv.game.mode === 'camp' ? lv.game.stop : null, xp: lv && lv.xp, lost: lostBy > 0, nz: isNz(), bench: waiting, hp: lv ? lv.hp : null, benchN: lv && Array.isArray(lv.bench) ? lv.bench.length : null,
     benchFree: lv && Array.isArray(lv.bench) && lv.benchCap ? lv.benchCap - lv.bench.length : null,
     // Rechnung mit den Spielwerten: Kandidaten fürs Feld, Kosten laut Karte, Gegner
     cands: S.level ? fieldCands() : null, costs: lv && lv.shopInfo ? lv.shopInfo.map((x) => (x ? x.cost || 0 : 0)) : null, foes: foesNow() });
@@ -642,14 +646,18 @@ function craftable(pool) {
 // Verteilt deinen Beutel auf die Wunsch-Items der Ziel-Comp (Carrys zuerst)
 // Getragene Items je Linie: Brett (immer sichtbar) und Bank (falls das Spiel sie dort zeigt); gemerkt, damit sie
 // auch während des Kampfs und hinter Auswahlfenstern bekannt bleiben
-let heldMemo = {};
+let heldMemo = {}, boardMemo = []; // zuletzt gesehenes Brett (hinter Auswahlfenstern ist es leer)
 function heldItems() {
   if (live && isLive() && (Array.isArray(live.board) || Array.isArray(live.bench))) {
     const h = {}; for (const u of [...(live.board || []), ...(live.bench || [])]) if (u.items && u.items.length) { const b = K.base(u.line); h[b] = [...(h[b] || []), ...u.items]; }
     // Die Bank zeigt keine Items: Wer gerade auf der Bank steht, behält die zuletzt auf dem Brett gesehenen
     const onBoard = new Set((live.board || []).map((u) => K.base(u.line)));
     for (const u of live.bench || []) { const b = K.base(u.line); if (!h[b] && !onBoard.has(b) && heldMemo[b]) h[b] = heldMemo[b]; }
-    if (Array.isArray(live.board) && live.board.length) heldMemo = h;
+    if (Array.isArray(live.board) && live.board.length) {
+      heldMemo = h; boardMemo = live.board;
+      // gemerkt über Neuladen hinweg (Relikt-Wahl direkt nach dem Laden zeigt kein Brett)
+      const bk = JSON.stringify(live.board.map((u) => [u.line, u.star, u.items || []])); if (bk !== S.boardKey) { S.boardKey = bk; S.boardMemo = live.board.map((u) => ({ line: u.line, star: u.star, items: u.items || [] })); persist(); }
+    }
   }
   return heldMemo;
 }
@@ -805,11 +813,15 @@ function tipText(x) {
   if (x.k === 'save') return tt.tSave(x.cap, x.max);
   if (x.k === 'roll') return tt.tRoll(x.cap);
   if (x.k === 'xp' && x.add) return tt.tXpAdd(x.buys, x.level, K.baseName(x.add), Math.max(1, Math.round(x.gain * 100)));
+  if (x.k === 'xp' && x.goal) return tt.tXpGoal(x.buys, x.level, x.stop, x.goal);
   if (x.k === 'xp') return tt.tXp(x.buys, x.level, x.need, x.lost);
+  if (x.k === 'legend') return tt.tLegend[x.why](x);
   if (x.k === 'rollStar') return tt.tRollStar(x.cap);
   if (x.k === 'allin') return tt.tAllin(x.hp, x.missing);
   if (x.k === 'lostRoll') return tt.tLostRoll(x.missing);
   if (x.k === 'sell') return tt.tSell(x.names);
+  if (x.k === 'foeAssassin') return tt.tFoeAssassin(x.names);
+  if (x.k === 'foeHeal') return tt.tFoeHeal(x.names);
   return '';
 }
 function stopNm(raw) { const x = K.stopName(raw); return gm() === 'tower' && x.key === 'elite' ? t().eliteTrainer : x.name; }
@@ -876,16 +888,28 @@ function viewNow() {
   for (const b of adv.buys) steps.push(`<div class="step ${b.affordable ? '' : 'dim'}"><span class="sn">${b.affordable ? ++bn : '–'}</span>${av(b.line, 1, 'sm')}<span><b>${esc(tt.doBuy(K.baseName(b.line)))}</b><span class="sub">${esc(buyWhy(b))}${b.affordable ? '' : ' · ' + esc(tt.noGold)}</span></span></div>`);
   const fs = fieldSteps();
   const sells = sellList(); if (sells.length) adv.tips.push({ k: 'sell', names: sells.map((l) => K.baseName(l)) });
+  // Nächster Gegner (Turm/Abenteuer, in der Planung sichtbar): Assassinen springen nach hinten, Heiler brauchen Anticura
+  if (campMode()) {
+    const fi = K.foeInfo(foesNow()); const nm = (ls) => [...new Set(ls.map((l) => K.baseName(l)))].join(', ');
+    if (fi.assassins.length >= 2) adv.tips.push({ k: 'foeAssassin', names: nm(fi.assassins) });
+    const hasCut = Object.values(heldItems()).some((h) => h.some((i) => i === 'poison-barb' || i === 'flame-orb'));
+    if (fi.healers.length && !hasCut) adv.tips.push({ k: 'foeHeal', names: nm(fi.healers) });
+    // Abenteuer Legende (Kanto): Kontrollpunkte vor Rocko, Koga und Pyro
+    const g = live && isLive() && live.game;
+    if (g && g.mode === 'camp' && g.dif === 3 && g.adv === 'gyms' && g.stop && live.planning) {
+      const lc = K.legendCheck(g.stop, [...(live.board || []), ...(live.bench || [])], live.hp); if (lc) adv.tips.unshift({ k: 'legend', ...lc });
+    }
+  }
   for (const x of fs) steps.push(x.k === 'place'
     ? `<div class="step"><span class="sn" style="background:#4fcb88">⬆</span>${av(x.line, starsOf(ownOf(x.line)) || 1, 'sm')}<span><b>${esc(tt.placeStep(K.baseName(x.line)))}</b><span class="sub">${esc(tt.placeSub)}</span></span></div>`
     : `<div class="step"><span class="sn" style="background:#4fcb88">⇄</span>${av(x.line, starsOf(ownOf(x.line)) || 1, 'sm')}<span><b>${esc(tt.swapStep(K.unitName(x.line, x.star), K.unitName(x.out, x.outStar)))}</b><span class="sub">${esc(tt.swapSub(x.gain))}</span></span></div>`);
   for (const x of itemMarks().steps) {
     const w = x.w; const un = K.unitName(w.unit.line, w.unit.star);
-    if (x.k === 'slam') steps.push(`<div class="step"><span class="sn" style="background:${x.col}">${x.n}</span><span class="rcp">${itemImg(w.use[0])}+${itemImg(w.use[1])}</span><span><b>${esc(tt.slamStep(K.itemName(w.use[0]), K.itemName(w.use[1]), K.itemName(w.id)))}</b><span class="sub">${esc(x.heal ? tt.slamHeal(un) : tt.slamFor(un))}</span></span></div>`);
+    if (x.k === 'slam') steps.push(`<div class="step"><span class="sn" style="background:${x.col}">${x.n}</span><span class="rcp">${itemImg(w.use[0])}+${itemImg(w.use[1])}</span><span><b>${esc(tt.slamStep(K.itemName(w.use[0]), K.itemName(w.use[1]), K.itemName(w.id)))}</b><span class="sub">${esc(x.heal ? tt.slamHeal(un, (x.healers || []).join(', ')) : tt.slamFor(un))}</span></span></div>`);
     else if (x.k === 'craft') steps.push(`<div class="step"><span class="sn" style="background:${x.col}">${x.n}</span><span class="rcp">${itemImg(w.use[0])}+${itemImg(w.use[1])}</span><span><b>${esc(tt.craftStep(K.itemName(w.use[0]), K.itemName(w.use[1]), K.itemName(w.id)))}</b><span class="sub">${esc(tt.craftFor(un))}</span></span></div>`);
     else steps.push(`<div class="step"><span class="sn" style="background:#8ab4ff">⬇</span>${itemImg(w.id, 'ii lg')}<span><b>${esc(tt.useStep(K.itemName(w.id), un))}</b><span class="sub">${esc(x.why === 'type' ? tt.useType(K.typeName(x.type), x.gain) : x.why === 'relic' ? tt.useRelic : tt.useFor)}</span></span></div>`);
   }
-  for (const x of adv.tips) if (!(x.k === 'free' && fs.length)) steps.push(`<div class="step tip${x.k === 'xp' || x.k === 'rollStar' || x.k === 'allin' || x.k === 'lostRoll' ? ' act' : ''}"><span class="sn">•</span><span class="ti">${{ free: '⬆', near: '◆', nearShop: '◆', level: '⇧', save: '💰', roll: '🎲', xp: '⇧', rollStar: '🎲', allin: '🔥', lostRoll: '🎲', sell: '🪙' }[x.k] || '•'}</span><span>${esc(tipText(x))}</span></div>`);
+  for (const x of adv.tips) if (!(x.k === 'free' && fs.length)) steps.push(`<div class="step tip${x.k === 'xp' || x.k === 'rollStar' || x.k === 'allin' || x.k === 'lostRoll' ? ' act' : ''}"><span class="sn">•</span><span class="ti">${{ free: '⬆', near: '◆', nearShop: '◆', level: '⇧', save: '💰', roll: '🎲', xp: '⇧', rollStar: '🎲', allin: '🔥', lostRoll: '🎲', sell: '🪙', foeAssassin: '⚔', foeHeal: '✚', legend: '⚠' }[x.k] || '•'}</span><span>${esc(tipText(x))}</span></div>`);
   if (steps.length && !/class="step (dim|tip)/.test(steps[0])) steps[0] = steps[0].replace('class="step', 'class="step main');
   const sr = safariRec(); let sfHtml = ''; const lr = lootRec(); const stp = starterRec();
   if (stp) {
@@ -913,7 +937,7 @@ function viewNow() {
   const br = boonRec();
   if (br) {
     const p = br.picks[0]; const alt = br.picks[1];
-    sfHtml = `<div class="card hero"><span class="sub up">${esc(tt.boonT)}</span><div class="row">${itemImg(p.item || (D.data.boons[p.id] || {}).art || '', 'ii lg')}<span><b>${esc(tt.sealTake(br.labels[p.idx] || p.id))}</b><span class="sub">${esc(tt.boonWhy[p.why] || '')}${alt ? ' · ' + esc(tt.safariAlt(br.labels[alt.idx] || alt.id)) : ''}</span></span></div><span class="sub">${esc(tt.boonNote)}</span></div>`;
+    sfHtml = `<div class="card hero"><span class="sub up">${esc(br.relic ? tt.relicT : tt.boonT)}</span><div class="row">${itemImg(p.item || (D.data.boons[p.id] || {}).art || (br.arts || [])[p.idx] || '', 'ii lg')}<span><b>${esc(tt.sealTake(br.labels[p.idx] || p.id))}</b><span class="sub">${esc(p.text || tt.boonWhy[p.why] || '')}${alt ? ' · ' + esc(tt.safariAlt(br.labels[alt.idx] || alt.id)) : ''}</span></span></div><span class="sub">${esc(br.relic ? tt.relicNote : tt.boonNote)}</span></div>`;
   }
   const ctr = counterCore();
   if (ctr && !sfHtml) sfHtml = `<div class="card ctr"><span class="sub up">${esc(tt.counterT(stopNm(ctr.st.stop)))}</span><div class="row">${ctr.lines.map((l) => av(l, 1, 'sm' + (ownOf(l) ? '' : inShop(l) ? ' shop' : ' miss'))).join('')}<span class="sub">${esc(ctr.lines.map((l) => K.baseName(l)).join(' + '))}</span></div><span class="sub">${esc(tt.counterSub(num(ctr.lo, 0), num(ctr.st.win, 0), ctr.n, ctr.lines.some((l) => !ownOf(l) && inShop(l))))}</span></div>`;
@@ -948,7 +972,7 @@ function viewPlan() {
   }
   const units = planUnits(); const board = targetBoard(); const have = units.filter((u) => ownOf(u.line)).length;
   const me = list.find((x) => x.comp.id === c.id);
-  const now = fieldNow(); const tr = K.traitsFor(now.map((u) => ({ line: u.line, items: [] }))).filter((x) => x.lv > 0);
+  const now = fieldNow(); const tr = K.traitsFor(now.map((u) => ({ line: u.line, items: u.items || [] }))).filter((x) => x.lv > 0);
   const norm = pvpStage() ? K.stageNorm(c, pvpStage()) : null;
   const others = list.filter((x) => x.comp.id !== c.id).slice(0, 3);
   return modeBar() + difRow + `<div class="card"><span class="sub up">${esc((S.planAuto || {})[k] ? tt.planAuto : tt.planManual)}</span>
@@ -1225,13 +1249,14 @@ function itemMarks() {
   if (!out.steps.some((x) => x.k === 'craft') && n < PAIR_COL.length) {
     const pool = { ...(S.items || {}) }; for (const w of wishes) if (w.status === 'half') pool[w.use[0]] = (pool[w.use[0]] || 0) - 1;
     const g = live && isLive() && live.game; const HEAL_CUT = ['poison-barb', 'flame-orb'];
-    const antiHeal = !!(g && g.mode === 'tower' && (g.stop || 0) >= 50 && !withHeld.some((x) => x.items.some((i) => HEAL_CUT.includes(i))));
+    const healers = campMode() ? K.foeInfo(foesNow()).healers : [];
+    const antiHeal = !!(((g && g.mode === 'tower' && (g.stop || 0) >= 50) || healers.length) && !withHeld.some((x) => x.items.some((i) => HEAL_CUT.includes(i))));
     const list = craftable(pool); const ah = antiHeal ? list.find((x) => HEAL_CUT.includes(x.r)) : null;
     const best = ah || list[0]; const holder = (!ah && wishes[0] && wishes[0].unit) || holderFor(best && best.r);
     if (best && holder) {
       const col = PAIR_COL[n++]; add(best.a, { kind: 'craft', col, n }); add(best.b, { kind: 'craft', col, n });
       const ul = K.base(holder.line); if (!out.board[ul]) out.board[ul] = { col, label: CIRC[n - 1] + ' ' + K.itemName(best.r) };
-      out.steps.push({ k: 'slam', heal: !!ah, w: { id: best.r, unit: holder, use: [best.a, best.b] }, n, col });
+      out.steps.push({ k: 'slam', heal: !!ah, healers: ah ? [...new Set(healers.map((l) => K.baseName(l)))] : null, w: { id: best.r, unit: holder, use: [best.a, best.b] }, n, col });
     }
   }
   return out;
@@ -1256,8 +1281,15 @@ function itemWants() {
 function boonRec() {
   const bo = live && isLive() && live.boon; if (!K || !K.boonPick || !bo || bo.picked) return null;
   const c = planComp(); const g = live.game;
-  const picks = K.boonPick({ arts: bo.arts, level: S.level, hp: live.hp, want: itemWants(), waiting: c ? Math.max(0, planUnits().filter((u) => ownOf(u.line)).length - (S.level || 0)) : 0, lost: lostBy > 0, floor: g && g.stop });
-  return picks.length ? { picks, labels: bo.labels } : null;
+  // Relikt-Wahl (gleiches Fenster mit Klasse trel): Tafeln und Signatur-Items, gerechnet mit dem echten Brett
+  if (bo.relic) {
+    const tt = t(); heldItems(); const rp = K.relicPick(bo.arts, (live.board || []).length ? live.board : boardMemo.length ? boardMemo : (S.boardMemo || []), live.bench || [], foesNow());
+    // Auch ein Relikt ohne Nutzen ist besser als „Keins“: Es liegt im Beutel und lässt sich verkaufen
+    const picks = rp.map((p) => ({ ...p, text: p.kind === 'type' ? tt.relicType(K.typeName(p.type), K.unitName(p.line, 1), Math.max(1, Math.round(p.gain * 100))) : p.kind === 'sig' ? (p.bench ? tt.relicSigBench(K.baseName(p.line)) : tt.relicSig(K.baseName(p.line))) : tt.relicNone }));
+    return picks.length ? { picks, labels: bo.labels, arts: bo.arts, relic: true } : null;
+  }
+  const picks = K.boonPick({ arts: bo.arts, texts: bo.texts, level: S.level, hp: live.hp, want: itemWants(), waiting: c ? Math.max(0, planUnits().filter((u) => ownOf(u.line)).length - (S.level || 0)) : 0, lost: lostBy > 0, floor: g && g.stop });
+  return picks.length ? { picks, labels: bo.labels, arts: bo.arts } : null;
 }
 // Ereignis im Abenteuer: Items wie bei der Item-Wahl, Pokémon wie in der Safari-Zone, Sonderbonbon nur mit Bedarf
 function eventRec() {

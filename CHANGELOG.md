@@ -4,6 +4,23 @@ All versions below 1.0 are **beta** – the extension stays in beta until everyt
 
 Alle Versionen unter 1.0 sind **Beta** – die Erweiterung bleibt Beta, bis alles in jedem Modus sauber läuft. (Frühere Releases hießen 2.x; es sind dieselben Stände wie 0.1–0.7.)
 
+## 0.8.2 Beta – 2026-11-01
+**EN**
+- **Relic pick (Tower, after each guardian):** the coach now recognizes the “Relic!” window and marks the best card – a Plate goes where it adds the most to your board (calculated, e.g. “gives Golbat the Rock type – board 2% stronger”), a signature item only counts if its Pokémon is yours. Even a useless relic beats “None” (you can sell it).
+- **New Tower blessings** (HP Up, Leftovers, Team Training, Legendary Trail, Token Pouch) are recognized. The Leftovers blessing (+HP per floor won) is no longer mistaken for the Leftovers item. **Rare Candy from floor 41 is a full level** and now ranks first; before floor 41 it’s only a little XP. HP Up, Sacred Ash and Leftovers rank high (losses cost HP in the Tower).
+- **Enemy abilities count against your types:** e.g. Ground is immune to Electric abilities, Ice hits Ground twice as hard – the line-up calculation now includes both directions.
+- **Next enemy:** healers (Chansey, Snorlax, Tangela, …) → build Heal Block (Poison Barb/Flame Orb) first; two or more assassins → keep your carry out of the back corners, cheap Pokémon there as bait. Roles now come from the game itself (tank, assassin, mage, …).
+- **Adventure XP schedule** (from 130+ Legend runs by another player): level 4 at stop 5, 5 at 7, 6 at 10, 7 at 16, 8 at 22 – only the XP you need, the rest into rerolls.
+- **Legend checkpoints:** warnings before Brock (two ★★ that hit Rock/Ground), Koga at stop 16 (a ★★★ and 60+ HP) and Blaine (Snorlax ★★ + Bulbasaur ★★ as taunt tanks).
+
+**DE**
+- **Relikt-Wahl (Turm, nach jedem Wächter):** Der Coach erkennt das Fenster „Relikt!“ und markiert die beste Karte – eine Tafel dorthin, wo sie dein Feld am meisten stärkt (gerechnet, z. B. „gibt Golbat den Typ Gestein – Feld 2 % stärker“), ein Signatur-Item nur, wenn du sein Pokémon hast. Auch ein unnützes Relikt ist besser als „Keins“ (lässt sich verkaufen).
+- **Neue Turm-Segen** (KP-Plus, Überreste, Teamtraining, Legendäre Spur, Markenbeutel) werden erkannt. Der Segen Überreste (+KP je gewonnener Etage) wird nicht mehr mit dem Item Überreste verwechselt. **Sonderbonbon ab Etage 41 = ein ganzes Level** und steht dann ganz oben; vorher bringt es nur ein paar EP. KP-Plus, Zauberasche und Überreste stehen weit oben (Niederlagen kosten im Turm KP).
+- **Gegner-Attacken gegen deine Typen:** z. B. ist Boden immun gegen Elektro-Attacken, Eis trifft Boden doppelt – die Aufstellung rechnet jetzt in beide Richtungen.
+- **Nächster Gegner:** Heiler (Chaneira, Relaxo, Tangela …) → zuerst Anticura (Giftstich/Heiß-Orb) bauen; zwei oder mehr Assassinen → Carry nicht in die hinteren Ecken, billige Pokémon dort als Köder. Rollen kommen jetzt aus dem Spiel selbst (Tank, Assassine, Magier …).
+- **EP-Fahrplan im Abenteuer** (aus 130+ Legende-Läufen eines anderen Spielers): Level 4 an Station 5, 5 an 7, 6 an 10, 7 an 16, 8 an 22 – nur die nötigen EP, der Rest ins Würfeln.
+- **Legende-Kontrollpunkte:** Warnungen vor Rocko (zwei ★★, die Gestein/Boden treffen), Koga an Station 16 (ein ★★★ und mindestens 60 KP) und Pyro (Relaxo ★★ + Bisasam ★★ als Spott-Tanks).
+
 ## 0.8.1 Beta – 2026-11-01
 **EN**
 - **Tower Plates count:** a Plate (e.g. Toxic Plate, Spooky Plate) gives its holder its type – the coach now counts it for the type tiers, like the game does. Before, it suggested swaps that broke a tier you already had through a Plate.

@@ -309,7 +309,8 @@ function readStarter() {
 /* Segen des Turms: .modal.tboon mit button.ev-card.tb-card, Bild items/<art>.png (Sonderbonbon = rare-candy, Geschenk = das Item) */
 function readBoon() {
   const btns = [...document.querySelectorAll('.tboon button.ev-card')]; if (!btns.length) return null;
-  return { arts: btns.map((b) => { const m = RX_ITEM.exec(srcOf(b.querySelector('img'))); return m ? m[1] : null; }), labels: btns.map((b) => (b.getAttribute('aria-label') || '').split(':')[0].trim()), picked: btns.some((b) => /\bpicked\b/.test(b.className)) };
+  return { arts: btns.map((b) => { const m = RX_ITEM.exec(srcOf(b.querySelector('img'))); return m ? m[1] : null; }), labels: btns.map((b) => (b.getAttribute('aria-label') || '').split(':')[0].trim()), texts: btns.map((b) => b.getAttribute('aria-label') || b.textContent || ''), picked: btns.some((b) => /\bpicked\b/.test(b.className)),
+    relic: !!document.querySelector('.tboon.trel') }; // Relikt-Wahl nach einem Wächter: gleiches Fenster, Klasse trel
 }
 /* Ereignis im Abenteuer („Prof. Eich“ u. a.): .modal.evround (ohne .tboon) mit button.ev-card – Item-Bild, Pokémon-Bild oder nur Symbol (🍬 = EP) */
 function readEvent() {

@@ -12,6 +12,18 @@ const STONE_ART = { fire:'fire-stone', water:'water-stone', electric:'thunder-st
 const PLATE = { iron:'normal', flame:'fire', splash:'water', meadow:'grass', zap:'electric', icicle:'ice', fist:'fighting', toxic:'poison', earth:'ground', sky:'flying', mind:'psychic', insect:'bug', stone:'rock', spooky:'ghost', draco:'dragon' };
 const PLATE_DE = { iron:'Neutraltafel', flame:'Feuertafel', splash:'Wassertafel', meadow:'Wiesentafel', zap:'Blitztafel', icicle:'Frosttafel', fist:'Fausttafel', toxic:'Gifttafel', earth:'Erdtafel', sky:'Wolkentafel', mind:'Hirntafel', insect:'Käfertafel', stone:'Steintafel', spooky:'Spuktafel', draco:'Dracotafel' };
 const SIG_RELIC = { 'light-ball':['pikachu','Light Ball','Kugelblitz'], 'thick-club':['cubone','Thick Club','Kampfknochen'], stick:['farfetchd','Leek','Lauchstange'], 'lucky-punch':['chansey','Lucky Punch','Lucky Punch'], 'quick-powder':['ditto','Quick Powder','Flinkstaub'], 'dragon-scale':['dratini','Dragon Scale','Drachenhaut'], 'kings-rock':['slowpoke',"King's Rock",'King-Stein'], 'metal-coat':['onix','Metal Coat','Metallmantel'], 'up-grade':['porygon','Up-Grade','Up-Grade'], electirizer:['electabuzz','Electirizer','Stromisierer'], magmarizer:['magmar','Magmarizer','Magmaisierer'], stardust:['clefairy','Stardust','Sternenstaub'], 'red-scale':['magikarp','Red Scale','Rote Schuppe'] };
+// Rollen laut Spielcode (Kartentext „Tank“, „Assassine“ …). Assassinen springen zu Kampfbeginn in die hinteren Reihen.
+const GAME_ROLE = Object.fromEntries(Object.entries({
+  tank: 'bulbasaur caterpie geodude sandshrew slowpoke onix seel snorlax rhyhorn grimer tangela nidoranf lickitung krabby',
+  fighter: 'charmander weedle rattata nidoran machop poliwag paras ponyta growlithe hitmonlee hitmonchan electabuzz eevee flareon dratini tauros bellsprout pinsir kangaskhan mankey farfetchd',
+  marksman: 'squirtle pikachu cubone jolteon lapras staryu shellder venonat horsea omanyte',
+  assassin: 'pidgey zubat diglett ekans scyther aerodactyl meowth doduo spearow goldeen kabuto kabutops',
+  special: 'magikarp voltorb ditto mew porygon',
+  mage: 'vulpix psyduck oddish abra gastly magnemite jynx magmar exeggcute vaporeon articuno zapdos moltres mewtwo koga drowzee tentacool omastar',
+  support: 'jigglypuff chansey clefairy koffing mrmime',
+}).flatMap(([r, ids]) => ids.split(' ').map((id) => [id, r])));
+// Heiler (Video-Lauf bis Etage 81: verloren gegen ein Team, das sich immer wieder heilte) – dagegen hilft Anticura
+const HEALERS = new Set(['chansey', 'snorlax', 'tangela4', 'tangela', 'clefairy']);
 // Pokédex-Nummern der Kampagnen-Pokémon, die nicht in data.json stehen
 const CAMP_DEX = { bellsprout:[69,70,71], clefairy:[35,36], drowzee:[96,97], grimer:[88,89], kangaskhan:[115], koffing:[109,110], mankey:[56,57], meowth:[52,53], mrmime:[122], nidoranf:[29,30,31], pinsir:[127], porygon:[137], tangela:[114], venonat:[48,49], omanyte:[138,139], kabuto:[140,141], 'pikachu-partner':[25] };
 // Linien, die in data.json fehlen können: die Neuen aus v35 (PvP-IDs, seit Regeln 39 in data.json) und Kampagnen-Linien.
@@ -367,6 +379,48 @@ function create(opts) {
     const effs = foes.map((f) => typeEff(mt, K.lineTypes(f.line)));
     return effs.reduce((a, b) => a + b, 0) / effs.length;
   };
+  // Umgekehrt: wie hart die Attacken der Gegner dieses Pokémon treffen (1 = neutral; Boden gegen Elektro = 0, Eis gegen Boden = 2),
+  // gewichtet mit dem Attacken-Anteil der Gegner. Liefert den Faktor auf den erlittenen Schaden.
+  K.defMatchup = (id, foes) => {
+    if (!foes || !foes.length) return 1; const my = K.lineTypes(id); if (!my.length) return 1;
+    let sum = 0, w = 0;
+    for (const f of foes) {
+      const l = data.lines[K.base(f.line)]; const s = l && l.stars[Math.min(Math.max(f.star || 1, 1), l.stars.length) - 1];
+      const mt = s && s.move && s.move.type; if (!mt) continue;
+      const a = K.abilityShare(f.line, f.star); sum += a * (typeEff(mt, my) - 1); w += 1;
+    }
+    return w ? Math.max(0.3, 1 + sum / w) : 1;
+  };
+  // Relikt-Wahl nach einem Wächter (Turm): Tafel = Typ für das Pokémon auf dem Feld, bei dem sie am meisten bringt (gerechnet),
+  // Signatur-Item nur, wenn seine Linie auf dem Feld steht. units: Brett [{line, star, items}], bench: [{line, star}].
+  // Liefert [{idx, score, kind: 'type'|'sig'|'none', type, line, gain}] (bestes zuerst).
+  K.relicPick = (arts, units, bench, foes) => {
+    const u = (units || []).map((x) => ({ line: K.base(x.line), star: x.star || 1, items: x.items || [] }));
+    const s0 = u.length ? K.fieldScore(u, { foes }).score : 0;
+    return (arts || []).map((art, idx) => {
+      const ty = K.itemType(art); const rl = K.relicLine(art);
+      if (ty) {
+        let best = null;
+        u.forEach((x, i) => {
+          if (x.items.length >= 3 || K.lineTypes(x.line).includes(ty) || x.items.some((it) => K.itemType(it) === ty)) return;
+          const next = u.slice(); next[i] = { ...x, items: [...x.items, art] }; const g = K.fieldScore(next, { foes }).score / Math.max(1e-9, s0) - 1;
+          if (!best || g > best.g) best = { g, line: x.line };
+        });
+        return best && best.g > 0.005 ? { idx, kind: 'type', type: ty, line: best.line, gain: best.g, score: 10 + 300 * best.g } : { idx, kind: 'none', type: ty, score: 2 };
+      }
+      if (rl) {
+        const on = u.find((x) => x.line === rl || CAMP_ALIAS[x.line] === rl); const bn = (bench || []).find((x) => K.base(x.line) === rl || CAMP_ALIAS[K.base(x.line)] === rl);
+        return on ? { idx, kind: 'sig', line: on.line, score: 12 + 4 * on.star } : bn ? { idx, kind: 'sig', line: K.base(bn.line), bench: true, score: 6 } : { idx, kind: 'none', score: 1 };
+      }
+      return { idx, kind: 'none', score: 0 };
+    }).sort((a, b) => b.score - a.score);
+  };
+  // Was der nächste Gegner mitbringt: Heiler (→ Anticura) und Assassinen (springen in die hinteren Reihen, bevorzugt in die Ecken)
+  K.foeInfo = (foes) => {
+    const fs = foes || []; const kind = (id) => { const l = data.lines[K.base(id)]; return l && l.stars[0].move ? l.stars[0].move.kind : null; };
+    return { healers: fs.filter((f) => HEALERS.has(K.base(f.line)) || kind(f.line) === 'heal').map((f) => f.line),
+      assassins: fs.filter((f) => K.lineRole(f.line) === 'assassin').map((f) => f.line) };
+  };
   // Bewertung einer Aufstellung: Summe der Kraft, jede mit den Aufschlägen ihrer aktiven Typ-Stufen
   // (Typ zählt pro verschiedener Linie, wie im Spiel). Typ-Vorteil nur auf den Schaden der Attacke: Kraft = √(Schaden × KP),
   // also wirkt ein Faktor e auf den Attacken-Anteil a als √(1 + a·(e − 1)).
@@ -380,7 +434,8 @@ function create(opts) {
       const b0 = K.base(u.line); let b = (dup.has(b0) ? 0.8 : 1) + team; dup.add(b0);
       const ts = new Set(K.lineTypes(u.line)); (u.items || []).forEach((it) => { const ty = K.itemType(it); if (ty) ts.add(ty); });
       for (const t of ts) if (lvOf[t] && (!data.traits[t] || data.traits[t].scope === 'type')) b += K.traitBonus(t, lvOf[t]);
-      const m = o.foes ? Math.sqrt(Math.max(0.1, 1 + K.abilityShare(u.line, u.star) * (K.matchup(u.line, u.star, o.foes) - 1))) : 1;
+      // Kraft = √(Schaden × aushaltbarer Schaden): eigener Typ-Vorteil wirkt auf den Schaden, der der Gegner auf das Aushalten
+      const m = o.foes ? Math.sqrt(Math.max(0.1, 1 + K.abilityShare(u.line, u.star) * (K.matchup(u.line, u.star, o.foes) - 1)) / K.defMatchup(u.line, o.foes)) : 1;
       sum += K.unitPower(u.line, u.star, K.statItems(u.items)) * b * m * (u.w || 1);
     }
     return { score: sum, traits: tr };
@@ -586,6 +641,20 @@ function create(opts) {
 
   /* ---------- Plan & Ratgeber (für PvP, Kampagne und Turm gleich) ---------- */
   // Typische Level/Gold je Stage aus dem Stage-Ablauf einer Comp
+  K.campLevelGoal = (stop) => (stop >= 22 ? 8 : stop >= 16 ? 7 : stop >= 10 ? 6 : stop >= 7 ? 5 : stop >= 5 ? 4 : 0);
+  // Legende-Kontrollpunkte (130+ Testläufe eines Spielers, Video pyo4sGhlNIc): wer sie verfehlt, verliert dort meist den Lauf.
+  // units: eigene Pokémon [{line, star}] (Brett + Bank), hp. Liefert {stop, why} oder null.
+  K.legendCheck = (stop, units, hp) => {
+    const u = units || []; const st = (l, s) => u.some((x) => K.base(x.line) === l && (x.star || 1) >= s);
+    if (stop === 3 || stop === 4) {
+      // Rocko: zwei ★★, deren Attacke Gestein oder Boden sehr effektiv trifft (Wasser, Pflanze, Boden, Kampf, Eis)
+      const hit = u.filter((x) => (x.star || 1) >= 2).filter((x) => { const l = data.lines[K.base(x.line)]; const mt = l && l.stars[Math.min(x.star, l.stars.length) - 1].move; return mt && mt.type && (typeEff(mt.type, ['rock']) >= 2 || typeEff(mt.type, ['ground']) >= 2); });
+      if (hit.length < 2) return { stop, why: 'brock', n: hit.length };
+    }
+    if (stop >= 14 && stop <= 16) { const s3 = u.some((x) => (x.star || 1) >= 3); if (!s3 || (hp != null && hp < 60)) return { stop, why: 'koga', s3, hp }; }
+    if (stop >= 23 && stop <= 25 && !(st('snorlax', 2) && st('bulbasaur', 2))) return { stop, why: 'tanks' };
+    return null;
+  };
   K.stageNorm = (c, stage) => {
     const st = c && c.guide && c.guide.stages ? c.guide.stages.find((g) => g.stage === stage) : null; if (!st) return null;
     const mode = (arr) => arr.reduce((a, b) => (b.share > a.share ? b : a));
@@ -745,8 +814,13 @@ function create(opts) {
   // Segen des Turms (alle 10 Etagen ab 11): Karte über ihr Bild erkennen (data.boons[].art, beim Geschenk das Item selbst).
   // Keine Statistik in der API, darum Faustregeln: Komponenten/Items wirken die ganze Partie, Level nur mit wartenden Pokémon,
   // Trank/Asche nur bei wenig KP. o: { arts: [bild-id], level, hp, want: {itemId: Gewicht}, waiting, lost, floor }
-  K.boonOf = (art) => {
+  // Neuer Turm (v41): Segen, die data.json (Regeln 40) noch nicht kennt – Bild laut Spielcode. „Überreste“ (+KP je gewonnener Etage)
+  // hat dasselbe Bild wie das Item Überreste aus einem Geschenk: Der Segen trägt eine Zahl im Kartentext („+2 KP …“).
+  const NEW_BOONS = { 'hp-up': 'hpup', 'black-belt': 'team', 'silph-scope': 'trail', 'star-piece': 'fbag' };
+  K.boonOf = (art, text) => {
     if (!art) return null;
+    if (NEW_BOONS[art]) return { id: NEW_BOONS[art], item: null };
+    if (art === 'leftovers' && (text == null || /\+\s*\d/.test(text))) return { id: 'leftovers', item: null };
     const b = Object.entries(data.boons || {}).find(([, x]) => x.art === art); if (b) return { id: b[0], item: null };
     return data.items[art] && data.items[art].k === 'full' ? { id: 'item', item: art } : null;
   };
@@ -755,14 +829,21 @@ function create(opts) {
     const tierV = (id) => { const x = K.itemTier[id]; return x ? ({ S: 10, A: 7, B: 4, C: 1 }[x.tier] || 0) : 4; };
     const out = [];
     (o.arts || []).forEach((art, idx) => {
-      const b = K.boonOf(art); if (!b) return; let s = 10; let why = b.id;
+      const b = K.boonOf(art, (o.texts || [])[idx]); if (!b) return; let s = 10; let why = b.id;
       switch (b.id) {
         case 'vitamins': s = 30; break;
         case 'item': s = 24 + tierV(b.item) + (want[b.item] ? 12 : 0); why = want[b.item] ? 'itemPlan' : 'item'; break;
-        case 'candy': s = lvl >= 9 ? 0 : 20 + (o.waiting > 0 || o.lost ? 10 : 0); why = o.waiting > 0 || o.lost ? 'candyNeed' : 'candy'; break;
+        // Sonderbonbon: erst ab Etage 41 ein ganzes Level (davor 4–8 EP) – dann der stärkste Segen (Video: mit Level 9 keine Niederlage von 41 bis 59)
+        case 'candy': s = lvl >= 9 ? 0 : floor >= 41 ? 38 : 12 + (o.waiting > 0 || o.lost ? 6 : 0); why = floor >= 41 ? (lvl >= 9 ? 'candy' : 'candyLevel') : 'candyXp'; break;
+        // Ausdauer-Segen zuerst (KP+, Zauberasche, Überreste): Niederlagen kosten im Turm KP, ab Etage 40 steigt der Druck
+        case 'hpup': s = 30; break;
+        case 'leftovers': s = 29; break;
+        case 'team': s = floor >= 30 ? 22 : 16; break;
+        case 'trail': s = 10; break;
+        case 'fbag': s = 12; break;
         case 'expshare': s = lvl >= 8 ? 4 : 20; break;
         case 'potion': s = hp <= 50 ? 34 : 8; why = hp <= 50 ? 'potionNeed' : 'potion'; break;
-        case 'ash': s = hp <= 40 ? 30 : 14; break;
+        case 'ash': s = hp <= 40 ? 34 : 28; break;
         case 'amulet': s = floor < 40 ? 22 : 12; break;
         case 'nugget': s = 18; break;
         case 'egg': s = 22; break;
@@ -811,7 +892,8 @@ function create(opts) {
   };
   // Grobe Rolle einer Linie aus Reichweite und Attacke (die API nennt keine Rollen)
   K.lineRole = (id) => {
-    const l = data.lines[K.base(id)]; if (!l) return null; const s = l.stars[0]; const kind = s.move && s.move.kind; const hp = s.stats ? s.stats.hp : 0;
+    const b = K.base(id); const g = GAME_ROLE[b] || GAME_ROLE[CAMP_ALIAS[b]]; if (g) return g;
+    const l = data.lines[b]; if (!l) return null; const s = l.stars[0]; const kind = s.move && s.move.kind; const hp = s.stats ? s.stats.hp : 0;
     if (['heal', 'shield', 'buff'].includes(kind) && l.range >= 2) return 'support';
     if (l.range >= 3) return 'marksman';
     if (['dash', 'teleport', 'execute'].includes(kind)) return 'assassin';
@@ -989,9 +1071,13 @@ function create(opts) {
     }
     // Gerechnet: Mit einem Platz mehr und dem passenden Shop-Pokémon wird das Feld deutlich stärker -> EP jetzt, auch unter der Zinsgrenze
     if (xpAdd && pve && !xpTip && xpAdd.need * 4 + xpAdd.cost <= gold) xpTip = { k: 'xp', buys: xpAdd.need, need: xpAdd.need, level: lvl + 1, lost: !!o.lost, add: xpAdd.line, gain: xpAdd.g };
+    // Abenteuer: EP-Fahrplan aus 130+ Testläufen eines Spielers (Legende): Level 4 an Station 5, 5 an 7, 6 an 10, 7 an 16, 8 an 22.
+    // Hinter dem Plan nur die nötigen EP kaufen (auch unter der Zinsgrenze) – jedes weitere Gold ins Würfeln.
+    const goal = o.mode === 'camp' && o.stop ? K.campLevelGoal(o.stop) : 0;
+    if (pve && !xpTip && !o.nz && lvl && lvl < goal) { const need = o.xp && o.xp.buys ? o.xp.buys : 1; if (need * 4 <= left) xpTip = { k: 'xp', buys: need, need, level: lvl + 1, lost: !!o.lost, goal, stop: o.stop }; }
     if (xpTip) tips.push(xpTip);
     if (!buys.some((b) => b.kind !== 'trait' && b.affordable) && !o.nz) {
-      if (gold < cap && !(pve && o.lost)) tips.push({ k: 'save', cap, max: it.max, gold });
+      if (gold < cap && !(pve && o.lost) && !(xpTip && xpTip.goal)) tips.push({ k: 'save', cap, max: it.max, gold });
       else if (missing > 0 && gold >= cap) tips.push({ k: 'roll', cap, missing });
       else if (pve && !xpTip && spare >= 2) tips.push({ k: 'rollStar', cap });
     }
