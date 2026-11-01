@@ -1,6 +1,6 @@
 # Privacy · Datenschutz – Kanto Coach
 
-*Last updated / Stand: 2026-11-01 · Version 0.8.2 Beta*
+*Last updated / Stand: 2026-11-01 · Version 0.8.3 Beta*
 
 ## English
 
@@ -8,7 +8,7 @@
 
 **What it reads:** The extension is loaded on einoow.com but only becomes active on Kanto Tactics pages (`einoow.com/kanto-tactics`, `/pvp`, `/duo`, `/tower`, `/nuzlocke`). There it only reads content visible in the game: image addresses and labels of the shop cards, bench, Pokémon on the board, item bag, plus level, gold, HP and the progress bar. It does not read game variables, network traffic, input, chat or account/profile data.
 
-**What it stores:** settings (language, optional server address, detection on/off), overlay state (position, chosen plan, team), cached game data and images, and the last game state it read. Everything stays local in your browser (`chrome.storage`). Settings may be synced between your devices via Chrome sync if you have enabled it.
+**What it stores:** settings (language, optional server address, detection on/off), overlay state (position, chosen plan, team), cached game data and images, the last game state it read, and a **match log** (per round: shop, bench, board, items, gold, level, enemies, the coach’s advice and the fight result – at most 40 games; can be paused or deleted in the overlay’s Team tab). Everything stays local in your browser (`chrome.storage`). Settings may be synced between your devices via Chrome sync if you have enabled it.
 
 **Requests it makes:**
 - `https://einoow.com/api/meta/kanto/` – public stats and game rules (at most once an hour, cached).
@@ -28,7 +28,7 @@ No data about you is sent with these requests; they are plain downloads of publi
 
 **Was die Erweiterung liest:** Sie wird auf einoow.com geladen, wird aber nur auf den Seiten von Kanto Tactics aktiv (`einoow.com/kanto-tactics`, `/pvp`, `/duo`, `/tower`, `/nuzlocke`). Dort liest sie nur Inhalte, die im Spiel sichtbar sind: Bildadressen und Beschriftungen der Shop-Karten, der Bank, der Pokémon auf dem Brett, des Item-Beutels sowie Level, Gold, KP und die Fortschrittsleiste. Sie liest keine Spielvariablen, keinen Netzwerkverkehr, keine Eingaben, keine Chat-Inhalte und keine Konto- oder Profildaten.
 
-**Was gespeichert wird:** Einstellungen (Sprache, optionale Server-Adresse, Erkennung an/aus), der Zustand des Overlays (Position, gewählter Plan, Team), zwischengespeicherte Spieldaten und Bilder sowie der zuletzt gelesene Spielstand. Alles liegt nur lokal in deinem Browser (`chrome.storage`). Einstellungen können über die Chrome-Synchronisierung deines Google-Kontos zwischen deinen Geräten abgeglichen werden, wenn du diese aktiviert hast.
+**Was gespeichert wird:** Einstellungen (Sprache, optionale Server-Adresse, Erkennung an/aus), der Zustand des Overlays (Position, gewählter Plan, Team), zwischengespeicherte Spieldaten und Bilder, der zuletzt gelesene Spielstand und ein **Partie-Protokoll** (je Runde: Shop, Bank, Brett, Items, Gold, Level, Gegner, der Rat des Coaches und das Kampfergebnis – höchstens 40 Partien; im Overlay unter „Team“ pausier- und löschbar). Alles liegt nur lokal in deinem Browser (`chrome.storage`). Einstellungen können über die Chrome-Synchronisierung deines Google-Kontos zwischen deinen Geräten abgeglichen werden, wenn du diese aktiviert hast.
 
 **Welche Anfragen sie stellt:**
 - `https://einoow.com/api/meta/kanto/` – öffentliche Statistik und Spielregeln (höchstens einmal pro Stunde, zwischengespeichert).

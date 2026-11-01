@@ -4,6 +4,15 @@ All versions below 1.0 are **beta** – the extension stays in beta until everyt
 
 Alle Versionen unter 1.0 sind **Beta** – die Erweiterung bleibt Beta, bis alles in jedem Modus sauber läuft. (Frühere Releases hießen 2.x; es sind dieselben Stände wie 0.1–0.7.)
 
+## 0.8.3 Beta – 2026-11-01
+**EN**
+- **Match log:** the coach records every round locally – shop, bench, board, items, gold, level, the next enemy, what it advised and the fight result. In the overlay (Team tab) you can save it as a file, pause or delete it. Nothing is sent anywhere. Sharing a few of these files lets the advice be tuned on real wins and losses.
+- Tips about the next enemy (healers, assassins) and the Legend checkpoints now show up no matter which tab is open.
+
+**DE**
+- **Partie-Protokoll:** Der Coach zeichnet jede Runde lokal auf – Shop, Bank, Brett, Items, Gold, Level, den nächsten Gegner, seinen Rat und das Kampfergebnis. Im Overlay (Reiter „Team“) kannst du es als Datei speichern, pausieren oder löschen. Es wird nichts gesendet. Wenn du ein paar dieser Dateien weitergibst, lassen sich die Empfehlungen an echten Siegen und Niederlagen ausrichten.
+- Tipps zum nächsten Gegner (Heiler, Assassinen) und die Legende-Kontrollpunkte erscheinen jetzt unabhängig vom offenen Reiter.
+
 ## 0.8.2 Beta – 2026-11-01
 **EN**
 - **Relic pick (Tower, after each guardian):** the coach now recognizes the “Relic!” window and marks the best card – a Plate goes where it adds the most to your board (calculated, e.g. “gives Golbat the Rock type – board 2% stronger”), a signature item only counts if its Pokémon is yours. Even a useless relic beats “None” (you can sell it).

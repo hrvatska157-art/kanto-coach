@@ -115,7 +115,9 @@ de: {
   buildable: 'Chance', setTarget: 'Als Ziel', missing: 'fehlt', avg: 'Ø', noPred: 'Trag zuerst Pokémon in Team oder Shop ein.',
   teamHint: 'Pokémon, die du besitzt (Brett und Bank). In der Planungsphase liest der Coach dein Team direkt aus dem Spiel, auch nach Tausch-Segen oder Verkauf. Kopien zählen für die Sterne: 3 = ★★, 9 = ★★★.',
   addUnit: '+ Pokémon', codePh: 'Team-Code aus dem Spiel (KT1;…)', loadCode: 'Code laden', codeBad: 'Kein gültiger Team-Code', codeOk: (n) => `${n} Pokémon geladen`,
-  newGame: 'Neues Spiel', newGameHint: 'Leert Team und Shop (Ziel bleibt).', noUnits: 'Noch keine Pokémon eingetragen.',
+  newGame: 'Neues Spiel', newGameHint: 'Leert Team und Shop (Ziel bleibt).',
+  logT: 'Partie-Protokoll', logInfo: (g, r) => `${g} Partien, ${r} Runden aufgezeichnet`, logOff: 'Pausiert – es wird nichts aufgezeichnet.', logSave: 'Als Datei speichern', logClear: 'Löschen', logPause: 'Pausieren', logOn: 'Weiter aufzeichnen',
+  logHint: 'Pro Runde: Shop, Bank, Brett, Items, Gold, Level, Gegner, was der Coach geraten hat und das Kampfergebnis. Bleibt auf deinem PC – nichts wird gesendet. Die Datei kannst du zur Auswertung weitergeben (enthält keinen Spielernamen).', logClearQ: 'Ganzes Protokoll löschen?', noUnits: 'Noch keine Pokémon eingetragen.',
   data: (d, s) => `Daten ${d} · ${s}`, credit: 'Daten: Kanto Tactics · einoow.com', minimize: 'Minimieren', close: 'Schließen (Alt+K)',
 },
 en: {
@@ -224,7 +226,9 @@ en: {
   buildable: 'Buildable', setTarget: 'Set target', missing: 'missing', avg: 'Avg', noPred: 'Add Pokémon to your team or the shop first.',
   teamHint: 'Pokémon you own (board and bench). During planning the coach reads your team straight from the game, even after swap boons or selling. Copies count towards stars: 3 = ★★, 9 = ★★★.',
   addUnit: '+ Pokémon', codePh: 'Team code from the game (KT1;…)', loadCode: 'Load code', codeBad: 'Not a valid team code', codeOk: (n) => `${n} Pokémon loaded`,
-  newGame: 'New game', newGameHint: 'Clears team and shop (target stays).', noUnits: 'No Pokémon added yet.',
+  newGame: 'New game', newGameHint: 'Clears team and shop (target stays).',
+  logT: 'Match log', logInfo: (g, r) => `${g} games, ${r} rounds recorded`, logOff: 'Paused – nothing is recorded.', logSave: 'Save as file', logClear: 'Delete', logPause: 'Pause', logOn: 'Resume recording',
+  logHint: 'Per round: shop, bench, board, items, gold, level, enemies, what the coach advised and the fight result. Stays on your PC – nothing is sent. You can share the file for analysis (no player name inside).', logClearQ: 'Delete the whole log?', noUnits: 'No Pokémon added yet.',
   data: (d, s) => `Data ${d} · ${s}`, credit: 'Data: Kanto Tactics · einoow.com', minimize: 'Minimize', close: 'Close (Alt+K)',
 }};
 
@@ -614,6 +618,18 @@ function advice() {
     adv.buys = pk ? [{ line: pk.line, slot: pk.idx, cost: K.lineCost(pk.line) || 1, kind: 'pick', prio: 100, why: 'nz', reason: pk.why, affordable: true }] : [];
     adv.tips = adv.tips.filter((x) => x.k !== 'save' && x.k !== 'roll');
   }
+  // Nächster Gegner (Turm/Abenteuer, in der Planung sichtbar): Assassinen springen nach hinten, Heiler brauchen Anticura
+  if (campMode()) {
+    const fi = K.foeInfo(foesNow()); const nm = (ls) => [...new Set(ls.map((l) => K.baseName(l)))].join(', ');
+    if (fi.assassins.length >= 2) adv.tips.push({ k: 'foeAssassin', names: nm(fi.assassins) });
+    const hasCut = Object.values(heldItems()).some((h) => h.some((i) => i === 'poison-barb' || i === 'flame-orb'));
+    if (fi.healers.length && !hasCut) adv.tips.push({ k: 'foeHeal', names: nm(fi.healers) });
+    // Abenteuer Legende (Kanto): Kontrollpunkte vor Rocko, Koga und Pyro
+    const g = live && isLive() && live.game;
+    if (g && g.mode === 'camp' && g.dif === 3 && g.adv === 'gyms' && g.stop && live.planning) {
+      const lc = K.legendCheck(g.stop, [...(live.board || []), ...(live.bench || [])], live.hp); if (lc) adv.tips.unshift({ k: 'legend', ...lc });
+    }
+  }
   return (adviceMemo = adv);
 }
 const ST_COL = { ok: '#4fcb88', own: '#8ab4ff', shop: '#f2bf45', miss: '#5b6478' };
@@ -888,18 +904,6 @@ function viewNow() {
   for (const b of adv.buys) steps.push(`<div class="step ${b.affordable ? '' : 'dim'}"><span class="sn">${b.affordable ? ++bn : '–'}</span>${av(b.line, 1, 'sm')}<span><b>${esc(tt.doBuy(K.baseName(b.line)))}</b><span class="sub">${esc(buyWhy(b))}${b.affordable ? '' : ' · ' + esc(tt.noGold)}</span></span></div>`);
   const fs = fieldSteps();
   const sells = sellList(); if (sells.length) adv.tips.push({ k: 'sell', names: sells.map((l) => K.baseName(l)) });
-  // Nächster Gegner (Turm/Abenteuer, in der Planung sichtbar): Assassinen springen nach hinten, Heiler brauchen Anticura
-  if (campMode()) {
-    const fi = K.foeInfo(foesNow()); const nm = (ls) => [...new Set(ls.map((l) => K.baseName(l)))].join(', ');
-    if (fi.assassins.length >= 2) adv.tips.push({ k: 'foeAssassin', names: nm(fi.assassins) });
-    const hasCut = Object.values(heldItems()).some((h) => h.some((i) => i === 'poison-barb' || i === 'flame-orb'));
-    if (fi.healers.length && !hasCut) adv.tips.push({ k: 'foeHeal', names: nm(fi.healers) });
-    // Abenteuer Legende (Kanto): Kontrollpunkte vor Rocko, Koga und Pyro
-    const g = live && isLive() && live.game;
-    if (g && g.mode === 'camp' && g.dif === 3 && g.adv === 'gyms' && g.stop && live.planning) {
-      const lc = K.legendCheck(g.stop, [...(live.board || []), ...(live.bench || [])], live.hp); if (lc) adv.tips.unshift({ k: 'legend', ...lc });
-    }
-  }
   for (const x of fs) steps.push(x.k === 'place'
     ? `<div class="step"><span class="sn" style="background:#4fcb88">⬆</span>${av(x.line, starsOf(ownOf(x.line)) || 1, 'sm')}<span><b>${esc(tt.placeStep(K.baseName(x.line)))}</b><span class="sub">${esc(tt.placeSub)}</span></span></div>`
     : `<div class="step"><span class="sn" style="background:#4fcb88">⇄</span>${av(x.line, starsOf(ownOf(x.line)) || 1, 'sm')}<span><b>${esc(tt.swapStep(K.unitName(x.line, x.star), K.unitName(x.out, x.outStar)))}</b><span class="sub">${esc(tt.swapSub(x.gain))}</span></span></div>`);
@@ -1045,7 +1049,14 @@ function viewTeam() {
     <div class="list">${lines.length ? lines.map((l) => `<div class="u">${av(l, starsOf(S.owned[l]), 'sm')}<span class="n">${esc(K.unitName(l, starsOf(S.owned[l])))} <span class="stars">${'★'.repeat(starsOf(S.owned[l]))}</span></span><span class="cnt"><button data-dec="${l}">−</button><b style="min-width:18px;text-align:center">${S.owned[l]}</b><button data-inc="${l}">+</button></span></div>`).join('') : `<p class="hint">${esc(tt.noUnits)}</p>`}</div>
     <div class="row"><button class="btn sm" data-act="addown">${esc(tt.addUnit)}</button></div>
     <div class="row" style="flex-wrap:nowrap"><input type="text" id="code" placeholder="${esc(tt.codePh)}"><button class="btn sm" data-act="code">${esc(tt.loadCode)}</button></div>
-    <div class="row"><button class="btn sm" data-act="newgame">${esc(tt.newGame)}</button><span class="sub">${esc(tt.newGameHint)}</span></div>`;
+    <div class="row"><button class="btn sm" data-act="newgame">${esc(tt.newGame)}</button><span class="sub">${esc(tt.newGameHint)}</span></div>
+    ${logCard()}`;
+}
+function logCard() {
+  const tt = t(); const games = (LOG && LOG.games) || []; const rounds = games.reduce((a, g) => a + g.rounds.length, 0);
+  return `<div class="card"><h4>${esc(tt.logT)}</h4><span class="sub">${esc(S.logOff ? tt.logOff : tt.logInfo(games.length, rounds))}</span>
+    <div class="row"><button class="btn sm" data-act="logsave" ${games.length ? '' : 'disabled'}>${esc(tt.logSave)}</button><button class="btn sm" data-act="logclear" ${games.length ? '' : 'disabled'}>${esc(tt.logClear)}</button><button class="btn sm" data-act="logtoggle">${esc(S.logOff ? tt.logOn : tt.logPause)}</button></div>
+    <span class="sub">${esc(tt.logHint)}</span></div>`;
 }
 function viewPicker() {
   const tt = t(); const q = pickQ;
@@ -1099,6 +1110,9 @@ box.addEventListener('click', (e) => {
     case 'camprety': CAMP = { key: '', mode: null, loading: false, err: '', planKey: '', plan: null, endKey: '', end: null }; render(); break;
     case 'fieldshow': S.fieldShow = !S.fieldShow; persist(); setField({ show: S.fieldShow, edit: false }); render(); break;
     case 'align': S.fieldShow = true; persist(); setField({ show: true, edit: true }); toast(t().fieldAlignHint.split('. ')[1] + '.'); render(); break;
+    case 'logsave': logDownload(); break;
+    case 'logclear': if (window.confirm(t().logClearQ)) { LOG = { v: 1, games: [] }; logPend = null; logOpen = null; try { chrome.storage.local.set({ kkLog: LOG }); } catch (e) {} render(); } break;
+    case 'logtoggle': S.logOff = !S.logOff; persist(); render(); break;
     case 'newgame': S.owned = {}; S.items = {}; S.target = null; S.plans = {}; S.planAuto = {}; S.shop = [null, null, null, null, null]; S.level = 3; S.gold = 0; persist(); render(); break;
     case 'code': {
       const r = K.parseTeamCode((root.getElementById('code') || {}).value);
@@ -1372,18 +1386,94 @@ function noteSeen(l) {
   if (ch) { S.seen = { ...(S.seen || {}), [m]: cur }; if (K) K.setSeen(cur, campMode()); }
 }
 let lastLiveSig = '', lastTab = null;
+/* ---------- Partie-Protokoll (nur lokal) ----------
+ * Je Planungsphase der letzte Stand vor dem Kampf (Shop, Bank, Brett, Items, Gold, Level, Gegner) und was der Coach geraten hat;
+ * beim nächsten Planungsbeginn das Ergebnis (KP-Verlust, Station/Etage/Runde). Liegt in chrome.storage.local (kkLog), wird nie
+ * gesendet – nur per Knopf als Datei gespeichert. Daraus lassen sich die Gewichte an echten Siegen und Niederlagen ausrichten.
+ */
+let LOG = null, logPend = null, logOpen = null, logSaveT = 0;
+const LOG_MAX_GAMES = 40, LOG_MAX_BYTES = 1500000;
+const logWhere = (g) => (!g ? null : g.mode === 'pvp' ? (g.stage ? g.stage + '-' + g.round : null) : g.stop || null);
+const logNum = (w) => (w == null ? 0 : typeof w === 'number' ? w : String(w).split('-').reduce((a, x) => a * 100 + (+x || 0), 0));
+function logSave() {
+  clearTimeout(logSaveT);
+  logSaveT = setTimeout(() => {
+    if (!LOG) return;
+    while (LOG.games.length > LOG_MAX_GAMES || (LOG.games.length > 1 && JSON.stringify(LOG).length > LOG_MAX_BYTES)) LOG.games.shift();
+    try { chrome.storage.local.set({ kkLog: LOG }); } catch (e) {}
+  }, 1500);
+}
+const logUnits = (arr) => (arr || []).map((u) => [K.base(u.line), u.star || 1, ...(u.items && u.items.length ? [u.items] : [])]);
+// Aktuelle Partie: neu, wenn Modus wechselt, das Spiel neu beginnt (Level/Station zurück) oder lange nichts kam
+function logGame(l) {
+  const g = l.game || {}; const mode = g.mode || gm(); const w = logNum(logWhere(g)); const games = LOG.games; let cur = games[games.length - 1];
+  const stale = cur && Date.now() - cur.last > 3 * 3600 * 1000;
+  const restart = cur && w && cur.at && w < cur.at && !(mode === 'tower' && cur.at - w < 1);
+  if (!cur || cur.end || cur.mode !== mode || stale || restart || (cur.adv || null) !== (g.adv || null)) {
+    cur = { id: Date.now().toString(36), mode, adv: g.adv || null, dif: g.dif || null, nz: !!g.nz, start: new Date().toISOString(), last: Date.now(), at: w, ver: chrome.runtime.getManifest().version, rounds: [] };
+    games.push(cur);
+  }
+  return cur;
+}
+function logTick(l, startPlan, endPlan) {
+  if (!LOG || !K || S.logOff || !l || !l.game) return;
+  const g = l.game;
+  // Beginn einer Planungsphase: Ergebnis des letzten Kampfs nachtragen
+  if (startPlan && logOpen) {
+    logOpen.res = { hpLoss: lostBy, hp: l.hp, next: logWhere(g), lost: lostBy > 0 };
+    logOpen = null; logSave();
+  }
+  if (l.planning) {
+    const adv = advice(); const c = planComp(); const fsx = fieldSteps();
+    logPend = {
+      at: logWhere(g), t: Date.now(), hp: l.hp, gold: l.gold, level: l.level, xp: l.xp || null, teamN: l.teamN,
+      shop: (l.shopInfo || []).map((x) => (x && x.line ? [x.line, x.cost || 0, x.merge || 0] : null)),
+      board: logUnits(l.board), bench: logUnits(l.bench), bag: l.items || {}, foes: logUnits(l.foes),
+      traits: K.traitsFor((l.board || []).map((u) => ({ line: u.line, items: u.items || [] }))).filter((x) => x.lv).map((x) => [x.type, x.n, x.lv]),
+      plan: c ? c.id : null,
+      advice: {
+        buys: (adv.buys || []).slice(0, 6).map((b) => [b.line, b.kind, b.why || null]),
+        tips: (adv.tips || []).map((x) => x.k), field: fsx.map((x) => [x.k, x.line, x.out || null]),
+        items: itemMarks().steps.map((x) => [x.k, x.w.id, K.base(x.w.unit.line)]),
+      },
+    };
+    // Auswahl-Fenster in dieser Planungsphase (Segen, Relikt, Item-Wahl, Siegel, Safari, Ereignis): Angebot + Empfehlung
+    const picks = [];
+    const br = boonRec(); if (br) picks.push({ k: br.relic ? 'relic' : 'boon', opts: br.labels, rec: br.picks[0] ? br.picks[0].idx : null });
+    const lr = lootRec(); if (lr && lr.length) picks.push({ k: 'loot', opts: (live.loot.items || []), rec: lr[0].idx });
+    const sl = sealRec(); if (sl) picks.push({ k: 'seal', opts: (live.seal && live.seal.labels) || null, rec: sl.picks[0].idx });
+    if (picks.length) logPend.picks = picks;
+  }
+  // Ende der Planungsphase = Kampf beginnt: letzten Stand als Runde ablegen
+  if (endPlan && logPend) {
+    const game = logGame(l); game.rounds.push(logPend); game.last = Date.now(); game.at = logNum(logPend.at) || game.at;
+    logOpen = logPend; logPend = null; logSave();
+  }
+  // Turm/Nuzlocke vorbei (0 KP): Partie abschließen
+  if (l.hp === 0 && LOG.games.length) { const cur = LOG.games[LOG.games.length - 1]; if (!cur.end) { cur.end = { hp: 0, at: logWhere(g), t: Date.now() }; logSave(); } }
+}
+function logDownload() {
+  if (!LOG || !LOG.games.length) return;
+  const d = new Date(); const pad = (n) => String(n).padStart(2, '0');
+  const file = { app: 'Kanto Coach', kind: 'match-log', v: 1, version: chrome.runtime.getManifest().version, exported: d.toISOString(), lang, games: LOG.games };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(file)], { type: 'application/json' }));
+  const a = document.createElement('a'); a.href = url; a.download = `kanto-coach-protokoll-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.json`;
+  // Im eigenen Shadow-DOM klicken: Die Spielseite fängt Link-Klicks im Dokument ab (Seitenwechsel ohne Neuladen)
+  a.addEventListener('click', (e) => e.stopPropagation()); root.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
 function applyLive(raw) {
   if (!raw || !raw.ts) return;
   // Hauptmenü: kein Spielstand – Overlay bleibt bei den letzten Werten, aber nicht mehr „live“
   if (raw.lobby) { live = null; liveTs = 0; lastLiveSig = ''; render(); return; }
   const l = canonLive(raw);
+  const startPlan = !!l.planning && !wasPlanning, endPlan = !l.planning && wasPlanning;
   // Beginn einer Planungsphase: KP mit der letzten vergleichen -> letzter Kampf verloren?
   if (l.planning && !wasPlanning && l.hp != null) { lostBy = hpAtPlan != null && l.hp < hpAtPlan ? hpAtPlan - l.hp : 0; hpAtPlan = l.hp; }
   wasPlanning = !!l.planning; manualMode = false;
   // Nur der Herzschlag ohne Änderung: nichts neu zeichnen (sonst springt die Liste nach oben)
   const sig = JSON.stringify({ ...l, ts: 0 }); const wasLive = isLive();
   live = l; liveTs = l.ts;
-  if (sig === lastLiveSig && wasLive) return;
+  if (sig === lastLiveSig && wasLive) { if (startPlan || endPlan) logTick(l, startPlan, endPlan); return; }
   lastLiveSig = sig;
   if (langSel === 'auto') { const nl = resolveLang(); if (nl !== lang) { lang = nl; if (K) K.setLang(lang); } }
   if (l.level != null && S.level >= 5 && l.level <= 2 && Object.keys(S.owned).length) { S.owned = {}; S.items = {}; S.target = null; S.plans = {}; S.planAuto = {}; S.foesSeen = []; lostBy = 0; hpAtPlan = null; toast(t().newGame2); }
@@ -1418,6 +1508,7 @@ function applyLive(raw) {
   }
   if (l.itemsSeen && l.items) S.items = { ...l.items };
   sel = null; persist(); render();
+  try { logTick(l, startPlan, endPlan); } catch (e) { /* Protokoll darf das Overlay nie stören */ }
 }
 
 /* ---------- Nachrichten vom Hintergrund ---------- */
@@ -1459,7 +1550,8 @@ async function init() {
   const st = await chrome.storage.local.get('ov'); S = { ...DEF, ...(st.ov || {}) };
   const s = await chrome.storage.sync.get({ lang: 'auto', server: '' }); langSel = s.lang || 'auto'; lang = resolveLang(); server = (s.server || '').replace(/\/+$/, '');
   loadData(false);
-  const lv = await chrome.storage.local.get(['kkLive', 'kkCalib']); calibrated = Object.keys(lv.kkCalib || {}).length > 0;
+  const lv = await chrome.storage.local.get(['kkLive', 'kkCalib', 'kkLog']); calibrated = Object.keys(lv.kkCalib || {}).length > 0;
+  LOG = lv.kkLog && Array.isArray(lv.kkLog.games) ? lv.kkLog : { v: 1, games: [] };
   if (lv.kkLive && !lv.kkLive.lobby && Date.now() - lv.kkLive.ts < 20000) { liveTs = lv.kkLive.ts; live = lv.kkLive; }
 }
 init();
