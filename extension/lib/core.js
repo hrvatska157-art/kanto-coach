@@ -939,7 +939,9 @@ function create(opts) {
   // Ratgeber: Was kaufe ich, was mache ich mit dem Gold, was fehlt dem Feld?
   // o: { plan: [{line, share, star}], owned, board: [{line, star}], shop: [line], level, gold, stage, comp }
   // Ziel-Level im PvP: aus der Statistik der Comp (norm), sonst übliche Werte (Stage 2 → 5, 3 → 7, 4 → 8, ab 5 → 9)
-  const pvpGoal = (stage, norm) => Math.min(9, norm ? norm.level : ({ 1: 3, 2: 5, 3: 7, 4: 8 }[stage || 3] || 9));
+  // Ziel-Level je Stage: mindestens der übliche Fahrplan (2 → 5, 3 → 7, 4 → 8) – die Comp-Statistik allein lag oft darunter
+  // (Bot-Protokoll: Stage 3 komplett auf Level 6, in Stage 4 eine Stufe unter den Gegnern, Platz 5)
+  const pvpGoal = (stage, norm) => { const st = typeof stage === 'number' ? stage : parseInt(stage, 10) || 3; return Math.min(9, Math.max(norm ? norm.level : 0, { 1: 3, 2: 5, 3: 7, 4: 8 }[st] || 9)); };
   K.advise = (o) => {
     const owned = o.owned || {}; const plan = o.plan || []; const pl = {}; plan.forEach((u, i) => { const b = K.base(u.line); if (!pl[b]) pl[b] = { ...u, rank: i }; });
     const boardLines = [...new Set((o.board || []).map((u) => K.base(u.line)))];
@@ -965,6 +967,9 @@ function create(opts) {
       else if (inPlan && own < tgt(inPlan) && own % 3 === 1) { kind = 'buy'; prio = 50 - inPlan.rank; why = 'pair'; }
       // Plan will ★★★ und du hast ★★: jede weitere Kopie zählt (im Abenteuer/Turm ist ★★★ besonders stark)
       else if (inPlan && own >= 3 && own < tgt(inPlan)) { kind = 'buy'; prio = 44 - inPlan.rank + (o.stage == null && o.mode && o.mode !== 'pvp' ? 6 : 0); why = 'toward3'; }
+      // Ohne Plan-Grund: Kopien von Pokémon, die auf dem Feld stehen oder dorthin gehören, Richtung ★★/★★★ (★★ ≈ 1,8× Werte).
+      // Ohne das blieb im Abenteuer ohne Plan alles auf ★ (Bot-Protokoll: Station 21 nur ★-Pokémon, 46 % Niederlagen)
+      else if (own > 0 && own < 9 && (onField || (field0 && field0.units.some((u) => K.base(u.line) === K.base(line))))) { kind = 'buy'; prio = (own % 3 === 1 ? 40 : 34) + (o.stage == null && o.mode && o.mode !== 'pvp' ? 4 : 0); why = 'fieldPair'; }
       else if (!own && field0 && (o.benchN == null || o.benchN < 8)) { pend.push({ line, slot }); return; }
       else if (!field0 && !onField && !own && (o.benchN == null || o.benchN < 7) && (o.teamN == null || !o.level || o.teamN < o.level)) {
         // Ohne Kandidaten (Shop von Hand): Typ-Stufe vervollständigen, wenn ein Platz frei ist
@@ -1014,7 +1019,9 @@ function create(opts) {
     // Ein Platz mehr (EP) plus ein Shop-Pokémon: Lohnt sich der Aufstieg jetzt? (z. B. Level 8 und Bluzuk für Käfer 3)
     // Nur Abenteuer/Turm – im PvP regelt das Level-Ziel der Stage den Aufstieg.
     let xpAdd = null; const pveMode = o.stage == null && !!o.mode && o.mode !== 'pvp';
-    if (field0 && pveMode && slots && slots < 9 && o.xp && !o.nz) {
+    // Abenteuer: höchstens ein Level über dem Fahrplan (sonst kauft er an Station 12 bis Level 8 und hat danach kein Gold)
+    const overGoal = o.mode === 'camp' && o.stop && slots >= K.campLevelGoal(o.stop) + 1 && !o.lost;
+    if (field0 && pveMode && slots && slots < 9 && o.xp && !o.nz && !overGoal) {
       const need = o.xp.buys || 1; const fb = K.bestField(cands, slots, { foes: o.foes }); // Feld nach den Käufen oben
       const spent = buys.reduce((a, b) => a + b.cost, 0);
       (o.shop || []).forEach((line, slot) => {
@@ -1068,6 +1075,9 @@ function create(opts) {
       if (freeSoon) { /* Aufstieg kommt nächste Runde von selbst */ } else if (((spare >= 4 && (waiting > 0 || plan.length > lvl)) || (o.lost && left >= 4)) && need * 4 <= budget) xpTip = { k: 'xp', buys: need, need, level: lvl + 1, lost: !!o.lost };
       // Nach einer Niederlage würfeln nur mit genug Gold (≥ 12) und wenn dem Plan noch Pokémon fehlen – sonst verbrennt man sein Gold früh
       else if (o.lost && left >= 12 && plan.some((u) => !owned[K.base(u.line)])) tips.push({ k: 'lostRoll', missing: plan.filter((u) => !owned[K.base(u.line)]).length });
+      // Turm: Niederlage gegen dieselbe Etage – mit gleichem Brett geht es meist wieder schief (Bot-Protokoll: 3× Etage 55 Elektro,
+      // 30 Gold liegen gelassen). Würfeln nach Kontern; die Kauf-Rechnung bewertet Shop-Pokémon schon gegen den sichtbaren Gegner.
+      else if (o.lost && o.mode === 'tower' && left >= 14) tips.push({ k: 'lostRoll', missing: 0, counter: true });
     }
     // Gerechnet: Mit einem Platz mehr und dem passenden Shop-Pokémon wird das Feld deutlich stärker -> EP jetzt, auch unter der Zinsgrenze
     if (xpAdd && pve && !xpTip && xpAdd.need * 4 + xpAdd.cost <= gold) xpTip = { k: 'xp', buys: xpAdd.need, need: xpAdd.need, level: lvl + 1, lost: !!o.lost, add: xpAdd.line, gain: xpAdd.g };
@@ -1075,7 +1085,13 @@ function create(opts) {
     // Hinter dem Plan nur die nötigen EP kaufen (auch unter der Zinsgrenze) – jedes weitere Gold ins Würfeln.
     const goal = o.mode === 'camp' && o.stop ? K.campLevelGoal(o.stop) : 0;
     if (pve && !xpTip && !o.nz && lvl && lvl < goal) { const need = o.xp && o.xp.buys ? o.xp.buys : 1; if (need * 4 <= left) xpTip = { k: 'xp', buys: need, need, level: lvl + 1, lost: !!o.lost, goal, stop: o.stop }; }
+    // Nuzlocke: kein Neu-Würfeln, Shop 1 von 3 – Gold über der Zinsgrenze arbeitet nur als EP (Bot-Protokoll: 40–51 Gold blieben liegen)
+    if (o.nz && !xpTip && lvl && lvl < 9) { const need = o.xp && o.xp.buys ? o.xp.buys : 1; if (left - need * 4 >= cap) xpTip = { k: 'xp', buys: need, need, level: lvl + 1, lost: !!o.lost }; }
     if (xpTip) tips.push(xpTip);
+    // Abenteuer: vor Koga (Station 16) braucht es ein ★★★ – 31 % der Legende-Testläufe endeten dort ohne. Hat ein ★★ schon Kopien
+    // gesammelt, bis 10 Gold würfeln statt die Zinsen zu halten.
+    if (o.mode === 'camp' && o.stop >= 11 && o.stop <= 16 && !o.nz && cands && !cands.some((u) => (u.star || 1) >= 3) && left >= 12
+      && Object.entries(owned).some(([l, n]) => n >= 4 && n < 9 && (pl[l] || cands.some((u) => u.onBoard && K.base(u.line) === l)))) tips.push({ k: 'rollThree', stop: o.stop });
     if (!buys.some((b) => b.kind !== 'trait' && b.affordable) && !o.nz) {
       if (gold < cap && !(pve && o.lost) && !(xpTip && xpTip.goal)) tips.push({ k: 'save', cap, max: it.max, gold });
       else if (missing > 0 && gold >= cap) tips.push({ k: 'roll', cap, missing });
@@ -1085,8 +1101,11 @@ function create(opts) {
     // ein Platz weniger als die Gegner kostet mehr KP als der Zins bringt
     if (!pve && !o.nz && lvl && lvl < pvpGoal(o.stage, norm) && !tips.some((x) => x.k === 'xp' || x.k === 'level')) {
       const need = o.xp && o.xp.buys ? o.xp.buys : 1;
-      if (need * 4 <= left && left - need * 4 >= cap - it.step) {
-        for (let i = tips.length - 1; i >= 0; i--) if (tips[i].k === 'roll') tips.splice(i, 1); // erst leveln, Würfeln würde unter die Zinsgrenze führen
+      // nach einer Niederlage auch unter der Zinsgrenze (Bot-Protokoll PvP: bis 2-6 auf Level 4 mit 47 Gold, −52 KP)
+      const stg = typeof o.stage === 'number' ? o.stage : parseInt(o.stage, 10) || 0;
+      // ab Stage 3 geht das Tempo vor die Zinsen: aufsteigen, solange 20 Gold bleiben
+      if (need * 4 <= left && (left - need * 4 >= cap - it.step || (o.lost && left - need * 4 >= 10) || (stg >= 3 && left - need * 4 >= 20))) {
+        for (let i = tips.length - 1; i >= 0; i--) if (tips[i].k === 'roll' || tips[i].k === 'save') tips.splice(i, 1); // erst leveln (nicht gleichzeitig „sparen“ raten)
         tips.push({ k: 'xp', buys: need, need, level: lvl + 1, lost: false });
       }
     }
@@ -1097,6 +1116,21 @@ function create(opts) {
       if (missing > 0) tips.push({ k: 'roll', cap, missing });
       else if (lvl && lvl < goal && (o.xp && o.xp.buys ? o.xp.buys : 1) * 4 <= spare) { const need = o.xp && o.xp.buys ? o.xp.buys : 1; tips.push({ k: 'xp', buys: need, need, level: lvl + 1, lost: false }); }
       else tips.push({ k: 'rollStar', cap });
+    }
+    // PvP-Fahrplan zum Würfeln (Bot-Protokoll: mit 49 Gold an 3-2 gespart statt die Comp zu suchen, dann bis 4-2 ausgeblutet):
+    // Stabilisieren ab Stage 3 bei ≤ 60 KP, wenn Pokémon auf dem Feld oder im Plan auf Kopien warten – bis 20 Gold würfeln.
+    // Rolldown ab Stage 4 auf Level ≥ 7, wenn Plan-Pokémon fehlen oder unter dem Ziel-Stern sind – bis 30 Gold, bei ≤ 50 KP bis 10.
+    if (!pve && !o.nz && o.stage != null && !tips.some((x) => x.k === 'allin')) {
+      const stg = typeof o.stage === 'number' ? o.stage : parseInt(o.stage, 10) || 0;
+      const waitCopies = Object.entries(owned).some(([l, n]) => n % 3 !== 0 && n < 9 && (pl[l] || (cands || []).some((u) => u.onBoard && K.base(u.line) === l)));
+      const below = plan.filter((u) => (owned[K.base(u.line)] || 0) < tgt(u)).length;
+      let floor = null, k = null;
+      if (stg >= 4 && lvl >= 7 && (missing > 0 || below > 0)) { floor = o.hp != null && o.hp <= 50 ? 10 : 30; k = 'rollDown'; }
+      else if (stg >= 3 && o.hp != null && o.hp <= 60 && waitCopies) { floor = 20; k = 'rollStab'; }
+      if (k && left - 2 >= floor && !tips.some((x) => x.k === 'xp')) {
+        for (let i = tips.length - 1; i >= 0; i--) if (tips[i].k === 'save' || tips[i].k === 'roll' || tips[i].k === 'rollStar') tips.splice(i, 1);
+        tips.push({ k, floor, missing, below });
+      }
     }
     // PvP mit wenig KP: Zinsen sind egal, jetzt zählt jeder Kampf – erst den Level-Aufstieg (falls bezahlbar und unter dem Ziel), dann würfeln
     if (!pve && !o.nz && o.hp != null && o.hp <= 30 && left >= 4) {

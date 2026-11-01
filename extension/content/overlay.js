@@ -13,7 +13,7 @@ de: {
   title: 'Kanto Coach', lvl: 'Lv', gold: 'Gold', tabs: { now: 'Jetzt', plan: 'Plan', items: 'Items', team: 'Team' },
   whatNow: 'Was jetzt?', nothingNow: 'Gerade nichts zu tun. Kämpfen!', doBuy: (n) => `${n} kaufen`, noGold: 'zu wenig Gold', inPlan: 'im Plan',
   wStar: (n) => `macht ein Pokémon ${'★'.repeat(n)} – das stärkt dein Team am meisten`, wToward3: 'Plan will es ★★★: Kopie auf dem Weg dorthin',
-  wPower: (out, g) => `macht dein Feld um ${g} % stärker (gerechnet aus den Werten)${out ? ` – statt ${out}` : ''}`, wXpAdd: (g) => `mit EP-Kauf auf das nächste Level: Feld ${g} % stärker`, markPower: 'STÄRKER', wFill: 'stärkstes Pokémon für deinen freien Platz (gerechnet aus den Werten)', wCore: 'Kern-Pokémon deines Plans', wPlan: 'gehört zu deinem Plan', wPair: '2. Kopie: auf dem Weg zu ★★',
+  wFieldPair: 'Kopie für ein Pokémon auf deinem Feld – Richtung ★★ (fast doppelt so stark)', wPower: (out, g) => `macht dein Feld um ${g} % stärker (gerechnet aus den Werten)${out ? ` – statt ${out}` : ''}`, wXpAdd: (g) => `mit EP-Kauf auf das nächste Level: Feld ${g} % stärker`, markPower: 'STÄRKER', wFill: 'stärkstes Pokémon für deinen freien Platz (gerechnet aus den Werten)', wCore: 'Kern-Pokémon deines Plans', wPlan: 'gehört zu deinem Plan', wPair: '2. Kopie: auf dem Weg zu ★★',
   wTrait: (ty, n) => `bringt ${ty} auf ${n} (Typ-Bonus aktiv)`,
   tFree: (n) => `${n} ${n === 1 ? 'Platz' : 'Plätze'} auf dem Feld frei – stell Pokémon von der Bank auf`, tNear: (ty, n) => `Noch 1 ${ty} für ${ty} ${n}: halte im Shop danach Ausschau`,
   tNearShop: (who, ty, n, l) => `${who} im Shop bringt ${ty} ${n} – lohnt sich erst mit einem Platz mehr (Level ${l}) oder wenn ein schwächeres Pokémon gehen kann`,
@@ -76,10 +76,11 @@ de: {
   nzWhy: 'Nuzlocke: nur 1 von 3', starterT: 'Partnerwahl', lootOneT: 'Item',
   placeStep: (n) => `${n} aufs Feld stellen`, placeSub: 'freier Platz – aus deinem Plan bzw. passend zu deinen Typen',
   swapStep: (a, b) => `${a} statt ${b} aufstellen`, swapSub: (g) => `Feld ${g} % stärker (gerechnet mit Werten, Typ-Stufen, Items und Tafeln) – auf dem Brett tauschen`,
-  slamStep: (a, b, r) => `${a} auf ${b} ziehen → ${r}`, tXpGoal: (b, l, s, g) => `EP kaufen (${b}× → Level ${l}): an Station ${s} sollte man Level ${g} haben (Fahrplan aus vielen Legende-Läufen) – nur die nötigen EP, der Rest ins Würfeln`, tLegend: { brock: (x) => `Legende-Kontrollpunkt Rocko: Du hast ${x.n} von 2 ★★, deren Attacke Gestein/Boden sehr effektiv trifft (z. B. Nidorino, Schillok, Digdri). Mit weniger verlieren die meisten Läufe hier – jetzt gezielt danach würfeln.`, koga: (x) => `Legende-Kontrollpunkt Koga (Station 16): ${x.s3 ? `nur ${x.hp} KP` : 'noch kein ★★★'} – 31 % der Testläufe endeten hier. Vorher ein ★★★ bauen (Hauptlinie zuerst würfeln).`, tanks: () => 'Legende-Kontrollpunkt Pyro (Station 26): Relaxo ★★ (Bodyslam wählen) und Bisasam ★★ (verankert) als zwei Spott-Tanks gegenüber Arkani – fehlt einer, verlieren die meisten Läufe dort.' }, tFoeAssassin: (n) => `Der nächste Gegner hat Assassinen (${n}) – sie springen in deine hinteren Reihen, am liebsten in die Ecken: Carry nicht in die Ecke, ein billiges Pokémon als Köder dorthin`, tFoeHeal: (n) => `Der nächste Gegner heilt (${n}) – Giftstich oder Heiß-Orb (Anticura) auf ein Pokémon, das viel trifft`, slamFor: (u) => `nicht horten: jetzt bauen und ${u} geben – ein fertiges Item ist stärker als Komponenten im Beutel`, slamHeal: (u, h) => `${h ? `Der Gegner heilt (${h})` : 'Ab Etage 50 heilen die Gegner stark'}: Anticura (−30 % Heilung) bauen und ${u} geben – mehr Schaden allein gewinnt dort nicht`, useType: (t, g) => `gibt den Typ ${t} – Feld ${g} % stärker (zählt für die Typ-Stufe)`, useRelic: 'Signatur-Reliquie: wirkt nur bei diesem Pokémon',
+  slamStep: (a, b, r) => `${a} auf ${b} ziehen → ${r}`, tXpGoal: (b, l, s, g) => `EP kaufen (${b}× → Level ${l}): an Station ${s} sollte man Level ${g} haben (Fahrplan aus vielen Legende-Läufen) – nur die nötigen EP, der Rest ins Würfeln`, tLegend: { brock: (x) => `Legende-Kontrollpunkt Rocko: Du hast ${x.n} von 2 ★★, deren Attacke Gestein/Boden sehr effektiv trifft (z. B. Nidorino, Schillok, Digdri). Mit weniger verlieren die meisten Läufe hier – jetzt gezielt danach würfeln.`, koga: (x) => `Legende-Kontrollpunkt Koga (Station 16): ${x.s3 ? `nur ${x.hp} KP` : 'noch kein ★★★'} – 31 % der Testläufe endeten hier. Vorher ein ★★★ bauen (Hauptlinie zuerst würfeln).`, tanks: () => 'Legende-Kontrollpunkt Pyro (Station 26): Relaxo ★★ (Bodyslam wählen) und Bisasam ★★ (verankert) als zwei Spott-Tanks gegenüber Arkani – fehlt einer, verlieren die meisten Läufe dort.' }, tRollDown: (f, n) => `Zeit für den Rolldown: bis ${f} Gold neu würfeln, bis die Plan-Pokémon ★★ sind (${n} fehlen noch)`, tRollStab: (f) => `Wenig KP: jetzt stärker werden statt sparen – bis ${f} Gold würfeln für ★★ deiner Pokémon auf dem Feld`, tRollThree: (st) => `Vor Koga (Station 16) ein ★★★ bauen: jetzt bis 10 Gold neu würfeln (Station ${st}) – ohne ★★★ verlieren dort die meisten Läufe`, tFoeAssassin: (n) => `Der nächste Gegner hat Assassinen (${n}) – sie springen in deine hinteren Reihen, am liebsten in die Ecken: Carry nicht in die Ecke, ein billiges Pokémon als Köder dorthin`, tFoeHeal: (n) => `Der nächste Gegner heilt (${n}) – Giftstich oder Heiß-Orb (Anticura) auf ein Pokémon, das viel trifft`, slamFor: (u) => `nicht horten: jetzt bauen und ${u} geben – ein fertiges Item ist stärker als Komponenten im Beutel`, slamHeal: (u, h) => `${h ? `Der Gegner heilt (${h})` : 'Ab Etage 50 heilen die Gegner stark'}: Anticura (−30 % Heilung) bauen und ${u} geben – mehr Schaden allein gewinnt dort nicht`, useType: (t, g) => `gibt den Typ ${t} – Feld ${g} % stärker (zählt für die Typ-Stufe)`, useRelic: 'Signatur-Reliquie: wirkt nur bei diesem Pokémon',
   tXpAdd: (n, l, who, g) => `EP kaufen (${n}× 4 Gold → Level ${l}) und ${who} aufstellen: dein Feld wird ${g} % stärker – das schlägt die Zinsen`,
   tXp: (n, l, need, lost) => `${lost ? 'Letzten Kampf verloren' : 'Gold über der Zinsgrenze'}: EP kaufen (${n}× 4 Gold${need <= n ? ` → Level ${l}` : ''}) – ${lost ? 'mehr Pokémon auf dem Feld schlägt Zinsen' : 'dann passt ein Pokémon mehr aufs Feld'}`,
   tAllin: (hp, m) => `Nur noch ${hp} KP: Zinsen sind jetzt egal – Gold einsetzen: ${m > 0 ? 'neu würfeln für fehlende Plan-Pokémon und ★★' : 'neu würfeln für ★★'}, EP kaufen, um mehr aufs Feld zu stellen.`,
+  tLostRollCounter: 'Gegen diese Etage verloren – mit demselben Brett geht es meist wieder schief: neu würfeln nach Pokémon, die gegen diesen Gegner gut sind (der Coach rechnet den Typ-Vorteil mit)',
   tLostRoll: (m) => `Letzten Kampf verloren, der nächste Level ist noch zu teuer: neu würfeln für ${m > 0 ? 'fehlende Plan-Pokémon und ' : ''}★★ – das macht dein Team jetzt stärker`,
   tSell: (n) => `Bank (fast) voll: ${n.join(', ')} verkaufen (passen nicht zum Plan) – gibt Platz und Gold`,
   tRollStar: (c) => `Plan komplett und über ${c} Gold: neu würfeln für ★★ (nicht unter ${c} Gold fallen)`,
@@ -124,7 +125,7 @@ en: {
   title: 'Kanto Coach', lvl: 'Lv', gold: 'Gold', tabs: { now: 'Now', plan: 'Plan', items: 'Items', team: 'Team' },
   whatNow: 'What now?', nothingNow: 'Nothing to do right now. Fight!', doBuy: (n) => `Buy ${n}`, noGold: 'not enough gold', inPlan: 'in plan',
   wStar: (n) => `makes a Pokémon ${'★'.repeat(n)} – the biggest boost for your team`, wToward3: 'plan wants it ★★★: copy on the way there',
-  wPower: (out, g) => `makes your board ${g}% stronger (calculated from stats)${out ? ` – instead of ${out}` : ''}`, wXpAdd: (g) => `with XP to the next level: board ${g}% stronger`, markPower: 'STRONGER', wFill: 'strongest Pokémon for your free slot (calculated from stats)', wCore: 'core Pokémon of your plan', wPlan: 'part of your plan', wPair: '2nd copy: on the way to ★★',
+  wFieldPair: 'copy of a Pokémon on your board – towards ★★ (almost twice as strong)', wPower: (out, g) => `makes your board ${g}% stronger (calculated from stats)${out ? ` – instead of ${out}` : ''}`, wXpAdd: (g) => `with XP to the next level: board ${g}% stronger`, markPower: 'STRONGER', wFill: 'strongest Pokémon for your free slot (calculated from stats)', wCore: 'core Pokémon of your plan', wPlan: 'part of your plan', wPair: '2nd copy: on the way to ★★',
   wTrait: (ty, n) => `brings ${ty} to ${n} (type bonus active)`,
   tFree: (n) => `${n} free ${n === 1 ? 'slot' : 'slots'} on the board – field Pokémon from the bench`, tNear: (ty, n) => `1 more ${ty} for ${ty} ${n}: look out for one in the shop`,
   tNearShop: (who, ty, n, l) => `${who} in the shop brings ${ty} ${n} – worth it once you have one more slot (level ${l}) or a weaker Pokémon can go`,
@@ -187,10 +188,11 @@ en: {
   nzWhy: 'Nuzlocke: only 1 of 3', starterT: 'Partner pick', lootOneT: 'Item',
   placeStep: (n) => `Put ${n} on the board`, placeSub: 'free slot – from your plan or matching your types',
   swapStep: (a, b) => `Field ${a} instead of ${b}`, swapSub: (g) => `board ${g}% stronger (from stats, type tiers, items and plates) – swap them on the board`,
-  slamStep: (a, b, r) => `Drag ${a} onto ${b} → ${r}`, tXpGoal: (b, l, s, g) => `Buy XP (${b}× → level ${l}): at stop ${s} you want level ${g} (schedule from many Legend runs) – only the XP you need, the rest into rerolls`, tLegend: { brock: (x) => `Legend checkpoint Brock: you have ${x.n} of 2 ★★ whose ability hits Rock/Ground super effectively (e.g. Nidorino, Wartortle, Dugtrio). With fewer, most runs lose here – reroll for them now.`, koga: (x) => `Legend checkpoint Koga (stop 16): ${x.s3 ? `only ${x.hp} HP` : 'no ★★★ yet'} – 31% of test runs ended here. Build a ★★★ first (reroll your main line).`, tanks: () => 'Legend checkpoint Blaine (stop 26): Snorlax ★★ (pick Body Slam) and Bulbasaur ★★ (anchored) as two taunt tanks across from Arcanine – missing one, most runs lose there.' }, tFoeAssassin: (n) => `The next enemy has assassins (${n}) – they jump into your back rows, corners first: keep your carry out of the corner, put a cheap Pokémon there as bait`, tFoeHeal: (n) => `The next enemy heals (${n}) – Poison Barb or Flame Orb (Heal Block) on a Pokémon that hits often`, slamFor: (u) => `don’t hoard: build it now and give it to ${u} – a finished item beats components in the bag`, slamHeal: (u, h) => `${h ? `The enemy heals (${h})` : 'From floor 50 enemies heal a lot'}: build Heal Block (−30% healing) and give it to ${u} – more damage alone won’t win there`, useType: (t, g) => `adds the ${t} type – board ${g}% stronger (counts for the type tier)`, useRelic: 'signature relic: only works on this Pokémon',
+  slamStep: (a, b, r) => `Drag ${a} onto ${b} → ${r}`, tXpGoal: (b, l, s, g) => `Buy XP (${b}× → level ${l}): at stop ${s} you want level ${g} (schedule from many Legend runs) – only the XP you need, the rest into rerolls`, tLegend: { brock: (x) => `Legend checkpoint Brock: you have ${x.n} of 2 ★★ whose ability hits Rock/Ground super effectively (e.g. Nidorino, Wartortle, Dugtrio). With fewer, most runs lose here – reroll for them now.`, koga: (x) => `Legend checkpoint Koga (stop 16): ${x.s3 ? `only ${x.hp} HP` : 'no ★★★ yet'} – 31% of test runs ended here. Build a ★★★ first (reroll your main line).`, tanks: () => 'Legend checkpoint Blaine (stop 26): Snorlax ★★ (pick Body Slam) and Bulbasaur ★★ (anchored) as two taunt tanks across from Arcanine – missing one, most runs lose there.' }, tRollDown: (f, n) => `Time to roll down: reroll to ${f} gold until your plan Pokémon are ★★ (${n} still missing)`, tRollStab: (f) => `Low HP: get stronger instead of saving – reroll to ${f} gold for ★★ of your board Pokémon`, tRollThree: (st) => `Build a ★★★ before Koga (stop 16): reroll down to 10 gold now (stop ${st}) – most runs without one lose there`, tFoeAssassin: (n) => `The next enemy has assassins (${n}) – they jump into your back rows, corners first: keep your carry out of the corner, put a cheap Pokémon there as bait`, tFoeHeal: (n) => `The next enemy heals (${n}) – Poison Barb or Flame Orb (Heal Block) on a Pokémon that hits often`, slamFor: (u) => `don’t hoard: build it now and give it to ${u} – a finished item beats components in the bag`, slamHeal: (u, h) => `${h ? `The enemy heals (${h})` : 'From floor 50 enemies heal a lot'}: build Heal Block (−30% healing) and give it to ${u} – more damage alone won’t win there`, useType: (t, g) => `adds the ${t} type – board ${g}% stronger (counts for the type tier)`, useRelic: 'signature relic: only works on this Pokémon',
   tXpAdd: (n, l, who, g) => `Buy XP (${n}× 4 gold → level ${l}) and field ${who}: your board gets ${g}% stronger – worth more than interest`,
   tXp: (n, l, need, lost) => `${lost ? 'Lost the last fight' : 'Gold above the interest cap'}: buy XP (${n}× 4 gold${need <= n ? ` → level ${l}` : ''}) – ${lost ? 'more Pokémon on the board beats interest' : 'then one more Pokémon fits on the board'}`,
   tAllin: (hp, m) => `Only ${hp} HP left: interest doesn’t matter now – spend gold: ${m > 0 ? 'reroll for missing plan Pokémon and ★★' : 'reroll for ★★'}, buy XP to field more.`,
+  tLostRollCounter: 'Lost to this floor – the same board usually loses again: reroll for Pokémon that do well against this enemy (the coach includes type advantage)',
   tLostRoll: (m) => `Lost the last fight and the next level is still too expensive: reroll for ${m > 0 ? 'missing plan Pokémon and ' : ''}★★ – that makes your team stronger now`,
   tSell: (n) => `Bench almost full: sell ${n.join(', ')} (not in your plan) – frees space and gives gold`,
   tRollStar: (c) => `Plan complete and above ${c} gold: reroll for ★★ (don’t drop below ${c} gold)`,
@@ -362,6 +364,7 @@ let CAMP = { key: '', mode: null, loading: false, err: '', planKey: '', plan: nu
 const campData = {};
 const extraCost = {}; // Kosten von Pokémon, die in den API-Daten fehlen (aus der Shop-Karte)
 let live = null; // letzter Stand vom Leser: bench, board, items, diag …
+let livesAtPlan = null;
 let lostBy = 0, hpAtPlan = null, wasPlanning = false, manualMode = false; // KP-Verlust im letzten Kampf; Shop von Hand trotz Lobby
 const spr = {};
 const t = () => L[lang];
@@ -740,6 +743,8 @@ function onKanto() { return KANTO_PATH.test(location.pathname) || !!document.que
 let lastPath = location.pathname;
 setInterval(() => { if (location.pathname !== lastPath) { lastPath = location.pathname; render(); } }, 1000);
 function render() {
+  // Bot-Modus (tools/autoplay setzt kkBot): Overlay bleibt unsichtbar, gerechnet und markiert wird trotzdem
+  if (BOT && onKanto()) { host.style.display = 'none'; if (K) { K.setSeen((S.seen || {})[gm()] || {}, campMode()); fieldMemo = null; adviceMemo = null; try { pushMarks(); } catch (e) {} if (campMode() && CAMP.key !== campDataKey()) ensureCamp(); } return; }
   if (!S.open || !onKanto()) { host.style.display = 'none'; return; }
   host.style.display = '';
   box.classList.toggle('min', !!S.min);
@@ -811,7 +816,7 @@ function buyLabel(b) { const tt = t(); return b.kind === 'pick' ? tt.markTake : 
 function buyWhy(b) {
   const tt = t();
   if (b.why === 'star2') return tt.wStar(2); if (b.why === 'star3') return tt.wStar(3);
-  if (b.why === 'core') return tt.wCore; if (b.why === 'plan') return tt.wPlan; if (b.why === 'pair') return tt.wPair; if (b.why === 'toward3') return tt.wToward3;
+  if (b.why === 'core') return tt.wCore; if (b.why === 'plan') return tt.wPlan; if (b.why === 'pair') return tt.wPair; if (b.why === 'toward3') return tt.wToward3; if (b.why === 'fieldPair') return tt.wFieldPair;
   const g = b.gain ? Math.max(1, Math.round(b.gain * 100)) : 0;
   if (b.why === 'trait') return tt.wTrait(K.typeName(b.trait), b.next) + (b.out ? ' · ' + tt.wPower(K.unitName(b.out.line, b.out.star), g) : '');
   if (b.why === 'power' && b.fill) return tt.wFill;
@@ -833,8 +838,11 @@ function tipText(x) {
   if (x.k === 'xp') return tt.tXp(x.buys, x.level, x.need, x.lost);
   if (x.k === 'legend') return tt.tLegend[x.why](x);
   if (x.k === 'rollStar') return tt.tRollStar(x.cap);
+  if (x.k === 'rollThree') return tt.tRollThree(x.stop);
+  if (x.k === 'rollDown') return tt.tRollDown(x.floor, x.missing + x.below);
+  if (x.k === 'rollStab') return tt.tRollStab(x.floor);
   if (x.k === 'allin') return tt.tAllin(x.hp, x.missing);
-  if (x.k === 'lostRoll') return tt.tLostRoll(x.missing);
+  if (x.k === 'lostRoll') return x.counter ? tt.tLostRollCounter : tt.tLostRoll(x.missing);
   if (x.k === 'sell') return tt.tSell(x.names);
   if (x.k === 'foeAssassin') return tt.tFoeAssassin(x.names);
   if (x.k === 'foeHeal') return tt.tFoeHeal(x.names);
@@ -1164,7 +1172,7 @@ function pushMarks() {
   const btn = {}; const xt = adv.tips.find((x) => x.k === 'xp');
   if (xt) btn.xp = { kind: 'upgrade', label: tt.markXp(xt.buys) };
   else if (adv.tips.some((x) => x.k === 'level')) btn.xp = { kind: 'upgrade', label: tt.markXp(1) };
-  if (adv.tips.some((x) => x.k === 'roll' || x.k === 'rollStar' || x.k === 'allin' || x.k === 'lostRoll')) btn.roll = { kind: 'comp', label: tt.markRoll };
+  if (adv.tips.some((x) => x.k === 'roll' || x.k === 'rollStar' || x.k === 'rollThree' || x.k === 'rollDown' || x.k === 'rollStab' || x.k === 'allin' || x.k === 'lostRoll')) btn.roll = { kind: 'comp', label: tt.markRoll };
   const er = eventRec(); let event = null;
   if (er && er.picks.length > 1) { event = {}; event[er.picks[0].idx] = { kind: 'pick', label: tt.markTake, n: 1 }; }
   const br = boonRec(); let boon = null;
@@ -1202,7 +1210,7 @@ const CIRC = ['①', '②', '③', '④'];
 // items[id] ist eine Liste: eine Marke je Beutel-Platz mit diesem Item (zwei gleiche Komponenten = zwei Plätze)
 function itemMarks() {
   const out = { items: {}, board: {}, steps: [] };
-  if (!K || !hasTarget()) return out;
+  if (!K) return out; // auch ohne Plan: fertige Items geben, Komponenten zu einem Item bauen
   const add = (id, mk) => (out.items[id] = out.items[id] || []).push(mk);
   const ip = itemPlan(); const wishes = ip.wishes; let n = 0;
   for (const w of wishes) {
@@ -1391,7 +1399,7 @@ let lastLiveSig = '', lastTab = null;
  * beim nächsten Planungsbeginn das Ergebnis (KP-Verlust, Station/Etage/Runde). Liegt in chrome.storage.local (kkLog), wird nie
  * gesendet – nur per Knopf als Datei gespeichert. Daraus lassen sich die Gewichte an echten Siegen und Niederlagen ausrichten.
  */
-let LOG = null, logPend = null, logOpen = null, logSaveT = 0;
+let LOG = null, logPend = null, logOpen = null, logSaveT = 0, BOT = false;
 const LOG_MAX_GAMES = 40, LOG_MAX_BYTES = 1500000;
 const logWhere = (g) => (!g ? null : g.mode === 'pvp' ? (g.stage ? g.stage + '-' + g.round : null) : g.stop || null);
 const logNum = (w) => (w == null ? 0 : typeof w === 'number' ? w : String(w).split('-').reduce((a, x) => a * 100 + (+x || 0), 0));
@@ -1469,6 +1477,8 @@ function applyLive(raw) {
   const startPlan = !!l.planning && !wasPlanning, endPlan = !l.planning && wasPlanning;
   // Beginn einer Planungsphase: KP mit der letzten vergleichen -> letzter Kampf verloren?
   if (l.planning && !wasPlanning && l.hp != null) { lostBy = hpAtPlan != null && l.hp < hpAtPlan ? hpAtPlan - l.hp : 0; hpAtPlan = l.hp; }
+  // Nuzlocke: keine KP, sondern Leben – ein verlorenes Leben zählt als Niederlage
+  else if (l.planning && !wasPlanning && l.game && l.game.lives != null) { lostBy = livesAtPlan != null && l.game.lives < livesAtPlan ? livesAtPlan - l.game.lives : 0; livesAtPlan = l.game.lives; }
   wasPlanning = !!l.planning; manualMode = false;
   // Nur der Herzschlag ohne Änderung: nichts neu zeichnen (sonst springt die Liste nach oben)
   const sig = JSON.stringify({ ...l, ts: 0 }); const wasLive = isLive();
@@ -1523,6 +1533,7 @@ chrome.storage.onChanged.addListener((ch, area) => {
   if (area === 'sync' && ch.server) { init(); }
   else if (area === 'sync' && ch.lang) { langSel = ch.lang.newValue || 'auto'; const l = resolveLang(); if (l !== lang) { lang = l; if (K) K.setLang(lang); } render(); }
   if (area === 'local' && ch.kkLive && ch.kkLive.newValue) applyLive(ch.kkLive.newValue);
+  if (area === 'local' && ch.kkBot) { BOT = !!ch.kkBot.newValue; render(); }
   if (area === 'local' && ch.kkCalib) { calibrated = Object.keys(ch.kkCalib.newValue || {}).length > 0; render(); }
   if (area === 'local' && ch.kkField && ch.kkField.newValue && !!ch.kkField.newValue.show !== !!S.fieldShow) { S.fieldShow = !!ch.kkField.newValue.show; persist(); render(); }
   // Kauf-Meldung nur ohne Live-Stand zählen: mit Live-Stand stecken Bank, Brett und Shop-Karte schon im nächsten Update
@@ -1550,7 +1561,7 @@ async function init() {
   const st = await chrome.storage.local.get('ov'); S = { ...DEF, ...(st.ov || {}) };
   const s = await chrome.storage.sync.get({ lang: 'auto', server: '' }); langSel = s.lang || 'auto'; lang = resolveLang(); server = (s.server || '').replace(/\/+$/, '');
   loadData(false);
-  const lv = await chrome.storage.local.get(['kkLive', 'kkCalib', 'kkLog']); calibrated = Object.keys(lv.kkCalib || {}).length > 0;
+  const lv = await chrome.storage.local.get(['kkLive', 'kkCalib', 'kkLog', 'kkBot']); calibrated = Object.keys(lv.kkCalib || {}).length > 0; BOT = !!lv.kkBot;
   LOG = lv.kkLog && Array.isArray(lv.kkLog.games) ? lv.kkLog : { v: 1, games: [] };
   if (lv.kkLive && !lv.kkLive.lobby && Date.now() - lv.kkLive.ts < 20000) { liveTs = lv.kkLive.ts; live = lv.kkLive; }
 }

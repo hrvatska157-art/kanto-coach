@@ -336,7 +336,7 @@ function readMode() {
     // Abenteuer (v35+): Klasse „ph-<art>“ (gyms = Kanto mit 8 Orden) und Stufe .st-lv.lv1–3 = Normal/Veteran/Legende
     const ph = /\bph-([a-z0-9-]+)/.exec(el.className || ''); const lv = document.querySelector('.st-lv[class*="lv"]');
     const lm = lv ? /\blv(\d)\b/.exec(lv.className) : null;
-    const extra = { adv: ph ? ph[1] : null, dif: lm ? +lm[1] : null, nz: !!document.querySelector('.nz-lives') }; // Nuzlocke: eigene Regeln (1 Kauf pro Shop)
+    const extra = { adv: ph ? ph[1] : null, dif: lm ? +lm[1] : null, nz: !!document.querySelector('.nz-lives'), lives: firstInt((document.querySelector('.nz-lives') || { getAttribute: () => '' }).getAttribute('aria-label')) }; // Nuzlocke: eigene Regeln (1 Kauf pro Shop)
     // „Titel · Ort · Station 7 von 38 · 2 von 8 Orden“ – die vorletzte Angabe ist die Station
     for (let i = parts.length - 2; i >= 0; i--) { const m = /(\d+)\D+(\d+)/.exec(parts[i]); if (m) return { mode: 'camp', stop: +m[1], total: +m[2], ...extra }; }
     return { mode: 'camp', stop: null, ...extra };

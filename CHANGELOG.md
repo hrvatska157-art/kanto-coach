@@ -4,6 +4,24 @@ All versions below 1.0 are **beta** – the extension stays in beta until everyt
 
 Alle Versionen unter 1.0 sind **Beta** – die Erweiterung bleibt Beta, bis alles in jedem Modus sauber läuft. (Frühere Releases hießen 2.x; es sind dieselben Stände wie 0.1–0.7.)
 
+## 0.8.4 Beta – 2026-11-01
+Lessons from the first automated games (a bot followed every coach mark in Adventure, Tower, Nuzlocke and PvP training):
+**EN**
+- **Copies for your board:** even without a plan the coach now suggests copies of Pokémon on your board towards ★★/★★★. Before, a whole Adventure could stay at ★ (46% losses up to stop 21 → with the fix: stop 26 with 12% losses).
+- **Items without a plan:** finished items are handed out and components combined even when no plan is chosen.
+- **Adventure:** before Koga (stop 11–16) without a ★★★, reroll down to 10 gold if a ★★ is waiting for copies. XP + buy at most one level above the schedule (no more level 8 at stop 12 with 1 gold left).
+- **PvP:** after a loss, level up even below the interest threshold (the bot sat at level 4 until 2-6 with 47 gold and lost 52 HP). New reroll plan: from stage 3 at 60 HP or less, reroll down to 20 gold when Pokémon on your board or in your plan wait for copies (“stabilize”); from stage 4 at level 7+, roll down to 30 gold (10 at 50 HP or less) until the plan Pokémon are ★★. Level targets at least 5 in stage 2, 7 in stage 3, 8 in stage 4; from stage 3 level up as long as 20 gold remain. In PvP training against bots the bot went from an early exit to 4th, 5th, 2nd and 2nd place.
+- **Nuzlocke:** no rerolls there – gold above the interest threshold goes into XP. Lost lives now count as losses in the match log.
+- **Tower:** after losing a floor, reroll for counters (the bot lost floor 55, all Electric, three times with the same board and 30 gold left).
+
+**DE**
+- **Kopien fürs Feld:** Auch ohne Plan schlägt der Coach jetzt Kopien von Pokémon auf deinem Feld vor (Richtung ★★/★★★). Vorher konnte ein ganzes Abenteuer auf ★ bleiben (46 % Niederlagen bis Station 21 → mit der Korrektur: Station 26 mit 12 %).
+- **Items ohne Plan:** Fertige Items werden verteilt und Komponenten kombiniert, auch wenn kein Plan gewählt ist.
+- **Abenteuer:** Vor Koga (Station 11–16) ohne ★★★ bis 10 Gold würfeln, wenn ein ★★ auf Kopien wartet. EP + Kauf höchstens ein Level über dem Fahrplan (kein Level 8 an Station 12 mit 1 Gold mehr).
+- **PvP:** Nach einer Niederlage auch unter der Zinsgrenze aufsteigen (der Bot blieb bis 2-6 auf Level 4 mit 47 Gold und verlor 52 KP). Neuer Würfel-Fahrplan: ab Stage 3 mit höchstens 60 KP bis 20 Gold würfeln, wenn Pokémon auf dem Feld oder im Plan auf Kopien warten („stabilisieren“); ab Stage 4 auf Level 7+ bis 30 Gold (bei höchstens 50 KP bis 10), bis die Plan-Pokémon ★★ sind. Ziel-Level mindestens 5 in Stage 2, 7 in Stage 3, 8 in Stage 4; ab Stage 3 aufsteigen, solange 20 Gold bleiben. Im PvP-Training gegen Bots kam der Bot so vom frühen Aus auf Platz 4, 5, 2 und 2.
+- **Nuzlocke:** Dort gibt es kein Neu-Würfeln – Gold über der Zinsgrenze geht in EP. Verlorene Leben zählen im Protokoll als Niederlage.
+- **Turm:** Nach einer verlorenen Etage nach Kontern würfeln (der Bot verlor Etage 55, alles Elektro, dreimal mit demselben Brett und 30 Gold im Beutel).
+
 ## 0.8.3 Beta – 2026-11-01
 **EN**
 - **Match log:** the coach records every round locally – shop, bench, board, items, gold, level, the next enemy, what it advised and the fight result. In the overlay (Team tab) you can save it as a file, pause or delete it. Nothing is sent anywhere. Sharing a few of these files lets the advice be tuned on real wins and losses.
