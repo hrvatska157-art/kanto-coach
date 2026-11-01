@@ -75,8 +75,8 @@ de: {
   overT: 'Partie vorbei.', overSub: 'Zurück zur Lobby – im nächsten Spiel wählt der Coach einen neuen Plan.',
   nzWhy: 'Nuzlocke: nur 1 von 3', starterT: 'Partnerwahl', lootOneT: 'Item',
   placeStep: (n) => `${n} aufs Feld stellen`, placeSub: 'freier Platz – aus deinem Plan bzw. passend zu deinen Typen',
-  swapStep: (a, b) => `${a} statt ${b} aufstellen`, swapSub: 'stärker für deinen Plan – Pokémon auf dem Brett tauschen',
-  slamStep: (a, b, r) => `${a} auf ${b} ziehen → ${r}`, slamFor: (u) => `nicht horten: jetzt bauen und ${u} geben – ein fertiges Item ist stärker als Komponenten im Beutel`,
+  swapStep: (a, b) => `${a} statt ${b} aufstellen`, swapSub: (g) => `Feld ${g} % stärker (gerechnet mit Werten, Typ-Stufen, Items und Tafeln) – auf dem Brett tauschen`,
+  slamStep: (a, b, r) => `${a} auf ${b} ziehen → ${r}`, slamFor: (u) => `nicht horten: jetzt bauen und ${u} geben – ein fertiges Item ist stärker als Komponenten im Beutel`, slamHeal: (u) => `ab Etage 50 heilen die Gegner stark: Anticura (−30 % Heilung) bauen und ${u} geben`, useType: (t, g) => `gibt den Typ ${t} – Feld ${g} % stärker (zählt für die Typ-Stufe)`, useRelic: 'Signatur-Reliquie: wirkt nur bei diesem Pokémon',
   tXpAdd: (n, l, who, g) => `EP kaufen (${n}× 4 Gold → Level ${l}) und ${who} aufstellen: dein Feld wird ${g} % stärker – das schlägt die Zinsen`,
   tXp: (n, l, need, lost) => `${lost ? 'Letzten Kampf verloren' : 'Gold über der Zinsgrenze'}: EP kaufen (${n}× 4 Gold${need <= n ? ` → Level ${l}` : ''}) – ${lost ? 'mehr Pokémon auf dem Feld schlägt Zinsen' : 'dann passt ein Pokémon mehr aufs Feld'}`,
   tAllin: (hp, m) => `Nur noch ${hp} KP: Zinsen sind jetzt egal – Gold einsetzen: ${m > 0 ? 'neu würfeln für fehlende Plan-Pokémon und ★★' : 'neu würfeln für ★★'}, EP kaufen, um mehr aufs Feld zu stellen.`,
@@ -182,8 +182,8 @@ en: {
   overT: 'Game over.', overSub: 'Back to the lobby – in the next game the coach picks a new plan.',
   nzWhy: 'Nuzlocke: only 1 of 3', starterT: 'Partner pick', lootOneT: 'Item',
   placeStep: (n) => `Put ${n} on the board`, placeSub: 'free slot – from your plan or matching your types',
-  swapStep: (a, b) => `Field ${a} instead of ${b}`, swapSub: 'stronger for your plan – swap them on the board',
-  slamStep: (a, b, r) => `Drag ${a} onto ${b} → ${r}`, slamFor: (u) => `don’t hoard: build it now and give it to ${u} – a finished item beats components in the bag`,
+  swapStep: (a, b) => `Field ${a} instead of ${b}`, swapSub: (g) => `board ${g}% stronger (from stats, type tiers, items and plates) – swap them on the board`,
+  slamStep: (a, b, r) => `Drag ${a} onto ${b} → ${r}`, slamFor: (u) => `don’t hoard: build it now and give it to ${u} – a finished item beats components in the bag`, slamHeal: (u) => `from floor 50 enemies heal a lot: build Heal Block (−30% healing) and give it to ${u}`, useType: (t, g) => `adds the ${t} type – board ${g}% stronger (counts for the type tier)`, useRelic: 'signature relic: only works on this Pokémon',
   tXpAdd: (n, l, who, g) => `Buy XP (${n}× 4 gold → level ${l}) and field ${who}: your board gets ${g}% stronger – worth more than interest`,
   tXp: (n, l, need, lost) => `${lost ? 'Lost the last fight' : 'Gold above the interest cap'}: buy XP (${n}× 4 gold${need <= n ? ` → level ${l}` : ''}) – ${lost ? 'more Pokémon on the board beats interest' : 'then one more Pokémon fits on the board'}`,
   tAllin: (hp, m) => `Only ${hp} HP left: interest doesn’t matter now – spend gold: ${m > 0 ? 'reroll for missing plan Pokémon and ★★' : 'reroll for ★★'}, buy XP to field more.`,
@@ -545,7 +545,7 @@ function fieldNow() {
   const lvl = Math.max(1, S.level || 1); const plan = new Set(planUnits().map((u) => K.base(u.line)));
   const ctr = counterCore(); const ctrSet = new Set(ctr ? ctr.lines.map((l) => K.base(l)) : []);
   const best = K.bestField(fieldCands(), lvl, { foes: foesNow() });
-  return (fieldMemo = best.units.map((u) => ({ line: u.line, star: u.star, items: u.items, plan: plan.has(u.line) || ctrSet.has(u.line), score: K.unitPower(u.line, u.star, (u.items || []).length) })));
+  return (fieldMemo = best.units.map((u) => ({ line: u.line, star: u.star, items: u.items, plan: plan.has(u.line) || ctrSet.has(u.line), score: K.unitPower(u.line, u.star, K.statItems(u.items)) })));
 }
 // Volle Bank: Pokémon, die weder im Plan noch in der empfohlenen Aufstellung sind (und keine ★★) – Platz und Gold
 function sellList() {
@@ -565,7 +565,24 @@ function fieldSteps() {
   const free = lv.teamN != null && S.level ? Math.max(0, S.level - lv.teamN) : 0;
   const out = add.slice(0, free).map((l) => ({ k: 'place', line: l }));
   const drop = []; for (const l of Object.keys(oc)) for (let i = 0; i < oc[l] - (rc[l] || 0); i++) drop.push(l);
-  add.slice(free).forEach((l, i) => { if (drop[i]) out.push({ k: 'swap', line: l, out: drop[i] }); });
+  // Tauschen nur, wenn das echte Brett (mit Items und Tafeln) dadurch deutlich stärker wird: je Neuzugang der beste Partner,
+  // mindestens +4 %, und keine aktive Typ-Stufe geht verloren (außer bei +15 % oder mehr)
+  const held = heldItems(); const fo = { foes: foesNow() };
+  let cur = lv.board.map((u) => ({ line: K.base(u.line), star: u.star || 1, items: u.items || [] }));
+  const lvOf = (tr) => Object.fromEntries(tr.filter((x) => x.lv).map((x) => [x.type, x.lv]));
+  for (const l of add.slice(free)) {
+    const inU = (lv.bench || []).filter((u) => K.base(u.line) === l).sort((a, b) => (b.star || 1) - (a.star || 1))[0]; if (!inU) continue;
+    const s0 = K.fieldScore(cur, fo); const lv0 = lvOf(s0.traits); let best = null;
+    for (const d of new Set(drop)) {
+      const at = cur.findIndex((u) => u.line === d); if (at < 0) continue;
+      const next = cur.slice(); next[at] = { line: l, star: inU.star || 1, items: held[l] || [] };
+      const s1 = K.fieldScore(next, fo); const g = s1.score / Math.max(1e-9, s0.score) - 1; const lv1 = lvOf(s1.traits);
+      const lost = Object.keys(lv0).some((t) => (lv1[t] || 0) < lv0[t]);
+      if (g >= (lost ? 0.15 : 0.04) && (!best || g > best.g)) best = { d, g, next };
+    }
+    if (!best) continue;
+    out.push({ k: 'swap', line: l, out: best.d, gain: Math.round(best.g * 100), star: inU.star || 1, outStar: (cur.find((u) => u.line === best.d) || {}).star || 1 }); cur = best.next; drop.splice(drop.indexOf(best.d), 1);
+  }
   return out.slice(0, 3);
 }
 // Konter fürs Abenteuer: 3er-Kombi, mit der Spieler genau diesen Kampf am häufigsten gewinnen (campana.cores)
@@ -702,7 +719,7 @@ function render() {
   if (!S.open || !onKanto()) { host.style.display = 'none'; return; }
   host.style.display = '';
   box.classList.toggle('min', !!S.min);
-  const tt = t(); if (K) K.setSeen((S.seen || {})[gm()] || {}); fieldMemo = null; adviceMemo = null;
+  const tt = t(); if (K) K.setSeen((S.seen || {})[gm()] || {}, campMode()); fieldMemo = null; adviceMemo = null;
   const head = `<div class="hd" id="drag"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><polygon points="16.00,3.80 26.57,9.90 26.57,22.10 16.00,28.20 5.43,22.10 5.43,9.90" fill="none" stroke="#edf0f6" stroke-width="2.8" stroke-linejoin="round"/><polygon points="16.00,9.30 17.88,14.11 23.04,14.41 19.04,17.69 20.35,22.69 16.00,19.90 11.65,22.69 12.96,17.69 8.96,14.41 14.12,14.11" fill="#ff5c4e"/></svg><span class="ttl">Kanto <b>Coach</b></span>
     <div class="ctl"><label>${tt.lvl}<select data-act="level">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map((l) => `<option ${S.level === l ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label>${tt.gold}<input type="number" min="0" max="200" value="${S.gold}" data-act="gold"></label></div>
     <button class="ib lng" data-act="lang" title="${esc(tt.langTitle)}">${lang === 'de' ? 'DE' : 'EN'}</button><button class="ib mn" data-act="min" title="${esc(tt.minimize)}">${S.min ? '▢' : '–'}</button><button class="ib" data-act="close" title="${esc(tt.close)}">✕</button></div>`;
@@ -861,12 +878,12 @@ function viewNow() {
   const sells = sellList(); if (sells.length) adv.tips.push({ k: 'sell', names: sells.map((l) => K.baseName(l)) });
   for (const x of fs) steps.push(x.k === 'place'
     ? `<div class="step"><span class="sn" style="background:#4fcb88">⬆</span>${av(x.line, starsOf(ownOf(x.line)) || 1, 'sm')}<span><b>${esc(tt.placeStep(K.baseName(x.line)))}</b><span class="sub">${esc(tt.placeSub)}</span></span></div>`
-    : `<div class="step"><span class="sn" style="background:#4fcb88">⇄</span>${av(x.line, starsOf(ownOf(x.line)) || 1, 'sm')}<span><b>${esc(tt.swapStep(K.baseName(x.line), K.baseName(x.out)))}</b><span class="sub">${esc(tt.swapSub)}</span></span></div>`);
+    : `<div class="step"><span class="sn" style="background:#4fcb88">⇄</span>${av(x.line, starsOf(ownOf(x.line)) || 1, 'sm')}<span><b>${esc(tt.swapStep(K.unitName(x.line, x.star), K.unitName(x.out, x.outStar)))}</b><span class="sub">${esc(tt.swapSub(x.gain))}</span></span></div>`);
   for (const x of itemMarks().steps) {
     const w = x.w; const un = K.unitName(w.unit.line, w.unit.star);
-    if (x.k === 'slam') steps.push(`<div class="step"><span class="sn" style="background:${x.col}">${x.n}</span><span class="rcp">${itemImg(w.use[0])}+${itemImg(w.use[1])}</span><span><b>${esc(tt.slamStep(K.itemName(w.use[0]), K.itemName(w.use[1]), K.itemName(w.id)))}</b><span class="sub">${esc(tt.slamFor(un))}</span></span></div>`);
+    if (x.k === 'slam') steps.push(`<div class="step"><span class="sn" style="background:${x.col}">${x.n}</span><span class="rcp">${itemImg(w.use[0])}+${itemImg(w.use[1])}</span><span><b>${esc(tt.slamStep(K.itemName(w.use[0]), K.itemName(w.use[1]), K.itemName(w.id)))}</b><span class="sub">${esc(x.heal ? tt.slamHeal(un) : tt.slamFor(un))}</span></span></div>`);
     else if (x.k === 'craft') steps.push(`<div class="step"><span class="sn" style="background:${x.col}">${x.n}</span><span class="rcp">${itemImg(w.use[0])}+${itemImg(w.use[1])}</span><span><b>${esc(tt.craftStep(K.itemName(w.use[0]), K.itemName(w.use[1]), K.itemName(w.id)))}</b><span class="sub">${esc(tt.craftFor(un))}</span></span></div>`);
-    else steps.push(`<div class="step"><span class="sn" style="background:#8ab4ff">⬇</span>${itemImg(w.id, 'ii lg')}<span><b>${esc(tt.useStep(K.itemName(w.id), un))}</b><span class="sub">${esc(tt.useFor)}</span></span></div>`);
+    else steps.push(`<div class="step"><span class="sn" style="background:#8ab4ff">⬇</span>${itemImg(w.id, 'ii lg')}<span><b>${esc(tt.useStep(K.itemName(w.id), un))}</b><span class="sub">${esc(x.why === 'type' ? tt.useType(K.typeName(x.type), x.gain) : x.why === 'relic' ? tt.useRelic : tt.useFor)}</span></span></div>`);
   }
   for (const x of adv.tips) if (!(x.k === 'free' && fs.length)) steps.push(`<div class="step tip${x.k === 'xp' || x.k === 'rollStar' || x.k === 'allin' || x.k === 'lostRoll' ? ' act' : ''}"><span class="sn">•</span><span class="ti">${{ free: '⬆', near: '◆', nearShop: '◆', level: '⇧', save: '💰', roll: '🎲', xp: '⇧', rollStar: '🎲', allin: '🔥', lostRoll: '🎲', sell: '🪙' }[x.k] || '•'}</span><span>${esc(tipText(x))}</span></div>`);
   if (steps.length && !/class="step (dim|tip)/.test(steps[0])) steps[0] = steps[0].replace('class="step', 'class="step main');
@@ -1178,14 +1195,43 @@ function itemMarks() {
     if (!out.board[ul]) out.board[ul] = { label: '⬇ ' + K.itemName(id) };
     out.steps.push({ k: 'use', w: { id, unit: { line: u.line, star: u.star }, use: [id] } });
   }
-  // Kein Rezept des Plans komplett, aber im Beutel ergeben zwei Komponenten ein Item: jetzt bauen statt horten
+  // Tafeln (Turm) und Typ-Steine: dem Pokémon auf dem Feld, bei dem sie am meisten bringen (meist eine neue Typ-Stufe) –
+  // nur wenn das Feld dadurch stärker wird. Signatur-Reliquien wirken nur bei ihrer eigenen Linie.
+  const fo = { foes: foesNow() };
+  // Nur wer wirklich auf dem Brett steht (im Spiel) – auf der Bank wirken Reliquien nicht, und ein Tausch dorthin ist nicht sicher
+  const onB = live && isLive() && Array.isArray(live.board) && live.board.length ? new Set(live.board.map((u) => K.base(u.line))) : null;
+  const fieldB = onB ? fieldU.filter((x) => onB.has(K.base(x.line))) : fieldU;
+  const withHeld = fieldB.map((x) => ({ line: x.line, star: x.star, items: held[K.base(x.line)] || x.items || [] }));
+  for (const [id, cnt] of Object.entries(ip.pool || {})) {
+    if (!(cnt > 0) || out.items[id]) continue;
+    const ty = K.itemType(id); const rl = K.relicLine(id); if (!ty && !rl) continue;
+    let u = null, gain = 0;
+    if (rl) u = fieldB.find((x) => (K.base(x.line) === rl || K.CAMP_ALIAS[K.base(x.line)] === rl) && (held[K.base(x.line)] || []).length < 3) || null;
+    else {
+      const s0 = K.fieldScore(withHeld, fo).score;
+      withHeld.forEach((x, i) => {
+        if (x.items.length >= 3 || K.lineTypes(x.line).includes(ty) || x.items.some((it) => K.itemType(it) === ty)) return;
+        const next = withHeld.slice(); next[i] = { ...x, items: [...x.items, id] };
+        const g = K.fieldScore(next, fo).score / Math.max(1e-9, s0) - 1; if (g > Math.max(0.01, gain)) { gain = g; u = fieldB[i]; }
+      });
+    }
+    if (!u) continue; const ul = K.base(u.line);
+    add(id, { kind: 'use', label: '→ ' + K.unitName(u.line, u.star) });
+    if (!out.board[ul]) out.board[ul] = { label: '⬇ ' + K.itemName(id) };
+    out.steps.push({ k: 'use', why: rl ? 'relic' : 'type', type: ty, gain: Math.round(gain * 100), w: { id, unit: { line: u.line, star: u.star }, use: [id] } });
+  }
+  // Kein Rezept des Plans komplett, aber im Beutel ergeben zwei Komponenten ein Item: jetzt bauen statt horten.
+  // Turm ab Etage 50: Gegner heilen stark – Anticura (Giftstich, Heiß-Orb) zuerst, solange noch keiner auf dem Feld es trägt
   if (!out.steps.some((x) => x.k === 'craft') && n < PAIR_COL.length) {
     const pool = { ...(S.items || {}) }; for (const w of wishes) if (w.status === 'half') pool[w.use[0]] = (pool[w.use[0]] || 0) - 1;
-    const best = craftable(pool)[0]; const holder = (wishes[0] && wishes[0].unit) || holderFor(best && best.r);
+    const g = live && isLive() && live.game; const HEAL_CUT = ['poison-barb', 'flame-orb'];
+    const antiHeal = !!(g && g.mode === 'tower' && (g.stop || 0) >= 50 && !withHeld.some((x) => x.items.some((i) => HEAL_CUT.includes(i))));
+    const list = craftable(pool); const ah = antiHeal ? list.find((x) => HEAL_CUT.includes(x.r)) : null;
+    const best = ah || list[0]; const holder = (!ah && wishes[0] && wishes[0].unit) || holderFor(best && best.r);
     if (best && holder) {
       const col = PAIR_COL[n++]; add(best.a, { kind: 'craft', col, n }); add(best.b, { kind: 'craft', col, n });
       const ul = K.base(holder.line); if (!out.board[ul]) out.board[ul] = { col, label: CIRC[n - 1] + ' ' + K.itemName(best.r) };
-      out.steps.push({ k: 'slam', w: { id: best.r, unit: holder, use: [best.a, best.b] }, n, col });
+      out.steps.push({ k: 'slam', heal: !!ah, w: { id: best.r, unit: holder, use: [best.a, best.b] }, n, col });
     }
   }
   return out;
@@ -1291,7 +1337,7 @@ function noteSeen(l) {
     const types = (x.types || []).filter((ty) => D && D.data.traits[ty]);
     if (!o || o.c !== x.cost || (types.length && JSON.stringify(o.t) !== JSON.stringify(types))) { cur[b] = { c: x.cost, t: types.length ? types : (o && o.t) || [] }; ch = true; }
   }
-  if (ch) { S.seen = { ...(S.seen || {}), [m]: cur }; if (K) K.setSeen(cur); }
+  if (ch) { S.seen = { ...(S.seen || {}), [m]: cur }; if (K) K.setSeen(cur, campMode()); }
 }
 let lastLiveSig = '', lastTab = null;
 function applyLive(raw) {

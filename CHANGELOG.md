@@ -4,6 +4,23 @@ All versions below 1.0 are **beta** – the extension stays in beta until everyt
 
 Alle Versionen unter 1.0 sind **Beta** – die Erweiterung bleibt Beta, bis alles in jedem Modus sauber läuft. (Frühere Releases hießen 2.x; es sind dieselben Stände wie 0.1–0.7.)
 
+## 0.8.1 Beta – 2026-11-01
+**EN**
+- **Tower Plates count:** a Plate (e.g. Toxic Plate, Spooky Plate) gives its holder its type – the coach now counts it for the type tiers, like the game does. Before, it suggested swaps that broke a tier you already had through a Plate.
+- **No more swaps that make the board worse:** a swap is only suggested when it makes the board at least 4% stronger and keeps every active type tier (otherwise at least +15%). The suggestion shows how much stronger.
+- **No duplicates on the board:** a second copy of a Pokémon already on the board never pushes another Pokémon out (it adds no type and merges at the next planning phase anyway).
+- **Relics:** Plates in the bag go to the Pokémon on the board where they add the most (usually a new type tier). Signature relics (Light Ball, Thick Club, …) go to their own Pokémon.
+- **Heal Block from floor 50:** enemies heal a lot up there – if nobody on your board has Poison Barb or Flame Orb yet, the coach suggests building one first.
+- Tower costs and types of the Adventure/Tower-only families (Mankey 1, Tangela 3, Horsea, Krabby, …) are known from the start, not only once the card shows up in the shop.
+
+**DE**
+- **Tafeln im Turm zählen:** Eine Tafel (z. B. Gifttafel, Spuktafel) gibt ihrem Träger ihren Typ – der Coach zählt sie jetzt für die Typ-Stufen mit, wie das Spiel. Vorher schlug er Tausche vor, die eine schon per Tafel erreichte Stufe kaputt machten.
+- **Keine Tausche mehr, die das Feld schwächen:** Getauscht wird nur, wenn das Feld mindestens 4 % stärker wird und keine aktive Typ-Stufe verloren geht (sonst mindestens +15 %). Der Vorschlag zeigt, wie viel stärker.
+- **Keine Doppelten aufs Feld:** Eine zweite Kopie eines Pokémon, das schon steht, verdrängt nie ein anderes Pokémon (sie bringt keinen Typ und verschmilzt beim nächsten Planen ohnehin).
+- **Reliquien:** Tafeln im Beutel gehen an das Pokémon auf dem Feld, bei dem sie am meisten bringen (meist eine neue Typ-Stufe). Signatur-Reliquien (Kugelblitz, Kampfknochen, …) an ihr eigenes Pokémon.
+- **Anticura ab Etage 50:** Dort heilen die Gegner stark – trägt noch niemand auf dem Feld Giftstich oder Heiß-Orb, schlägt der Coach zuerst eins davon vor.
+- Turm-Kosten und Typen der Familien, die es nur im Abenteuer/Turm gibt (Menki 1, Tangela 3, Seeper, Krabby, …), sind von Anfang an bekannt – nicht erst, wenn die Karte im Shop auftaucht.
+
 ## 0.8.0 Beta – 2026-11-01
 **EN**
 - **New Tower (game version 41):** the Tower shop has every family in its first form – many of them aren’t in the public data yet. The coach now recognizes all 151 Pokémon (no more “not matched: #118”) and takes **cost and types straight from the shop card** (e.g. Tangela costs 3 in the Tower, not 4 like in PvP).

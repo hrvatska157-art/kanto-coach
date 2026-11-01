@@ -6,7 +6,7 @@
 English · <a href="README.de.md">Deutsch</a> · <a href="https://hrvatska157-art.github.io/kanto-coach/">Website</a></p>
 
 <p align="center">
-<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (version 0.8.0 Beta)</b></a>
+<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (version 0.8.1 Beta)</b></a>
 </p>
 
 <p align="center"><i>Beta: everything below version 1.0 is still being tested in the real game. Feedback and bug reports are welcome in the <a href="https://github.com/hrvatska157-art/kanto-coach/issues">issues</a>.</i></p>

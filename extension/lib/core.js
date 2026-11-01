@@ -7,6 +7,11 @@ const NUM = /\d+(?:\.\d+)?/g;
 const TYPE_COL = { normal:['#a8a77a','#1b1a10'], fire:['#e2703a','#fff'], water:['#4d8fe0','#fff'], grass:['#5ba849','#fff'], electric:['#eac52e','#1d1700'], ice:['#7fd3d3','#0d2424'], fighting:['#bf3a2f','#fff'], poison:['#9a4fa8','#fff'], ground:['#d2ad62','#241a06'], flying:['#8f9ce8','#10142c'], psychic:['#e5577e','#fff'], bug:['#9cad2a','#fff'], rock:['#b6a35a','#1f1a07'], ghost:['#6a5a9e','#fff'], dragon:['#6e4fe0','#fff'] };
 const COST_COL = { 0:'#7a8296', 1:'#7d8699', 2:'#2f9a5d', 3:'#2f74cc', 4:'#9a52da', 5:'#d99a17' };
 const STONE_ART = { fire:'fire-stone', water:'water-stone', electric:'thunder-stone', grass:'leaf-stone', ice:'ice-stone', normal:'blank-plate', fighting:'fist-plate', poison:'toxic-plate', ground:'earth-plate', flying:'sky-plate', psychic:'mind-plate', bug:'insect-plate', rock:'stone-plate', ghost:'spooky-plate', dragon:'draco-plate' };
+// Reliquien des Turms (v41, nicht in data.json; Spielcode route-*.js): Tafeln geben ihrem Träger ihren Typ (zählt für das Merkmal),
+// Signatur-Items wirken nur bei ihrer Linie. Im Beutel heißen sie '<id>', getragen 'rel-<id>'.
+const PLATE = { iron:'normal', flame:'fire', splash:'water', meadow:'grass', zap:'electric', icicle:'ice', fist:'fighting', toxic:'poison', earth:'ground', sky:'flying', mind:'psychic', insect:'bug', stone:'rock', spooky:'ghost', draco:'dragon' };
+const PLATE_DE = { iron:'Neutraltafel', flame:'Feuertafel', splash:'Wassertafel', meadow:'Wiesentafel', zap:'Blitztafel', icicle:'Frosttafel', fist:'Fausttafel', toxic:'Gifttafel', earth:'Erdtafel', sky:'Wolkentafel', mind:'Hirntafel', insect:'Käfertafel', stone:'Steintafel', spooky:'Spuktafel', draco:'Dracotafel' };
+const SIG_RELIC = { 'light-ball':['pikachu','Light Ball','Kugelblitz'], 'thick-club':['cubone','Thick Club','Kampfknochen'], stick:['farfetchd','Leek','Lauchstange'], 'lucky-punch':['chansey','Lucky Punch','Lucky Punch'], 'quick-powder':['ditto','Quick Powder','Flinkstaub'], 'dragon-scale':['dratini','Dragon Scale','Drachenhaut'], 'kings-rock':['slowpoke',"King's Rock",'King-Stein'], 'metal-coat':['onix','Metal Coat','Metallmantel'], 'up-grade':['porygon','Up-Grade','Up-Grade'], electirizer:['electabuzz','Electirizer','Stromisierer'], magmarizer:['magmar','Magmarizer','Magmaisierer'], stardust:['clefairy','Stardust','Sternenstaub'], 'red-scale':['magikarp','Red Scale','Rote Schuppe'] };
 // Pokédex-Nummern der Kampagnen-Pokémon, die nicht in data.json stehen
 const CAMP_DEX = { bellsprout:[69,70,71], clefairy:[35,36], drowzee:[96,97], grimer:[88,89], kangaskhan:[115], koffing:[109,110], mankey:[56,57], meowth:[52,53], mrmime:[122], nidoranf:[29,30,31], pinsir:[127], porygon:[137], tangela:[114], venonat:[48,49], omanyte:[138,139], kabuto:[140,141], 'pikachu-partner':[25] };
 // Linien, die in data.json fehlen können: die Neuen aus v35 (PvP-IDs, seit Regeln 39 in data.json) und Kampagnen-Linien.
@@ -42,6 +47,18 @@ const NEW_LINES = {
   grimer: { c: 0, t: ['poison'], dex: [88, 89], n: ['Grimer', 'Muk'] },
   kangaskhan: { c: 0, t: ['normal'], dex: [115], n: ['Kangaskhan'] },
   mrmime: { c: 0, t: ['psychic'], dex: [122], n: ['Mr. Mime'] },
+};
+// Abenteuer und Turm (Spielcode, Tabelle der Zusatz-Linien, v41): Kosten, Typen und Reichweite der Linien, die data.json nicht kennt.
+// Der Turm-Shop hat alle 151 Familien – ohne diese Tabelle kannte der Coach z. B. Seeper/Krabby nur, wenn sie im Shop zu sehen waren.
+const PVE_LINES = {
+  clefairy: { c: 2, t: ['normal'], range: 3 }, venonat: { c: 2, t: ['bug', 'poison'], range: 3 }, bellsprout: { c: 2, t: ['grass', 'poison'], range: 1 },
+  koffing: { c: 2, t: ['poison'], range: 3 }, grimer: { c: 3, t: ['poison'], range: 1 }, tangela: { c: 3, t: ['grass'], range: 1 },
+  pinsir: { c: 3, t: ['bug'], range: 1 }, kangaskhan: { c: 4, t: ['normal'], range: 1 }, nidoranf: { c: 1, t: ['poison', 'ground'], range: 1 },
+  mankey: { c: 1, t: ['fighting'], range: 1 }, meowth: { c: 2, t: ['normal'], range: 1 }, doduo: { c: 2, t: ['normal', 'flying'], range: 1 },
+  drowzee: { c: 3, t: ['psychic'], range: 3 }, mrmime: { c: 3, t: ['psychic'], range: 3 }, lickitung: { c: 3, t: ['normal'], range: 1 },
+  porygon: { c: 3, t: ['normal'], range: 3 }, spearow: { c: 1, t: ['normal', 'flying'], range: 1 }, krabby: { c: 1, t: ['water'], range: 1 },
+  goldeen: { c: 1, t: ['water'], range: 1 }, horsea: { c: 2, t: ['water'], range: 3 }, farfetchd: { c: 2, t: ['normal', 'flying'], range: 1 },
+  tentacool: { c: 3, t: ['water', 'poison'], range: 3 }, omanyte: { c: 4, t: ['rock', 'water'], range: 3 }, kabuto: { c: 4, t: ['rock', 'water'], range: 1 },
 };
 // Gleiche Pokémon, andere ID: Kampagne -> PvP (v35)
 const PVP_ALIAS = { venonat: 'venomoth', porygon: 'porygon3', omanyte: 'omastar', bellsprout: 'victreebel', tangela: 'tangela4', mankey: 'primeape', nidoranf: 'nidoqueen', kabuto: 'kabutops', koffing: 'koga', meowth: 'giovanni', pinsir: 'samurai' };
@@ -122,7 +139,11 @@ function create(opts) {
   // Was die Shop-Karten des laufenden Modus zeigen: {linie: {c: Kosten, t: [Typen]}} – im Turm (v41) kosten
   // manche Pokémon anders als im PvP (z. B. Tangela 3 statt 4), und viele Turm-Pokémon fehlen in data.json ganz.
   K.seen = {};
-  K.setSeen = (map) => { K.seen = map || {}; };
+  // pve: Abenteuer/Turm – Kosten der PvP-IDs nach der Spieltabelle vorbelegen (Menki 1 statt 4, Tangela 3), gesehene Karten haben Vorrang
+  K.setSeen = (map, pve) => {
+    const pre = {}; if (pve) for (const [p, c] of Object.entries(CAMP_ALIAS)) if (PVE_LINES[c]) pre[p] = { c: PVE_LINES[c].c };
+    K.seen = { ...pre, ...(map || {}) };
+  };
   const rawNames = (id) => { const l = data.lines[id]; return l ? l.n : (NEW_LINES[id] ? NEW_LINES[id].n : (GEN1[id] ? GEN1[id].n : (DE.campaignOnly[id] || [id]))); };
   // Verankert: nur die gewählte Form (sie steigt in ★ auf, ohne sich zu entwickeln)
   K.lineNames = (id) => { const s = splitId(id); const n = rawNames(s.base); return s.anchor == null ? n : [n[Math.min(s.anchor, n.length - 1)]]; };
@@ -134,14 +155,26 @@ function create(opts) {
   K.lineName = (id) => { const n = K.lineNames(id); return own(id, K.pname(n[n.length - 1])); };
   K.baseName = (id) => K.pname(K.lineNames(id)[0]);
   K.lineFullName = (id) => K.lineNames(id).map(K.pname).join(' → ') + (K.anchorOf(id) != null ? ' ⚓' : '');
-  K.lineCost = (id) => { id = K.base(id); if (K.seen[id] && K.seen[id].c) return K.seen[id].c; const l = data.lines[id]; return l ? l.c : (NEW_LINES[id] ? NEW_LINES[id].c : (id === 'pikachu-partner' ? 2 : 0)); };
-  K.lineRange = (id) => { id = K.base(id); const l = data.lines[id]; return l ? l.range : (NEW_LINES[id] && NEW_LINES[id].range) || 1; };
-  K.lineTypes = (id) => { id = K.base(id); const l = data.lines[id]; return l ? l.t : (NEW_LINES[id] ? NEW_LINES[id].t : ((K.seen[id] && K.seen[id].t) || [])); };
+  K.lineCost = (id) => { id = K.base(id); if (K.seen[id] && K.seen[id].c) return K.seen[id].c; const l = data.lines[id]; return l ? l.c : ((NEW_LINES[id] && NEW_LINES[id].c) || (PVE_LINES[id] && PVE_LINES[id].c) || (id === 'pikachu-partner' ? 2 : 0)); };
+  K.lineRange = (id) => { id = K.base(id); const l = data.lines[id]; return l ? l.range : (NEW_LINES[id] && NEW_LINES[id].range) || (PVE_LINES[id] && PVE_LINES[id].range) || 1; };
+  K.lineTypes = (id) => { id = K.base(id); const l = data.lines[id]; return l ? l.t : (NEW_LINES[id] ? NEW_LINES[id].t : PVE_LINES[id] ? PVE_LINES[id].t : ((K.seen[id] && K.seen[id].t) || [])); };
   K.typeName = (t) => { if (K.lang === 'de') return DE.types[t] || t; const tr = data.traits[t]; return tr ? tr.en : t; };
-  K.itemName = (id) => { const it = data.items[id]; if (!it) return id; return K.lang === 'de' ? (DE.items[it.en] || it.en) : it.en; };
+  K.itemName = (id) => {
+    const it = data.items[id]; const de = K.lang === 'de';
+    if (it) return de ? (DE.items[it.en] || it.en) : it.en;
+    const r = id.replace(/^rel-/, ''); const p = /^([a-z]+)-plate$/.exec(r);
+    if (p && PLATE[p[1]]) return de ? PLATE_DE[p[1]] : (p[1] === 'iron' ? 'Blank' : p[1][0].toUpperCase() + p[1].slice(1)) + ' Plate';
+    return SIG_RELIC[r] ? SIG_RELIC[r][de ? 2 : 1] : id;
+  };
+  // Typ, den ein Item seinem Träger gibt: Typ-Steine (emblem-<typ>) und Tafeln des Turms (rel-<x>-plate)
+  K.itemType = (id) => { if (!id) return null; if (id.startsWith('emblem-')) return id.slice(7); const p = /^(?:rel-)?([a-z]+)-plate$/.exec(id); return p ? PLATE[p[1]] || null : null; };
+  // Signatur-Reliquie: für welche Linie (PvP- oder Kampagnen-ID)
+  K.relicLine = (id) => { const r = SIG_RELIC[(id || '').replace(/^rel-/, '')]; return r ? r[0] : null; };
+  // Items mit Werten (für die Kraft): Typ-Steine, Tafeln und Signatur-Reliquien zählen nicht
+  K.statItems = (items) => (items || []).filter((id) => !K.itemType(id) && !K.relicLine(id)).length;
   K.itemText = (id) => { const it = data.items[id]; return it ? K.gtext(it.text.en) : ''; };
   K.itemShort = (id) => { const it = data.items[id]; return it && it.short ? K.gtext(it.short.en) : ''; };
-  K.itemArt = (id) => (id.startsWith('emblem-') ? (STONE_ART[id.slice(7)] || 'blank-plate') : id === 'eviolite' ? 'metal-powder' : id);
+  K.itemArt = (id) => (id.startsWith('emblem-') ? (STONE_ART[id.slice(7)] || 'blank-plate') : id === 'eviolite' ? 'metal-powder' : id === 'rel-iron-plate' || id === 'iron-plate' ? 'blank-plate' : id.replace(/^rel-/, ''));
   // Pokédex-Nummer einer Form (Stern = Entwicklungsstufe) und Sprite-Adresse
   // Pokédex-Nummern je Form (l.s), sonst aus den Sternen
   const formDex = (b) => { const l = data.lines[b]; if (l) return l.s && l.s.length ? l.s : [...new Set(l.stars.map((x) => x.dex))]; return CAMP_DEX[b] || (NEW_LINES[b] && NEW_LINES[b].dex) || (GEN1[b] && GEN1[b].dex) || null; };
@@ -274,7 +307,7 @@ function create(opts) {
     for (const u of units) {
       const b = K.base(u.line); if (seen.has(b)) continue; seen.add(b);
       const types = new Set(K.lineTypes(u.line));
-      for (const it of (u.items || [])) if (it.startsWith('emblem-')) types.add(it.slice(7));
+      for (const it of (u.items || [])) { const ty = K.itemType(it); if (ty) types.add(ty); }
       types.forEach((t) => { cnt[t] = (cnt[t] || 0) + 1; });
     }
     return Object.entries(cnt).filter(([t]) => data.traits[t]).map(([t, n]) => {
@@ -345,16 +378,23 @@ function create(opts) {
     for (const u of units) {
       // Eine zweite Kopie derselben Linie zählt für keinen Typ und verschmilzt später ohnehin – nur 80 % ihres Werts
       const b0 = K.base(u.line); let b = (dup.has(b0) ? 0.8 : 1) + team; dup.add(b0);
-      for (const t of K.lineTypes(u.line)) if (lvOf[t] && (!data.traits[t] || data.traits[t].scope === 'type')) b += K.traitBonus(t, lvOf[t]);
+      const ts = new Set(K.lineTypes(u.line)); (u.items || []).forEach((it) => { const ty = K.itemType(it); if (ty) ts.add(ty); });
+      for (const t of ts) if (lvOf[t] && (!data.traits[t] || data.traits[t].scope === 'type')) b += K.traitBonus(t, lvOf[t]);
       const m = o.foes ? Math.sqrt(Math.max(0.1, 1 + K.abilityShare(u.line, u.star) * (K.matchup(u.line, u.star, o.foes) - 1))) : 1;
-      sum += K.unitPower(u.line, u.star, (u.items || []).length) * b * m * (u.w || 1);
+      sum += K.unitPower(u.line, u.star, K.statItems(u.items)) * b * m * (u.w || 1);
     }
     return { score: sum, traits: tr };
   };
   // Beste Aufstellung mit höchstens `slots` Pokémon aus cands ([{line, star, items, w}], w = Zusatzgewicht z. B. Plan).
   // Gierig aufbauen, dann tauschen, solange es besser wird. Wer schon steht (onBoard), gewinnt knappe Vergleiche.
+  // Jede Linie nur einmal (die beste Kopie): eine zweite Kopie zählt für keinen Typ und verschmilzt beim nächsten Planen ohnehin.
+  // Weitere Kopien füllen nur Plätze, für die es sonst niemanden gibt – sie verdrängen nie ein anderes Pokémon.
   K.bestField = (cands, slots, o = {}) => {
-    const pool = cands.map((u, i) => ({ ...u, i })); const n = Math.min(slots, pool.length);
+    const all = cands.map((u, i) => ({ ...u, i })); const top = {};
+    const rank = (u) => (u.star || 1) * 10 + (u.items || []).length + (u.onBoard ? 0.5 : 0);
+    for (const u of all) { const b = K.base(u.line); if (!top[b] || rank(u) > rank(top[b])) top[b] = u; }
+    const pool = Object.values(top); const spare = all.filter((u) => !pool.includes(u)).sort((a, b) => rank(b) - rank(a));
+    const n = Math.min(slots, pool.length);
     const val = (set) => K.fieldScore(set, o).score + set.reduce((a, u) => a + (u.onBoard ? 0.02 : 0), 0);
     let cur = [];
     while (cur.length < n) {
@@ -371,6 +411,7 @@ function create(opts) {
       }
       if (!bestSwap) break; cur = bestSwap; v0 = bv;
     }
+    for (const u of spare) { if (cur.length >= slots) break; cur.push(u); }
     const fs = K.fieldScore(cur, o);
     return { units: cur, score: fs.score, traits: fs.traits };
   };
