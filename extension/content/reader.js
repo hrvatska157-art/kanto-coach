@@ -159,9 +159,13 @@ function readShop() {
     // Figuren-Pokémon (Koga, Giovanni, Samurai) haben im Spiel die Bildnummer 9000 + Pokédex-Nr.
     let line = num && map ? ((owner && num < 9000 && map.base[9000 + num]) || map.base[num] || (map.forms[num] || [])[0] || null) : null;
     if (!line) line = lineByName(label);
-    const cm = /\bc(\d)\b/.exec(b.className || '');
+    const cm = /\bc(\d)\b/.exec(b.className || ''); const cn = firstInt((b.querySelector('.ccost .num') || {}).textContent);
+    // Typen der Karte: Symbol-Bild „types/<typ>-g.png“ (englische Typ-ID, sprachunabhängig). Im Turm (v41) kennt
+    // data.json viele Pokémon nicht – Kosten, Typen und Name kommen dann nur von der Karte.
+    const types = [...b.querySelectorAll('.ctraits .type-ico')].map((e) => (/types\/([a-z]+)-/.exec(e.getAttribute('style') || '') || [])[1]).filter(Boolean);
+    const cname = ((b.querySelector('.cname') || {}).textContent || '').trim().slice(0, 30);
     // „plan“: Das Spiel markiert selbst Karten, die in seinem Planer stehen (z. B. nach „Code einfügen“)
-    out.push({ el: b, num, line, cost: cm ? +cm[1] : 0, own: ownFromCard(b, label), merge: (/\bmerge\b/.test(b.className || '') && +((/\bm(\d)\b/.exec(b.className) || [])[1] || 2)) || 0, owner, plan: /\bplan\b/.test(b.className || '') || !!b.querySelector('.c-plan'), name: label.replace(/\s*\(.*$/, '').slice(0, 60) });
+    out.push({ el: b, num, line, cost: cn || (cm ? +cm[1] : 0), types, cname, own: ownFromCard(b, label), merge: (/\bmerge\b/.test(b.className || '') && +((/\bm(\d)\b/.exec(b.className) || [])[1] || 2)) || 0, owner, plan: /\bplan\b/.test(b.className || '') || !!b.querySelector('.c-plan'), name: label.replace(/\s*\(.*$/, '').slice(0, 60) });
   }
   return out.slice(0, 5);
 }
@@ -215,7 +219,9 @@ function readBench() {
 // Eigene Pokémon auf dem Brett: Das Spiel hängt über jedes Pokémon eine Leiste .ubar.ally (eigene) bzw. .ubar.foe (Gegner)
 // mit derselben data-uid wie das Sprite (.unit2d). Daraus kommen Linie (Bildnummer), Stern und getragene Items.
 // Mit ausgerichteter Schablone wird zusätzlich das Feld bestimmt.
+let foes = [];
 function readBoard() {
+  foes = [];
   const root = document.querySelector('.units2d'); if (!root) return null;
   const bars = {};
   for (const b of root.querySelectorAll('.ubar[data-uid]')) {
@@ -225,12 +231,15 @@ function readBoard() {
     bars[b.dataset.uid] = { ally: b.classList.contains('ally'), foe: b.classList.contains('foe'), star: sm ? +sm[1] : 0, items };
   }
   const H = isCalibrated() ? hom() : null; const Hi = H && invert(H);
-  const out = []; const used = new Set();
+  const out = []; const used = new Set(); foes = [];
   for (const u of root.querySelectorAll(':scope > .unit2d[data-uid]')) {
     if (u.style.display === 'none') continue;
-    const bar = bars[u.dataset.uid]; if (!bar || !bar.ally) continue;
+    const bar = bars[u.dataset.uid]; if (!bar) continue;
     const img = u.querySelector('img'); if (!img) continue;
     const m = RX_MON.exec(srcOf(img)); if (!m) continue;
+    // Gegner (Leiste .foe): nur Linie und Stern – fürs Abschätzen, was die anderen spielen (PvP: Pool, Typen)
+    if (bar.foe) { const f = formOf(+m[1], bar.star || 0); if (f) foes.push({ line: f.line, star: f.star, num: +m[1] }); continue; }
+    if (!bar.ally) continue;
     const f = formOf(+m[1], bar.star || 0); if (!f) continue;
     const e = { ...f, num: +m[1], items: bar.items };
     if (Hi) {
@@ -512,7 +521,7 @@ function scanOnce() {
   if (!cards.length && level == null && gold == null && !safari && !loot && !seal && !starter && !boon && !event) { dbg.at = 'kein HUD'; return; } // kein Spiel-HUD sichtbar
   const bench = readBench(); const board = readBoard(); const it = readItems(cards.length > 0);
   const state = {
-    shop: cards.map((c) => c.line), shopInfo: cards.map((c) => ({ line: c.line, num: c.num, cost: c.cost, own: c.own, merge: c.merge, owner: c.owner, plan: c.plan, name: c.line ? '' : c.name })),
+    shop: cards.map((c) => c.line), shopInfo: cards.map((c) => ({ line: c.line, num: c.num, cost: c.cost, types: c.types, cname: c.cname, own: c.own, merge: c.merge, owner: c.owner, plan: c.plan, name: c.line ? '' : c.name })), foes: board ? foes : [],
     own: Object.fromEntries(cards.filter((c) => c.line).map((c) => [c.line, c.own])),
     level, gold, hp: readHp(), interest: readInterest(), benchCap: document.querySelectorAll('.bench .slot[data-bench]').length || null, xp: readXp(), safari, loot, seal, starter, boon, event, game: readMode(), planning: inPlanning(), teamN: firstInt((document.querySelector('.teamcount') || { getAttribute: () => '' }).getAttribute('aria-label')), lang: document.documentElement.lang || '', bench, board, items: it.items, itemsSeen: it.seen, itemsHidden: !!it.hidden, itemsCount: it.count || null,
     diag: { cards: cards.filter((c) => !c.empty).length, matched: cards.filter((c) => c.line).length, unknown: cards.filter((c) => !c.line && !c.empty).map((c) => c.num || c.name).slice(0, 5), bench: bench.length, board: board ? board.length : null, calibrated: isCalibrated(), map: !!map },

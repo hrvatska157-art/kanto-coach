@@ -12,9 +12,11 @@ const L = {
 de: {
   title: 'Kanto Coach', lvl: 'Lv', gold: 'Gold', tabs: { now: 'Jetzt', plan: 'Plan', items: 'Items', team: 'Team' },
   whatNow: 'Was jetzt?', nothingNow: 'Gerade nichts zu tun. Kämpfen!', doBuy: (n) => `${n} kaufen`, noGold: 'zu wenig Gold', inPlan: 'im Plan',
-  wStar: (n) => `macht ein Pokémon ${'★'.repeat(n)} – das stärkt dein Team am meisten`, wToward3: 'Kern-Pokémon schon ★★: Kopie auf dem Weg zu ★★★', wCore: 'Kern-Pokémon deines Plans', wPlan: 'gehört zu deinem Plan', wPair: '2. Kopie: auf dem Weg zu ★★',
+  wStar: (n) => `macht ein Pokémon ${'★'.repeat(n)} – das stärkt dein Team am meisten`, wToward3: 'Plan will es ★★★: Kopie auf dem Weg dorthin',
+  wPower: (out, g) => `macht dein Feld um ${g} % stärker (gerechnet aus den Werten)${out ? ` – statt ${out}` : ''}`, wXpAdd: (g) => `mit EP-Kauf auf das nächste Level: Feld ${g} % stärker`, markPower: 'STÄRKER', wFill: 'stärkstes Pokémon für deinen freien Platz (gerechnet aus den Werten)', wCore: 'Kern-Pokémon deines Plans', wPlan: 'gehört zu deinem Plan', wPair: '2. Kopie: auf dem Weg zu ★★',
   wTrait: (ty, n) => `bringt ${ty} auf ${n} (Typ-Bonus aktiv)`,
   tFree: (n) => `${n} ${n === 1 ? 'Platz' : 'Plätze'} auf dem Feld frei – stell Pokémon von der Bank auf`, tNear: (ty, n) => `Noch 1 ${ty} für ${ty} ${n}: halte im Shop danach Ausschau`,
+  tNearShop: (who, ty, n, l) => `${who} im Shop bringt ${ty} ${n} – lohnt sich erst mit einem Platz mehr (Level ${l}) oder wenn ein schwächeres Pokémon gehen kann`,
   tLevel: (s, l) => `Spieler mit diesem Plan sind in Stage ${s} meist Level ${l}: EP kaufen`, tSave: (c, m) => `Nichts kaufen, Gold sparen: ab ${c} Gold bekommst du +${m} Zinsen pro Runde`,
   tRoll: (c) => `Du hast über ${c} Gold: neu würfeln, bis du die fehlenden Plan-Pokémon findest (Gold nicht unter ${c} fallen lassen)`,
   roundN: (s, r) => `Runde ${s}-${r}`, fightWin: (n, w) => `Nächster Kampf: ${n} – Spieler gewinnen ${w} %`,
@@ -23,7 +25,9 @@ de: {
   whyCamp: (m, d, o, n) => `Diese Pokémon sind in „${m}“ überdurchschnittlich (${d} % Siege) · ${o} von ${n} hast du schon · Typen passen zusammen`,
   back: 'Zurück', bestPlans: 'Passt am besten zu dir', allComps: 'Alle Comps', planAuto: 'Vom Coach gewählt', planManual: 'Von dir gewählt',
   stageNorm: (s, l) => `In Stage ${s} sind Spieler mit diesem Plan meist Level ${l}.`, otherPlan: 'Anderen Plan wählen',
-  fieldNow: (l) => `Jetzt aufstellen (Level ${l})`, fromPlan: 'aus deinem Plan', filler: 'Platzhalter, bis du Plan-Pokémon hast', fieldNowHint: 'Durchgezogen = aus dem Plan, gestrichelt = Platzhalter mit passenden Typen. Stärkere Sterne zuerst.',
+  fieldNow: (l) => `Jetzt aufstellen (Level ${l})`, fromPlan: 'aus deinem Plan', filler: 'Platzhalter, bis du Plan-Pokémon hast', fieldNowHint: 'Gerechnet aus den Werten der Pokémon (KP, Verteidigung, Angriff, Tempo, Attacke), Sternen, Items und den Typ-Stufen, die zusammen entstehen. Durchgezogen = aus dem Plan.',
+  foeNext: 'Nächster Gegner', foeSeen: (n) => `Gegner – zuletzt gesehen (${n} ${n === 1 ? 'Kampf' : 'Kämpfe'})`, foeGood: (x) => `Attacken sehr effektiv: ${x}`, foeBad: (x) => `Attacken wenig effektiv: ${x}`,
+  foeContest: (x) => `Gegner halten Kopien deiner Plan-Pokémon (weniger im Shop): ${x}`, foeNote: 'Typ-Vorteil gilt nur für Attacken, Standardangriffe ignorieren Typen. Fließt in „Jetzt aufstellen“ ein.',
   alsoGood: 'Passen auch gut', isPlan: 'Dein Plan', takePlan: 'Diesen Plan nehmen',
   diag: (a, b) => `Erkannt: ${a}/${b} Shop-Karten`, diagBench: (n) => `Bank ${n}`, diagBoard: (n) => `Brett ${n}`, diagItems: (n) => `Items ${n}`, diagUnknown: (x) => `Nicht zugeordnet: ${x} (unbekanntes Pokémon – evtl. neuer als die API-Daten)`,
   diagNone: 'Im Spiel wurde noch kein Shop gefunden. Ist die Shop-Erkennung in den Einstellungen an?',
@@ -73,6 +77,7 @@ de: {
   placeStep: (n) => `${n} aufs Feld stellen`, placeSub: 'freier Platz – aus deinem Plan bzw. passend zu deinen Typen',
   swapStep: (a, b) => `${a} statt ${b} aufstellen`, swapSub: 'stärker für deinen Plan – Pokémon auf dem Brett tauschen',
   slamStep: (a, b, r) => `${a} auf ${b} ziehen → ${r}`, slamFor: (u) => `nicht horten: jetzt bauen und ${u} geben – ein fertiges Item ist stärker als Komponenten im Beutel`,
+  tXpAdd: (n, l, who, g) => `EP kaufen (${n}× 4 Gold → Level ${l}) und ${who} aufstellen: dein Feld wird ${g} % stärker – das schlägt die Zinsen`,
   tXp: (n, l, need, lost) => `${lost ? 'Letzten Kampf verloren' : 'Gold über der Zinsgrenze'}: EP kaufen (${n}× 4 Gold${need <= n ? ` → Level ${l}` : ''}) – ${lost ? 'mehr Pokémon auf dem Feld schlägt Zinsen' : 'dann passt ein Pokémon mehr aufs Feld'}`,
   tAllin: (hp, m) => `Nur noch ${hp} KP: Zinsen sind jetzt egal – Gold einsetzen: ${m > 0 ? 'neu würfeln für fehlende Plan-Pokémon und ★★' : 'neu würfeln für ★★'}, EP kaufen, um mehr aufs Feld zu stellen.`,
   tLostRoll: (m) => `Letzten Kampf verloren, der nächste Level ist noch zu teuer: neu würfeln für ${m > 0 ? 'fehlende Plan-Pokémon und ' : ''}★★ – das macht dein Team jetzt stärker`,
@@ -114,9 +119,11 @@ de: {
 en: {
   title: 'Kanto Coach', lvl: 'Lv', gold: 'Gold', tabs: { now: 'Now', plan: 'Plan', items: 'Items', team: 'Team' },
   whatNow: 'What now?', nothingNow: 'Nothing to do right now. Fight!', doBuy: (n) => `Buy ${n}`, noGold: 'not enough gold', inPlan: 'in plan',
-  wStar: (n) => `makes a Pokémon ${'★'.repeat(n)} – the biggest boost for your team`, wToward3: 'core Pokémon already ★★: copy toward ★★★', wCore: 'core Pokémon of your plan', wPlan: 'part of your plan', wPair: '2nd copy: on the way to ★★',
+  wStar: (n) => `makes a Pokémon ${'★'.repeat(n)} – the biggest boost for your team`, wToward3: 'plan wants it ★★★: copy on the way there',
+  wPower: (out, g) => `makes your board ${g}% stronger (calculated from stats)${out ? ` – instead of ${out}` : ''}`, wXpAdd: (g) => `with XP to the next level: board ${g}% stronger`, markPower: 'STRONGER', wFill: 'strongest Pokémon for your free slot (calculated from stats)', wCore: 'core Pokémon of your plan', wPlan: 'part of your plan', wPair: '2nd copy: on the way to ★★',
   wTrait: (ty, n) => `brings ${ty} to ${n} (type bonus active)`,
   tFree: (n) => `${n} free ${n === 1 ? 'slot' : 'slots'} on the board – field Pokémon from the bench`, tNear: (ty, n) => `1 more ${ty} for ${ty} ${n}: look out for one in the shop`,
+  tNearShop: (who, ty, n, l) => `${who} in the shop brings ${ty} ${n} – worth it once you have one more slot (level ${l}) or a weaker Pokémon can go`,
   tLevel: (s, l) => `Players with this plan are usually level ${l} in stage ${s}: buy XP`, tSave: (c, m) => `Buy nothing, save gold: from ${c} gold you get +${m} interest per round`,
   tRoll: (c) => `You have more than ${c} gold: reroll until you find the missing plan Pokémon (do not drop below ${c})`,
   roundN: (s, r) => `round ${s}-${r}`, fightWin: (n, w) => `Next fight: ${n} – players win ${w}%`,
@@ -125,7 +132,9 @@ en: {
   whyCamp: (m, d, o, n) => `These Pokémon do better than average in “${m}” (${d}% wins) · you own ${o} of ${n} · types fit together`,
   back: 'Back', bestPlans: 'Best fit for you', allComps: 'All comps', planAuto: 'Picked by the coach', planManual: 'Picked by you',
   stageNorm: (s, l) => `In stage ${s} players with this plan are usually level ${l}.`, otherPlan: 'Choose another plan',
-  fieldNow: (l) => `Field now (level ${l})`, fromPlan: 'from your plan', filler: 'placeholder until you have plan Pokémon', fieldNowHint: 'Solid = from the plan, dashed = placeholder with matching types. Higher stars first.',
+  fieldNow: (l) => `Field now (level ${l})`, fromPlan: 'from your plan', filler: 'placeholder until you have plan Pokémon', fieldNowHint: 'Calculated from the Pokémon’s stats (HP, defense, attack, speed, ability), stars, items and the type tiers they form together. Solid = from the plan.',
+  foeNext: 'Next opponent', foeSeen: (n) => `Opponents – last seen (${n} ${n === 1 ? 'fight' : 'fights'})`, foeGood: (x) => `Abilities super effective: ${x}`, foeBad: (x) => `Abilities not very effective: ${x}`,
+  foeContest: (x) => `Opponents hold copies of your plan Pokémon (fewer in the shop): ${x}`, foeNote: 'Type advantage applies to abilities only, basic attacks ignore types. Used for “Field now”.',
   alsoGood: 'Also a good fit', isPlan: 'Your plan', takePlan: 'Take this plan',
   diag: (a, b) => `Detected: ${a}/${b} shop cards`, diagBench: (n) => `bench ${n}`, diagBoard: (n) => `board ${n}`, diagItems: (n) => `items ${n}`, diagUnknown: (x) => `Not matched: ${x} (unknown Pokémon – maybe newer than the API data)`,
   diagNone: 'No shop found in the game yet. Is shop detection switched on in the settings?',
@@ -175,6 +184,7 @@ en: {
   placeStep: (n) => `Put ${n} on the board`, placeSub: 'free slot – from your plan or matching your types',
   swapStep: (a, b) => `Field ${a} instead of ${b}`, swapSub: 'stronger for your plan – swap them on the board',
   slamStep: (a, b, r) => `Drag ${a} onto ${b} → ${r}`, slamFor: (u) => `don’t hoard: build it now and give it to ${u} – a finished item beats components in the bag`,
+  tXpAdd: (n, l, who, g) => `Buy XP (${n}× 4 gold → level ${l}) and field ${who}: your board gets ${g}% stronger – worth more than interest`,
   tXp: (n, l, need, lost) => `${lost ? 'Lost the last fight' : 'Gold above the interest cap'}: buy XP (${n}× 4 gold${need <= n ? ` → level ${l}` : ''}) – ${lost ? 'more Pokémon on the board beats interest' : 'then one more Pokémon fits on the board'}`,
   tAllin: (hp, m) => `Only ${hp} HP left: interest doesn’t matter now – spend gold: ${m > 0 ? 'reroll for missing plan Pokémon and ★★' : 'reroll for ★★'}, buy XP to field more.`,
   tLostRoll: (m) => `Lost the last fight and the next level is still too expensive: reroll for ${m > 0 ? 'missing plan Pokémon and ' : ''}★★ – that makes your team stronger now`,
@@ -339,6 +349,7 @@ const DEF = { open: true, min: false, x: null, y: 90, tab: 'now', level: 4, gold
 let S = { ...DEF };
 let K = null, D = null, lang = 'de', langSel = 'auto', server = '', loadError = '', pick = null, sel = null, compQ = '', toastT = null, liveTs = 0, lastMarks = '', lastField = '';
 let calibrated = false;
+let fieldMemo = null, adviceMemo = null, foeLock = false; // je Zeichnen einmal rechnen (K.bestField ist nicht ganz billig)
 let CAMP = { key: '', mode: null, loading: false, err: '', planKey: '', plan: null, endKey: '', end: null };
 const campData = {};
 const extraCost = {}; // Kosten von Pokémon, die in den API-Daten fehlen (aus der Shop-Karte)
@@ -457,7 +468,7 @@ function ownOf(line) { return (K ? S.owned[K.base(line)] : S.owned[line]) || 0; 
 function inShop(line) { return S.shop.includes(K ? K.base(line) : line); }
 function predictions() {
   if (!K || gm() !== 'pvp') return [];
-  return K.predict({ owned: S.owned, shop: S.shop, level: S.level, gold: S.gold, tiers: ['S', 'A', 'B'], minN: 30, limit: 6 });
+  return K.predict({ owned: S.owned, shop: S.shop, level: S.level, gold: S.gold, tiers: ['S', 'A', 'B'], minN: 30, limit: 6, others: foeCopies() });
 }
 /* ---------- Plan: eine Team-Comp, an der du dich orientierst ---------- */
 const PL = { key: '', list: [] };
@@ -482,7 +493,7 @@ function planList() {
     if (PL.key !== key) { PL.key = key; PL.list = K.campComps(CAMP.mode, { owned, stop: stop && stop.stop, limit: 6 }).map((x) => ({ comp: x.comp, fit: x.fit, strength: x.strength, owned: x.owned, n: x.units.length, kind: 'camp' })); }
     return PL.list;
   }
-  const key = ['pvp', S.level, S.gold, JSON.stringify(S.owned), S.shop.join()].join('|');
+  const key = ['pvp', S.level, S.gold, JSON.stringify(S.owned), S.shop.join(), (S.foesSeen || []).length].join('|');
   if (PL.key !== key) { PL.key = key; PL.list = predictions().map((p) => ({ comp: p.comp, pBuild: p.pBuild, owned: p.have.length, n: p.need.length, kind: 'pvp' })); }
   return PL.list;
 }
@@ -506,22 +517,35 @@ function hasTarget() { return !!planComp(); }
 function planUnits() { const c = planComp(); return c ? K.boardUnits(c) : []; }
 function targetNeed() { return planUnits(); }
 function targetBoard() { const c = planComp(); return c ? K.buildBoard(c) : []; }
-// Was jetzt aufs Feld gehört: Plan-Pokémon, die du hast, dann eigene Pokémon mit passenden Typen
-function fieldNow() {
-  const lvl = Math.max(1, S.level || 1); const plan = planUnits(); const owned = S.owned;
-  // Bewertung statt fester Reihenfolge: Konter (Abenteuer) > Plan > Sterne > Kosten > passende Typen.
-  // Wer schon auf dem Brett steht, gewinnt Gleichstände – sonst pendelt der Tausch-Vorschlag zwischen gleich starken Pokémon.
+// Gegner, gegen die die Aufstellung gerechnet wird: Turm/Abenteuer = der nächste Gegner (in der Planungsphase sichtbar),
+// PvP = die zuletzt gesehenen Gegner-Felder (der nächste Gegner ist offen)
+function foesNow() {
+  const lv = live && isLive() ? live : null;
+  if (campMode()) return lv && lv.planning && Array.isArray(lv.foes) && lv.foes.length ? lv.foes.map((f) => ({ line: canon(f.line), star: f.star })) : null;
+  const fs = (S.foesSeen || []).filter((x) => x.mode === 'pvp').slice(-4);
+  return fs.length ? fs.flatMap((x) => x.units) : null;
+}
+// Kandidaten fürs Feld: im Spiel jedes Pokémon von Bank und Brett (mit Stern und Items), sonst aus den gezählten Kopien.
+// Plan-Pokémon wiegen etwas mehr (sie wachsen mit dem Plan), Konter im Abenteuer deutlich mehr.
+function fieldCands() {
+  const plan = new Set(planUnits().map((u) => K.base(u.line)));
   const ctr = counterCore(); const ctrSet = new Set(ctr ? ctr.lines.map((l) => K.base(l)) : []);
-  const planSet = new Set(plan.map((u) => K.base(u.line))); const types = new Set(plan.flatMap((u) => K.lineTypes(u.line)));
-  const onBoard = new Set((live && isLive() && Array.isArray(live.board) ? live.board : []).map((u) => K.base(u.line)));
-  const STAR = [0, 1.5, 4.5, 9]; const held = heldItems();
-  return Object.keys(owned).filter((l) => owned[l] > 0).map((l) => {
-    const star = starsOf(owned[l]); const shared = K.lineTypes(l).filter((x) => types.has(x)).length;
-    // getragene Items machen ein Pokémon deutlich stärker – Item-Träger nicht auf die Bank schicken
-    const its = (held[l] || []).length;
-    const score = (ctrSet.has(l) ? 6 : 0) + (planSet.has(l) ? 3 : 0) + STAR[Math.min(3, star)] + (K.lineCost(l) || 1) * 0.8 + shared * 0.7 + its * 2 + (onBoard.has(l) ? 0.3 : 0);
-    return { line: l, star, plan: planSet.has(l) || ctrSet.has(l), score };
-  }).sort((a, b) => b.score - a.score || a.line.localeCompare(b.line)).slice(0, lvl);
+  const w = (l) => (ctrSet.has(l) ? 1.3 : plan.has(l) ? 1.1 : 1);
+  const lv = live && isLive() ? live : null; const held = heldItems();
+  if (lv && lv.planning && Array.isArray(lv.board) && Array.isArray(lv.bench)) {
+    return [...lv.board.map((u) => ({ line: K.base(u.line), star: u.star || 1, items: u.items || [], onBoard: true })),
+      ...lv.bench.map((u) => ({ line: K.base(u.line), star: u.star || 1, items: held[K.base(u.line)] || [] }))].map((u) => ({ ...u, w: w(u.line) }));
+  }
+  return Object.keys(S.owned).filter((l) => S.owned[l] > 0).map((l) => ({ line: l, star: starsOf(S.owned[l]), items: held[l] || [], w: w(l) }));
+}
+// Was jetzt aufs Feld gehört: gerechnet aus den Werten der Pokémon, ihren Sternen und Items und den Typ-Stufen, die zusammen
+// entstehen (K.bestField). Wer schon steht, gewinnt knappe Vergleiche – sonst pendelt der Tausch-Vorschlag.
+function fieldNow() {
+  if (fieldMemo) return fieldMemo;
+  const lvl = Math.max(1, S.level || 1); const plan = new Set(planUnits().map((u) => K.base(u.line)));
+  const ctr = counterCore(); const ctrSet = new Set(ctr ? ctr.lines.map((l) => K.base(l)) : []);
+  const best = K.bestField(fieldCands(), lvl, { foes: foesNow() });
+  return (fieldMemo = best.units.map((u) => ({ line: u.line, star: u.star, items: u.items, plan: plan.has(u.line) || ctrSet.has(u.line), score: K.unitPower(u.line, u.star, (u.items || []).length) })));
 }
 // Volle Bank: Pokémon, die weder im Plan noch in der empfohlenen Aufstellung sind (und keine ★★) – Platz und Gold
 function sellList() {
@@ -533,11 +557,14 @@ function sellList() {
 // Wer aufs Feld soll: Empfehlung (fieldNow) gegen das echte Brett – freie Plätze füllen, sonst tauschen
 function fieldSteps() {
   const lv = live && isLive() ? live : null; if (!lv || !lv.planning || !Array.isArray(lv.board)) return [];
+  // Als Mengen mit Anzahl: dieselbe Linie kann zweimal stehen (zwei Kopien mit eigenem Stern)
   const rec = fieldNow().map((u) => K.base(u.line)); const on = lv.board.map((u) => K.base(u.line)); const bench = (lv.bench || []).map((u) => K.base(u.line));
-  const add = rec.filter((l) => !on.includes(l) && bench.includes(l));
+  const cnt = (arr) => arr.reduce((m, l) => ((m[l] = (m[l] || 0) + 1), m), {});
+  const rc = cnt(rec), oc = cnt(on), bc = cnt(bench);
+  const add = []; for (const l of Object.keys(rc)) for (let i = 0; i < Math.min(rc[l] - (oc[l] || 0), bc[l] || 0); i++) add.push(l);
   const free = lv.teamN != null && S.level ? Math.max(0, S.level - lv.teamN) : 0;
   const out = add.slice(0, free).map((l) => ({ k: 'place', line: l }));
-  const drop = on.filter((l) => !rec.includes(l));
+  const drop = []; for (const l of Object.keys(oc)) for (let i = 0; i < oc[l] - (rc[l] || 0); i++) drop.push(l);
   add.slice(free).forEach((l, i) => { if (drop[i]) out.push({ k: 'swap', line: l, out: drop[i] }); });
   return out.slice(0, 3);
 }
@@ -552,18 +579,21 @@ function counterCore() {
 function pvpStage() { const g = live && isLive() && live.game; return g && g.mode === 'pvp' && g.stage ? g.stage : null; }
 function advice() {
   if (!K) return { buys: [], tips: [] };
+  if (adviceMemo) return adviceMemo;
   const c = planComp(); const lv = live && isLive() ? live : null; const board = lv && Array.isArray(lv.board) && lv.planning ? lv.board : fieldNow();
   const waiting = c ? Math.max(0, planUnits().filter((u) => ownOf(u.line)).length - (S.level || 0)) : 0;
   const adv = K.advise({ plan: c ? planUnits() : [], owned: S.owned, board, shop: S.shop, level: S.level, gold: S.gold, teamN: lv && lv.planning ? lv.teamN : null, stage: pvpStage(), comp: c, interest: (lv && lv.interest) || null, merge: lv && lv.shopInfo ? lv.shopInfo.map((x) => (x ? x.merge || 0 : 0)) : null,
     mode: gm(), xp: lv && lv.xp, lost: lostBy > 0, nz: isNz(), bench: waiting, hp: lv ? lv.hp : null, benchN: lv && Array.isArray(lv.bench) ? lv.bench.length : null,
-    benchFree: lv && Array.isArray(lv.bench) && lv.benchCap ? lv.benchCap - lv.bench.length : null });
+    benchFree: lv && Array.isArray(lv.bench) && lv.benchCap ? lv.benchCap - lv.bench.length : null,
+    // Rechnung mit den Spielwerten: Kandidaten fürs Feld, Kosten laut Karte, Gegner
+    cands: S.level ? fieldCands() : null, costs: lv && lv.shopInfo ? lv.shopInfo.map((x) => (x ? x.cost || 0 : 0)) : null, foes: foesNow() });
   // Nuzlocke: pro Shop nur ein Kauf (1 von 3) – genau eine Karte empfehlen
   if (isNz()) {
     const pk = K.safariPick({ cards: S.shop.map((line) => ({ line })), plan: c ? planUnits() : [], owned: S.owned, board: board.map((u) => u.line) })[0];
     adv.buys = pk ? [{ line: pk.line, slot: pk.idx, cost: K.lineCost(pk.line) || 1, kind: 'pick', prio: 100, why: 'nz', reason: pk.why, affordable: true }] : [];
     adv.tips = adv.tips.filter((x) => x.k !== 'save' && x.k !== 'roll');
   }
-  return adv;
+  return (adviceMemo = adv);
 }
 const ST_COL = { ok: '#4fcb88', own: '#8ab4ff', shop: '#f2bf45', miss: '#5b6478' };
 const isLive = () => Date.now() - liveTs < 20000;
@@ -672,7 +702,7 @@ function render() {
   if (!S.open || !onKanto()) { host.style.display = 'none'; return; }
   host.style.display = '';
   box.classList.toggle('min', !!S.min);
-  const tt = t();
+  const tt = t(); if (K) K.setSeen((S.seen || {})[gm()] || {}); fieldMemo = null; adviceMemo = null;
   const head = `<div class="hd" id="drag"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><polygon points="16.00,3.80 26.57,9.90 26.57,22.10 16.00,28.20 5.43,22.10 5.43,9.90" fill="none" stroke="#edf0f6" stroke-width="2.8" stroke-linejoin="round"/><polygon points="16.00,9.30 17.88,14.11 23.04,14.41 19.04,17.69 20.35,22.69 16.00,19.90 11.65,22.69 12.96,17.69 8.96,14.41 14.12,14.11" fill="#ff5c4e"/></svg><span class="ttl">Kanto <b>Coach</b></span>
     <div class="ctl"><label>${tt.lvl}<select data-act="level">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map((l) => `<option ${S.level === l ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label>${tt.gold}<input type="number" min="0" max="200" value="${S.gold}" data-act="gold"></label></div>
     <button class="ib lng" data-act="lang" title="${esc(tt.langTitle)}">${lang === 'de' ? 'DE' : 'EN'}</button><button class="ib mn" data-act="min" title="${esc(tt.minimize)}">${S.min ? '▢' : '–'}</button><button class="ib" data-act="close" title="${esc(tt.close)}">✕</button></div>`;
@@ -736,12 +766,16 @@ function fieldCard(board) {
 }
 
 const TAGS = { star: 'upgrade', buy: 'target', trait: 'comp', pick: 'pick' };
-function buyLabel(b) { const tt = t(); return b.kind === 'pick' ? tt.markTake : b.kind === 'star' ? tt.markUpgrade(b.why === 'star3' ? 3 : 2) : b.kind === 'trait' ? '+' + K.typeName(b.trait).toUpperCase() : tt.markBuy; }
+function buyLabel(b) { const tt = t(); return b.kind === 'pick' ? tt.markTake : b.kind === 'star' ? tt.markUpgrade(b.why === 'star3' ? 3 : 2) : b.kind === 'trait' ? '+' + K.typeName(b.trait).toUpperCase() : b.kind === 'power' ? tt.markPower : tt.markBuy; }
 function buyWhy(b) {
   const tt = t();
   if (b.why === 'star2') return tt.wStar(2); if (b.why === 'star3') return tt.wStar(3);
   if (b.why === 'core') return tt.wCore; if (b.why === 'plan') return tt.wPlan; if (b.why === 'pair') return tt.wPair; if (b.why === 'toward3') return tt.wToward3;
-  if (b.why === 'trait') return tt.wTrait(K.typeName(b.trait), b.next);
+  const g = b.gain ? Math.max(1, Math.round(b.gain * 100)) : 0;
+  if (b.why === 'trait') return tt.wTrait(K.typeName(b.trait), b.next) + (b.out ? ' · ' + tt.wPower(K.unitName(b.out.line, b.out.star), g) : '');
+  if (b.why === 'power' && b.fill) return tt.wFill;
+  if (b.why === 'power') return tt.wPower(b.out ? K.unitName(b.out.line, b.out.star) : '', g);
+  if (b.why === 'xpAdd') return (b.trait ? tt.wTrait(K.typeName(b.trait), b.next) + ' · ' : '') + tt.wXpAdd(g);
   if (b.why === 'nz') return tt.nzWhy + ' · ' + b.reason.map((w) => tt.sWhy[w]).filter(Boolean).join(' · ');
   return '';
 }
@@ -749,9 +783,11 @@ function tipText(x) {
   const tt = t();
   if (x.k === 'free') return tt.tFree(x.n);
   if (x.k === 'near') return tt.tNear(K.typeName(x.type), x.next);
+  if (x.k === 'nearShop') return tt.tNearShop(K.baseName(x.line), K.typeName(x.type), x.next, x.level);
   if (x.k === 'level') return tt.tLevel(x.stage, x.level);
   if (x.k === 'save') return tt.tSave(x.cap, x.max);
   if (x.k === 'roll') return tt.tRoll(x.cap);
+  if (x.k === 'xp' && x.add) return tt.tXpAdd(x.buys, x.level, K.baseName(x.add), Math.max(1, Math.round(x.gain * 100)));
   if (x.k === 'xp') return tt.tXp(x.buys, x.level, x.need, x.lost);
   if (x.k === 'rollStar') return tt.tRollStar(x.cap);
   if (x.k === 'allin') return tt.tAllin(x.hp, x.missing);
@@ -832,7 +868,7 @@ function viewNow() {
     else if (x.k === 'craft') steps.push(`<div class="step"><span class="sn" style="background:${x.col}">${x.n}</span><span class="rcp">${itemImg(w.use[0])}+${itemImg(w.use[1])}</span><span><b>${esc(tt.craftStep(K.itemName(w.use[0]), K.itemName(w.use[1]), K.itemName(w.id)))}</b><span class="sub">${esc(tt.craftFor(un))}</span></span></div>`);
     else steps.push(`<div class="step"><span class="sn" style="background:#8ab4ff">⬇</span>${itemImg(w.id, 'ii lg')}<span><b>${esc(tt.useStep(K.itemName(w.id), un))}</b><span class="sub">${esc(tt.useFor)}</span></span></div>`);
   }
-  for (const x of adv.tips) if (!(x.k === 'free' && fs.length)) steps.push(`<div class="step tip${x.k === 'xp' || x.k === 'rollStar' || x.k === 'allin' || x.k === 'lostRoll' ? ' act' : ''}"><span class="sn">•</span><span class="ti">${{ free: '⬆', near: '◆', level: '⇧', save: '💰', roll: '🎲', xp: '⇧', rollStar: '🎲', allin: '🔥', lostRoll: '🎲', sell: '🪙' }[x.k] || '•'}</span><span>${esc(tipText(x))}</span></div>`);
+  for (const x of adv.tips) if (!(x.k === 'free' && fs.length)) steps.push(`<div class="step tip${x.k === 'xp' || x.k === 'rollStar' || x.k === 'allin' || x.k === 'lostRoll' ? ' act' : ''}"><span class="sn">•</span><span class="ti">${{ free: '⬆', near: '◆', nearShop: '◆', level: '⇧', save: '💰', roll: '🎲', xp: '⇧', rollStar: '🎲', allin: '🔥', lostRoll: '🎲', sell: '🪙' }[x.k] || '•'}</span><span>${esc(tipText(x))}</span></div>`);
   if (steps.length && !/class="step (dim|tip)/.test(steps[0])) steps[0] = steps[0].replace('class="step', 'class="step main');
   const sr = safariRec(); let sfHtml = ''; const lr = lootRec(); const stp = starterRec();
   if (stp) {
@@ -908,8 +944,31 @@ function viewPlan() {
       <div class="row">${now.map((u) => `<span class="fn ${u.plan ? '' : 'fill'}" title="${esc(u.plan ? tt.fromPlan : tt.filler)}">${av(u.line, u.star, 'sm')}<span>${esc(K.unitName(u.line, u.star))}</span></span>`).join('') || `<span class="sub">${esc(tt.noUnits)}</span>`}</div>
       ${tr.length ? `<div class="row">${tr.map((x) => `<span class="ty">${esc(K.typeName(x.type))} ${x.n}</span>`).join('')}</div>` : ''}
       <span class="sub">${esc(tt.fieldNowHint)}</span></div>
-    ${fieldCard(board)}<div class="list">${unitRows(units.map((u) => ({ ...u, cell: (board.find((b) => b.line === u.line) || {}).cell })))}</div>
+    ${foeCard()}${fieldCard(board)}<div class="list">${unitRows(units.map((u) => ({ ...u, cell: (board.find((b) => b.line === u.line) || {}).cell })))}</div>
     ${others.length ? `<div class="sec">${esc(tt.alsoGood)}</div><div class="list">${others.map((x) => planRow(x, c)).join('')}</div>` : ''}`;
+}
+// Gegner: Typen, Wirkung deiner Attacken (Typ-Tabelle des Spiels) und – im PvP – Kopien deiner Plan-Pokémon bei den Gegnern
+function foeCopies() {
+  const out = {}; const seen = new Set();
+  for (const x of (S.foesSeen || []).filter((y) => y.mode === 'pvp').slice(-5)) { if (seen.has(x.sig)) continue; seen.add(x.sig);
+    for (const u of x.units) out[K.base(u.line)] = (out[K.base(u.line)] || 0) + (u.star >= 3 ? 9 : u.star === 2 ? 3 : 1); }
+  return out;
+}
+function foeCard() {
+  const tt = t(); const foes = foesNow(); if (!foes || !foes.length) return '';
+  const cnt = {}; for (const f of foes) for (const ty of K.lineTypes(f.line)) cnt[ty] = (cnt[ty] || 0) + 1;
+  const types = Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const mine = fieldNow().map((u) => ({ u, m: K.matchup(u.line, u.star, foes) }));
+  const good = mine.filter((x) => x.m >= 1.25).sort((a, b) => b.m - a.m).slice(0, 3); const bad = mine.filter((x) => x.m <= 0.75).sort((a, b) => a.m - b.m).slice(0, 3);
+  const nm = (x) => x.map((y) => K.unitName(y.u.line, y.u.star)).join(', ');
+  let contest = '';
+  if (!campMode()) { const fc = foeCopies(); contest = planUnits().filter((u) => fc[K.base(u.line)]).map((u) => K.baseName(u.line) + ' ×' + fc[K.base(u.line)]).join(', '); }
+  const n = campMode() ? 1 : new Set((S.foesSeen || []).filter((y) => y.mode === 'pvp').slice(-4).map((y) => y.sig)).size;
+  return `<div class="card"><h4>${esc(campMode() ? tt.foeNext : tt.foeSeen(n))}</h4>
+    <div class="row">${foes.slice(0, 9).map((f) => av(f.line, f.star, 'xs')).join('')}</div>
+    <div class="row">${types.map(([ty, k]) => `<span class="ty">${esc(K.typeName(ty))} ${k}</span>`).join('')}</div>
+    ${good.length ? `<span class="sub good">${esc(tt.foeGood(nm(good)))}</span>` : ''}${bad.length ? `<span class="sub">${esc(tt.foeBad(nm(bad)))}</span>` : ''}
+    ${contest ? `<span class="sub">${esc(tt.foeContest(contest))}</span>` : ''}<span class="sub">${esc(tt.foeNote)}</span></div>`;
 }
 function planRow(x, cur) {
   const tt = t(); const isCur = cur && cur.id === x.comp.id; const units = K.boardUnits(x.comp);
@@ -1223,6 +1282,17 @@ function canonLive(l) {
   return { ...l, shopInfo, shop: shopInfo.map((x) => x.line), own,
     bench: (l.bench || []).map((u) => ({ ...u, line: canon(u.line) })), safari: l.safari ? { ...l.safari, cards: l.safari.cards.map((c) => ({ ...c, line: canon(c.line) })) } : null, board: l.board ? l.board.map((u) => ({ ...u, line: canon(u.line) })) : l.board };
 }
+// Was die Shop-Karten zeigen, je Modus merken: Kosten und Typen. Im Turm (v41) kosten manche Pokémon anders als im PvP,
+// und für Turm-Pokémon ohne API-Daten ist die Karte die einzige Quelle.
+function noteSeen(l) {
+  const m = gm(); const cur = (S.seen || {})[m] || {}; let ch = false;
+  for (const x of l.shopInfo || []) {
+    if (!x || !x.line || !x.cost) continue; const b = K ? K.base(x.line) : x.line; const o = cur[b];
+    const types = (x.types || []).filter((ty) => D && D.data.traits[ty]);
+    if (!o || o.c !== x.cost || (types.length && JSON.stringify(o.t) !== JSON.stringify(types))) { cur[b] = { c: x.cost, t: types.length ? types : (o && o.t) || [] }; ch = true; }
+  }
+  if (ch) { S.seen = { ...(S.seen || {}), [m]: cur }; if (K) K.setSeen(cur); }
+}
 let lastLiveSig = '', lastTab = null;
 function applyLive(raw) {
   if (!raw || !raw.ts) return;
@@ -1238,9 +1308,21 @@ function applyLive(raw) {
   if (sig === lastLiveSig && wasLive) return;
   lastLiveSig = sig;
   if (langSel === 'auto') { const nl = resolveLang(); if (nl !== lang) { lang = nl; if (K) K.setLang(lang); } }
-  if (l.level != null && S.level >= 5 && l.level <= 2 && Object.keys(S.owned).length) { S.owned = {}; S.items = {}; S.target = null; S.plans = {}; S.planAuto = {}; lostBy = 0; hpAtPlan = null; toast(t().newGame2); }
+  if (l.level != null && S.level >= 5 && l.level <= 2 && Object.keys(S.owned).length) { S.owned = {}; S.items = {}; S.target = null; S.plans = {}; S.planAuto = {}; S.foesSeen = []; lostBy = 0; hpAtPlan = null; toast(t().newGame2); }
   S.shop = [...(l.shop || []), null, null, null, null, null].slice(0, 5);
   for (const x of l.shopInfo || []) if (x.line && x.cost && D && !D.data.lines[x.line]) extraCost[x.line] = x.cost;
+  noteSeen(l);
+  // Gegner merken – je Kampf ein Feld: Turm/Abenteuer zeigen den nächsten Gegner schon in der Planungsphase (der volle Stand),
+  // im PvP erscheint er erst im Kampf. Danach sterben Pokémon weg – darum nur den ersten Stand nach der Planung, bis zur nächsten.
+  if (l.planning) foeLock = false;
+  if (Array.isArray(l.foes) && l.foes.length && !foeLock) {
+    const sig = l.foes.map((f) => f.line + f.star).sort().join(',');
+    const fs = (S.foesSeen || []).slice(); const units = l.foes.map((f) => ({ line: canon(f.line), star: f.star }));
+    const lastSame = fs.length && fs[fs.length - 1].open;
+    if (lastSame) fs[fs.length - 1] = { ...fs[fs.length - 1], sig, units, ts: Date.now(), open: !!l.planning }; else fs.push({ sig, mode: gm(), units, ts: Date.now(), open: !!l.planning });
+    S.foesSeen = fs.slice(-12);
+    if (!l.planning) foeLock = true;
+  }
   if (l.level != null) S.level = l.level;
   if (l.gold != null) S.gold = l.gold;
   // Abenteuer-Stufe aus dem Spiel: Normal = 1, Veteran = 2 (für Legende liefert die API keine eigene Auswertung -> alle)

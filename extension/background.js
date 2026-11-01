@@ -6,6 +6,7 @@
 // Deutsche Namen (KK_DE) auch im Hintergrund verfügbar machen, damit der Leser deutsche Beschriftungen zuordnen kann
 self.window = self;
 try { importScripts('lib/i18n-game.js'); } catch (e) { console.warn('i18n nicht geladen', e); }
+try { importScripts('lib/core.js'); } catch (e) { console.warn('core nicht geladen', e); }
 const GAME = 'https://einoow.com/playables/kanto-tactics/';
 const API = 'https://einoow.com/api/meta/kanto/';
 const GH = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/';
@@ -142,6 +143,15 @@ function readerMap(d) {
     if (base[dex[0]] == null) base[dex[0]] = id;
     dex.forEach((x, i) => { if (!forms[x]) forms[x] = [id, i + 1]; });
     for (const n of camp[id] || []) for (const v of [n, de[n]]) if (v && !names[String(v).toLowerCase()]) names[String(v).toLowerCase()] = id;
+  }
+  // Turm (v41): eigener Shop mit allen 151 Familien – was data.json nicht kennt, über die Pokédex-Familien zuordnen
+  // (ID = englischer Name der ersten Form, z. B. goldeen; Kosten/Typen liefert dann die Shop-Karte)
+  const gen1 = (self.KKCore && self.KKCore.GEN1) || {};
+  for (const [id, g] of Object.entries(gen1)) {
+    if (base[g.dex[0]] != null || d.lines[id]) continue;
+    extra[id] = true; base[g.dex[0]] = id;
+    g.dex.forEach((x, i) => { if (!forms[x]) forms[x] = [id, i + 1]; });
+    for (const n of g.n) { const k = n.toLowerCase(); if (!names[k]) names[k] = id; const dn = self.KKCore.GEN1_DE[n]; if (dn && !names[dn.toLowerCase()]) names[dn.toLowerCase()] = id; }
   }
   for (const [id, it] of Object.entries(d.items || {})) items[id] = it.k;
   return { base, forms, names, items, extra, formIdx, last };

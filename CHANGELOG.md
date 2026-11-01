@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.7.0 Beta – 2026-11-01
+**EN**
+- **New Tower (game version 41):** the Tower shop has every family in its first form – many of them aren’t in the public data yet. The coach now recognizes all 151 Pokémon (no more “not matched: #118”) and takes **cost and types straight from the shop card** (e.g. Tangela costs 3 in the Tower, not 4 like in PvP).
+- **Board advice calculated from the game’s numbers:** “Field now” compares every possible line-up – each Pokémon’s stats (HP, Defense, Attack, speed, crit, ability power and mana), its stars and items, plus the type tiers the line-up forms together (value of each tier from ranked placements). Same calculation for buys: a Pokémon that makes the board measurably stronger gets **“STRONGER”** or **“+TYPE”**, with “instead of X” when the board is full.
+- **Plan copies up to the planned star:** if the plan wants a Pokémon at ★★★ (e.g. Kakuna, Nidorino), every further copy is suggested – before, only core Pokémon got that.
+- **XP + buy together:** in Adventure/Tower the coach checks whether one more slot plus a shop Pokémon is worth more than interest (e.g. level 8 and Venonat for Bug 3) and says so.
+- **Opponents:** the coach reads enemy Pokémon on the board. Tower/Adventure: the next opponent (visible while planning) – your abilities’ type advantage (the game’s type chart, abilities only) counts for the line-up. PvP: boards seen in fights – opponents’ copies of your plan Pokémon lower the odds to find them, the plan choice accounts for that.
+- No more “1 more Bug for Bug 3: look out for one” while one is right there in the shop.
+
+**DE**
+- **Neuer Turm (Spielversion 41):** Der Turm-Shop hat jede Familie in ihrer ersten Form – viele davon stehen noch nicht in den öffentlichen Daten. Der Coach erkennt jetzt alle 151 Pokémon (kein „Nicht zugeordnet: #118“ mehr) und nimmt **Kosten und Typen direkt von der Shop-Karte** (z. B. kostet Tangela im Turm 3, nicht 4 wie im PvP).
+- **Aufstellung aus den Zahlen des Spiels gerechnet:** „Jetzt aufstellen“ vergleicht alle möglichen Aufstellungen – Werte jedes Pokémon (KP, Verteidigung, Angriff, Tempo, Krit, Stärke und Energie der Attacke), Sterne und Items und die Typ-Stufen, die zusammen entstehen (Wert jeder Stufe aus den Ranked-Platzierungen). Gleiche Rechnung für Käufe: Ein Pokémon, das dein Feld messbar stärker macht, bekommt **„STÄRKER“** oder **„+TYP“**, bei vollem Feld mit „statt X“.
+- **Plan-Kopien bis zum geplanten Stern:** Will der Plan ein Pokémon auf ★★★ (z. B. Kokuna, Nidorino), wird jede weitere Kopie vorgeschlagen – vorher nur bei Kern-Pokémon.
+- **EP und Kauf zusammen:** Im Abenteuer/Turm rechnet der Coach, ob ein Platz mehr plus ein Shop-Pokémon mehr bringt als die Zinsen (z. B. Level 8 und Bluzuk für Käfer 3), und sagt es.
+- **Gegner:** Der Coach liest gegnerische Pokémon auf dem Brett. Turm/Abenteuer: der nächste Gegner (in der Planungsphase sichtbar) – der Typ-Vorteil deiner Attacken (Typ-Tabelle des Spiels, nur Attacken) fließt in die Aufstellung ein. PvP: in Kämpfen gesehene Felder – Kopien deiner Plan-Pokémon bei Gegnern senken die Chance, sie zu finden; die Plan-Wahl rechnet das ein.
+- Kein „Noch 1 Käfer für Käfer 3: halte Ausschau“ mehr, während einer im Shop liegt.
+
 ## 2.6.0 – 2026-11-01
 **EN**
 - Logic fixes after many automated test games in every mode (a test Chrome follows every coach mark in the real game):

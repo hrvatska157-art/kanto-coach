@@ -6,7 +6,7 @@
 <a href="README.md">English</a> · Deutsch · <a href="https://hrvatska157-art.github.io/kanto-coach/?lang=de">Webseite</a></p>
 
 <p align="center">
-<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (Version 2.6.0)</b></a>
+<a href="https://github.com/hrvatska157-art/kanto-coach/releases/latest/download/kanto-coach-extension.zip"><b>⬇ Download (Version 2.7.0 Beta)</b></a>
 </p>
 
 ---
@@ -23,6 +23,7 @@ Kanto Coach ist eine Chrome-Erweiterung, die neben dem Spiel ein kleines Overlay
 - **Markierungen im Spiel** – durchnummeriert KAUFEN, ★★!, +TYP an den Shop-Karten („1“ zuerst). Zusammengehörige Item-Komponenten tragen dieselbe Nummer und Farbe, der Träger zeigt das Item über seiner Lebensleiste.
 - **Schnell wählen unter Zeitdruck** – klare „NIMM“-Markierung in der Safari-Zone, bei der Item-Belohnung („Wähle eins!“), der Siegel-Wahl, dem Segen des Turms und der Partnerwahl, mit einem Satz Begründung im Overlay.
 - **Gold und Brett** – wann EP kaufen oder neu würfeln (der Knopf im Spiel wird markiert), wen aufstellen oder tauschen („AUFS FELD“, „1 REIN / 1 RAUS“, „VERKAUFEN“ direkt an Bank und Brett), und im Abenteuer das Konter-Team für schwere Kämpfe. Items, die deine Pokémon schon tragen, werden berücksichtigt.
+- **Gerechnete Aufstellung** – wen du aufstellst, rechnet der Coach aus den Zahlen des Spiels: Werte, Sterne, Items, die Typ-Stufen, die zusammen entstehen, und – gegen die Gegner, die er gesehen hat – den Typ-Vorteil ihrer Attacken. Käufe, die dein Feld messbar stärker machen, bekommen „STÄRKER“ oder „+TYP“.
 - **Items** – liest deinen Beutel, zeigt, was du bauen kannst und wer welches Item tragen soll.
 - **Abenteuer & Turm** – erkennt Station/Etage und Schwierigkeit, zeigt den nächsten Boss mit Siegquote und warnt vor schweren Kämpfen (z. B. Sabrina, Giovanni, Turm-Etage 50).
 - **Aktuell zum Spiel** – verankerte Formen (⚓), Figuren-Pokémon (Koga, Giovanni, Samurai), Abenteuer-Stufen und alle Neuerungen bis Spielversion 41.

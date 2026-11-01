@@ -47,6 +47,45 @@ const NEW_LINES = {
 const PVP_ALIAS = { venonat: 'venomoth', porygon: 'porygon3', omanyte: 'omastar', bellsprout: 'victreebel', tangela: 'tangela4', mankey: 'primeape', nidoranf: 'nidoqueen', kabuto: 'kabutops', koffing: 'koga', meowth: 'giovanni', pinsir: 'samurai' };
 // Umgekehrt (PvP -> Kampagne) für die Kampagnen-Statistik; die Figuren-Pokémon (Koga, Giovanni, Samurai) haben dort eigene IDs
 const CAMP_ALIAS = Object.fromEntries(Object.entries(PVP_ALIAS).filter(([, p]) => !['koga', 'giovanni', 'samurai'].includes(p)).map(([c, p]) => [p, c]));
+// Alle 151 Pokémon der 1. Generation (englisch:deutsch) und ihre Entwicklungsreihen [erste Nr., Anzahl Formen].
+// Der Turm (v41) hat einen eigenen Shop mit allen Familien in ihrer ersten Form – viele davon fehlen in data.json.
+// Für sie kennt der Coach nur, was die Shop-Karte zeigt (Kosten, Typen, Name); Familien und Namen sind allgemeines Pokédex-Wissen.
+const GEN1_NAMES = ('Bulbasaur:Bisasam|Ivysaur:Bisaknosp|Venusaur:Bisaflor|Charmander:Glumanda|Charmeleon:Glutexo|Charizard:Glurak|Squirtle:Schiggy|Wartortle:Schillok|Blastoise:Turtok|'
+  + 'Caterpie:Raupy|Metapod:Safcon|Butterfree:Smettbo|Weedle:Hornliu|Kakuna:Kokuna|Beedrill:Bibor|Pidgey:Taubsi|Pidgeotto:Tauboga|Pidgeot:Tauboss|Rattata:Rattfratz|Raticate:Rattikarl|'
+  + 'Spearow:Habitak|Fearow:Ibitak|Ekans:Rettan|Arbok:Arbok|Pikachu:Pikachu|Raichu:Raichu|Sandshrew:Sandan|Sandslash:Sandamer|Nidoran♀:Nidoran♀|Nidorina:Nidorina|Nidoqueen:Nidoqueen|'
+  + 'Nidoran♂:Nidoran♂|Nidorino:Nidorino|Nidoking:Nidoking|Clefairy:Piepi|Clefable:Pixi|Vulpix:Vulpix|Ninetales:Vulnona|Jigglypuff:Pummeluff|Wigglytuff:Knuddeluff|Zubat:Zubat|Golbat:Golbat|'
+  + 'Oddish:Myrapla|Gloom:Duflor|Vileplume:Giflor|Paras:Paras|Parasect:Parasek|Venonat:Bluzuk|Venomoth:Omot|Diglett:Digda|Dugtrio:Digdri|Meowth:Mauzi|Persian:Snobilikat|Psyduck:Enton|'
+  + 'Golduck:Entoron|Mankey:Menki|Primeape:Rasaff|Growlithe:Fukano|Arcanine:Arkani|Poliwag:Quapsel|Poliwhirl:Quaputzi|Poliwrath:Quappo|Abra:Abra|Kadabra:Kadabra|Alakazam:Simsala|'
+  + 'Machop:Machollo|Machoke:Maschock|Machamp:Machomei|Bellsprout:Knofensa|Weepinbell:Ultrigaria|Victreebel:Sarzenia|Tentacool:Tentacha|Tentacruel:Tentoxa|Geodude:Kleinstein|'
+  + 'Graveler:Georok|Golem:Geowaz|Ponyta:Ponita|Rapidash:Gallopa|Slowpoke:Flegmon|Slowbro:Lahmus|Magnemite:Magnetilo|Magneton:Magneton|Farfetch\'d:Porenta|Doduo:Dodu|Dodrio:Dodri|'
+  + 'Seel:Jurob|Dewgong:Jugong|Grimer:Sleima|Muk:Sleimok|Shellder:Muschas|Cloyster:Austos|Gastly:Nebulak|Haunter:Alpollo|Gengar:Gengar|Onix:Onix|Drowzee:Traumato|Hypno:Hypno|'
+  + 'Krabby:Krabby|Kingler:Kingler|Voltorb:Voltobal|Electrode:Lektrobal|Exeggcute:Owei|Exeggutor:Kokowei|Cubone:Tragosso|Marowak:Knogga|Hitmonlee:Kicklee|Hitmonchan:Nockchan|'
+  + 'Lickitung:Schlurp|Koffing:Smogon|Weezing:Smogmog|Rhyhorn:Rihorn|Rhydon:Rizeros|Chansey:Chaneira|Tangela:Tangela|Kangaskhan:Kangama|Horsea:Seeper|Seadra:Seemon|Goldeen:Goldini|'
+  + 'Seaking:Golking|Staryu:Sterndu|Starmie:Starmie|Mr. Mime:Pantimos|Scyther:Sichlor|Jynx:Rossana|Electabuzz:Elektek|Magmar:Magmar|Pinsir:Pinsir|Tauros:Tauros|Magikarp:Karpador|'
+  + 'Gyarados:Garados|Lapras:Lapras|Ditto:Ditto|Eevee:Evoli|Vaporeon:Aquana|Jolteon:Blitza|Flareon:Flamara|Porygon:Porygon|Omanyte:Amonitas|Omastar:Amoroso|Kabuto:Kabuto|'
+  + 'Kabutops:Kabutops|Aerodactyl:Aerodactyl|Snorlax:Relaxo|Articuno:Arktos|Zapdos:Zapdos|Moltres:Lavados|Dratini:Dratini|Dragonair:Dragonir|Dragonite:Dragoran|Mewtwo:Mewtu|Mew:Mew')
+  .split('|').map((x) => x.split(':'));
+const GEN1_FAM = [[1,3],[4,3],[7,3],[10,3],[13,3],[16,3],[19,2],[21,2],[23,2],[25,2],[27,2],[29,3],[32,3],[35,2],[37,2],[39,2],[41,2],[43,3],[46,2],[48,2],[50,2],[52,2],[54,2],[56,2],[58,2],
+  [60,3],[63,3],[66,3],[69,3],[72,2],[74,3],[77,2],[79,2],[81,2],[83,1],[84,2],[86,2],[88,2],[90,2],[92,3],[95,1],[96,2],[98,2],[100,2],[102,2],[104,2],[106,1],[107,1],[108,1],[109,2],
+  [111,2],[113,1],[114,1],[115,1],[116,2],[118,2],[120,2],[122,1],[123,1],[124,1],[125,1],[126,1],[127,1],[128,1],[129,2],[131,1],[132,1],[133,1],[134,1],[135,1],[136,1],[137,1],
+  [138,2],[140,2],[142,1],[143,1],[144,1],[145,1],[146,1],[147,3],[150,1],[151,1]];
+const GEN1_ID = { 29: 'nidoranf', 32: 'nidoranm', 83: 'farfetchd', 122: 'mrmime' };
+// id -> { dex: [Nummern je Form], n: [englische Namen] }
+const GEN1 = {};
+for (const [d0, k] of GEN1_FAM) {
+  const id = GEN1_ID[d0] || GEN1_NAMES[d0 - 1][0].toLowerCase().replace(/[^a-z]/g, '');
+  GEN1[id] = { dex: Array.from({ length: k }, (_, i) => d0 + i), n: Array.from({ length: k }, (_, i) => GEN1_NAMES[d0 + i - 1][0]) };
+}
+const GEN1_DE = Object.fromEntries(GEN1_NAMES.map(([en, de]) => [en, de]));
+// Typ-Effektivität wie im Spiel (wie bei Pokémon). Gilt nur für Attacken, Standardangriffe ignorieren Typen (Spiel-Guide).
+const EFF = { normal: { rock: 0.5, ghost: 0 }, fire: { fire: 0.5, water: 0.5, grass: 2, ice: 2, bug: 2, rock: 0.5, dragon: 0.5 },
+  water: { fire: 2, water: 0.5, grass: 0.5, ground: 2, rock: 2, dragon: 0.5 }, grass: { fire: 0.5, water: 2, grass: 0.5, poison: 0.5, ground: 2, flying: 0.5, bug: 0.5, rock: 2, dragon: 0.5 },
+  electric: { water: 2, grass: 0.5, electric: 0.5, ground: 0, flying: 2, dragon: 0.5 }, ice: { fire: 0.5, water: 0.5, grass: 2, ice: 0.5, ground: 2, flying: 2, dragon: 2 },
+  fighting: { normal: 2, ice: 2, poison: 0.5, flying: 0.5, psychic: 0.5, bug: 0.5, rock: 2, ghost: 0 }, poison: { grass: 2, poison: 0.5, ground: 0.5, rock: 0.5, ghost: 0.5 },
+  ground: { fire: 2, grass: 0.5, electric: 2, poison: 2, flying: 0, bug: 0.5, rock: 2 }, flying: { grass: 2, electric: 0.5, fighting: 2, bug: 2, rock: 0.5 },
+  psychic: { fighting: 2, poison: 2, psychic: 0.5 }, bug: { fire: 0.5, grass: 2, fighting: 0.5, poison: 0.5, flying: 0.5, psychic: 2, ghost: 0.5 },
+  rock: { fire: 2, ice: 2, fighting: 0.5, ground: 0.5, flying: 2, bug: 2 }, ghost: { normal: 0, psychic: 2, ghost: 2 }, dragon: { dragon: 2 } };
+const typeEff = (atk, defTypes) => (defTypes || []).reduce((m, t) => m * ((EFF[atk] || {})[t] ?? 1), 1);
 // Verankerte Form (v37): „<linie>-a<k>“ = die Linie bleibt in ihrer k-ten Form (0 = erste), z. B. weedle-a1 = Kokuna ⚓
 const ANCHOR = /^(.+)-a(\d)$/;
 function splitId(id) { const m = ANCHOR.exec(String(id || '')); return m ? { base: m[1], anchor: +m[2] } : { base: id, anchor: null }; }
@@ -76,11 +115,15 @@ function create(opts) {
   K.numStr = (s) => (K.lang === 'de' ? String(s).replace('.', ',') : String(s));
   K.fill = (tpl, en) => { const nums = String(en).match(NUM) || []; let i = 0; return tpl.replace(/#/g, () => K.numStr(nums[i++] != null ? nums[i - 1] : '#')); };
   K.gtext = (en) => { if (!en) return ''; if (K.lang !== 'de') return en; const tpl = DE.texts[en.replace(NUM, '#')]; return tpl ? K.fill(tpl, en) : en; };
-  K.pname = (en) => (K.lang === 'de' ? (DE.pokemon[en] || en) : en);
-  K.NEW_LINES = NEW_LINES; K.PVP_ALIAS = PVP_ALIAS; K.CAMP_ALIAS = CAMP_ALIAS; K.splitId = splitId; K.spriteDex = spriteDex;
+  K.pname = (en) => (K.lang === 'de' ? (DE.pokemon[en] || GEN1_DE[en] || en) : en);
+  K.NEW_LINES = NEW_LINES; K.PVP_ALIAS = PVP_ALIAS; K.CAMP_ALIAS = CAMP_ALIAS; K.splitId = splitId; K.spriteDex = spriteDex; K.GEN1 = GEN1; K.typeEff = typeEff;
   K.base = (id) => splitId(id).base;
   K.anchorOf = (id) => splitId(id).anchor;
-  const rawNames = (id) => { const l = data.lines[id]; return l ? l.n : (NEW_LINES[id] ? NEW_LINES[id].n : (DE.campaignOnly[id] || [id])); };
+  // Was die Shop-Karten des laufenden Modus zeigen: {linie: {c: Kosten, t: [Typen]}} – im Turm (v41) kosten
+  // manche Pokémon anders als im PvP (z. B. Tangela 3 statt 4), und viele Turm-Pokémon fehlen in data.json ganz.
+  K.seen = {};
+  K.setSeen = (map) => { K.seen = map || {}; };
+  const rawNames = (id) => { const l = data.lines[id]; return l ? l.n : (NEW_LINES[id] ? NEW_LINES[id].n : (GEN1[id] ? GEN1[id].n : (DE.campaignOnly[id] || [id]))); };
   // Verankert: nur die gewählte Form (sie steigt in ★ auf, ohne sich zu entwickeln)
   K.lineNames = (id) => { const s = splitId(id); const n = rawNames(s.base); return s.anchor == null ? n : [n[Math.min(s.anchor, n.length - 1)]]; };
   K.isCampaignOnly = (id) => { const b = K.base(id); return !data.lines[b] && !(NEW_LINES[b] && NEW_LINES[b].pvp); };
@@ -91,9 +134,9 @@ function create(opts) {
   K.lineName = (id) => { const n = K.lineNames(id); return own(id, K.pname(n[n.length - 1])); };
   K.baseName = (id) => K.pname(K.lineNames(id)[0]);
   K.lineFullName = (id) => K.lineNames(id).map(K.pname).join(' → ') + (K.anchorOf(id) != null ? ' ⚓' : '');
-  K.lineCost = (id) => { id = K.base(id); const l = data.lines[id]; return l ? l.c : (NEW_LINES[id] ? NEW_LINES[id].c : (id === 'pikachu-partner' ? 2 : 0)); };
+  K.lineCost = (id) => { id = K.base(id); if (K.seen[id] && K.seen[id].c) return K.seen[id].c; const l = data.lines[id]; return l ? l.c : (NEW_LINES[id] ? NEW_LINES[id].c : (id === 'pikachu-partner' ? 2 : 0)); };
   K.lineRange = (id) => { id = K.base(id); const l = data.lines[id]; return l ? l.range : (NEW_LINES[id] && NEW_LINES[id].range) || 1; };
-  K.lineTypes = (id) => { id = K.base(id); const l = data.lines[id]; return l ? l.t : (NEW_LINES[id] ? NEW_LINES[id].t : []); };
+  K.lineTypes = (id) => { id = K.base(id); const l = data.lines[id]; return l ? l.t : (NEW_LINES[id] ? NEW_LINES[id].t : ((K.seen[id] && K.seen[id].t) || [])); };
   K.typeName = (t) => { if (K.lang === 'de') return DE.types[t] || t; const tr = data.traits[t]; return tr ? tr.en : t; };
   K.itemName = (id) => { const it = data.items[id]; if (!it) return id; return K.lang === 'de' ? (DE.items[it.en] || it.en) : it.en; };
   K.itemText = (id) => { const it = data.items[id]; return it ? K.gtext(it.text.en) : ''; };
@@ -101,7 +144,7 @@ function create(opts) {
   K.itemArt = (id) => (id.startsWith('emblem-') ? (STONE_ART[id.slice(7)] || 'blank-plate') : id === 'eviolite' ? 'metal-powder' : id);
   // Pokédex-Nummer einer Form (Stern = Entwicklungsstufe) und Sprite-Adresse
   // Pokédex-Nummern je Form (l.s), sonst aus den Sternen
-  const formDex = (b) => { const l = data.lines[b]; if (l) return l.s && l.s.length ? l.s : [...new Set(l.stars.map((x) => x.dex))]; return CAMP_DEX[b] || (NEW_LINES[b] && NEW_LINES[b].dex) || null; };
+  const formDex = (b) => { const l = data.lines[b]; if (l) return l.s && l.s.length ? l.s : [...new Set(l.stars.map((x) => x.dex))]; return CAMP_DEX[b] || (NEW_LINES[b] && NEW_LINES[b].dex) || (GEN1[b] && GEN1[b].dex) || null; };
   K.dexOf = (id, star) => {
     const s = splitId(id);
     if (s.anchor != null) { const d = formDex(s.base); return d ? d[Math.min(s.anchor, d.length - 1)] : null; }
@@ -240,6 +283,98 @@ function create(opts) {
     }).sort((a, b) => b.lv - a.lv || b.n - a.n || a.type.localeCompare(b.type));
   };
 
+  /* ---------- Kampfkraft und beste Aufstellung (aus den Spielwerten) ---------- */
+  // Kraft eines Pokémon aus seinen Werten: Schaden pro Sekunde (Standardangriff mit Angriff × Tempo × Krit,
+  // dazu die Attacke: Stärke × Einsätze pro Sekunde, Energie +10 je Angriff) mal aushaltbarer Schaden (KP × Verteidigung).
+  // Geometrisches Mittel, damit Tanks und Angreifer vergleichbar sind. Ohne Werte (Turm-Pokémon ohne API-Daten): aus den Kosten.
+  const AREA = { line: 1.8, aoeTarget: 2, aoeSelf: 2, multi: 1.8, splash: 1.6 };
+  const powParts = (id, star) => {
+    const l = data.lines[K.base(id)]; const s = l && l.stars[Math.min(Math.max(star || 1, 1), l.stars.length) - 1];
+    if (!s || !s.stats) return null;
+    const st = s.stats; const mv = s.move || {};
+    const basic = st.atk * st.as * (1 + 0.5 * (st.crit || 0) / 100);
+    const casts = st.as * 10 / Math.max(20, mv.mana || st.mana || 60);
+    const dmg = mv.power != null ? mv.power : (mv.kind === 'heal' || mv.kind === 'shield' || mv.kind === 'buff' ? 0.6 : 1) * Math.max(st.atk, st.spa);
+    const abil = dmg * casts * (AREA[mv.kind] || 1);
+    return { off: basic + abil, abil, ehp: st.hp * (1 + ((st.def || 0) + (st.spd || 0)) / 200) };
+  };
+  const rawPower = (id, star) => { const p = powParts(id, star); return p ? Math.sqrt(p.off * p.ehp) : null; };
+  // Anteil der Attacke am Schaden (für den Typ-Vorteil: der gilt nur für Attacken)
+  K.abilityShare = (id, star) => { const p = powParts(id, star); return p && p.off > 0 ? p.abil / p.off : 0.35; };
+  let powRef = null;
+  const powerRef = () => {
+    if (powRef) return powRef;
+    const v = K.shopLines.filter((id) => data.lines[id].c === 1).map((id) => rawPower(id, 1)).filter(Boolean).sort((a, b) => a - b);
+    return (powRef = v.length ? v[Math.floor(v.length / 2)] : 1);
+  };
+  const STAR_X = [1, 1, 1.8, 3.3]; // ohne Werte: grob wie im Spiel (★★ ≈ 1,8×, ★★★ ≈ 3,3× der Werte)
+  const costX = (c) => 0.75 + 0.35 * (c || 1);
+  K.unitPower = (id, star, nItems) => {
+    const r = rawPower(id, star); const b = K.base(id);
+    // Kostet ein Pokémon im laufenden Modus weniger als im PvP (Turm: Knofensa 2 statt 4), sind seine Werte dort entsprechend kleiner
+    const scale = r && K.seen[b] && K.seen[b].c && data.lines[b] && K.seen[b].c !== data.lines[b].c ? costX(K.seen[b].c) / costX(data.lines[b].c) : 1;
+    const base = r ? r / powerRef() * scale : costX(K.lineCost(id)) * STAR_X[Math.min(3, star || 1)];
+    return base * (1 + 0.15 * Math.min(3, nItems || 0));
+  };
+  // Wert einer Typ-Stufe aus der Ranked-Statistik: wie viel besser die Platzierung mit dieser Stufe ist als der Schnitt (meta.ref).
+  // Mindestens +7 % je Stufe (höhere Stufen wirken im Spiel deutlich stärker, die Statistik mischt sie mit frühen Runden).
+  // Der Wert wirkt als Aufschlag auf die Pokémon dieses Typs (bei Team-/Gegner-Typen halb auf alle).
+  K.traitBonus = (type, lv) => {
+    if (!lv) return 0;
+    const ref = (meta && meta.ref) || 4.3;
+    const row = meta && (meta.traits || []).find((x) => x.type === type && x.level === lv && x.n >= 100);
+    const v = row ? (ref - row.avg) * 0.15 : 0;
+    return Math.min(0.35, Math.max(0.07 * lv, v));
+  };
+  // Mittlere Wirkung der Attacke eines Pokémon gegen gesehene Gegner (foes: [{line}]); 1 = neutral
+  K.matchup = (id, star, foes) => {
+    if (!foes || !foes.length) return 1;
+    const l = data.lines[K.base(id)]; const s = l && l.stars[Math.min(Math.max(star || 1, 1), l.stars.length) - 1];
+    const mt = s && s.move && s.move.type; if (!mt) return 1;
+    const effs = foes.map((f) => typeEff(mt, K.lineTypes(f.line)));
+    return effs.reduce((a, b) => a + b, 0) / effs.length;
+  };
+  // Bewertung einer Aufstellung: Summe der Kraft, jede mit den Aufschlägen ihrer aktiven Typ-Stufen
+  // (Typ zählt pro verschiedener Linie, wie im Spiel). Typ-Vorteil nur auf den Schaden der Attacke: Kraft = √(Schaden × KP),
+  // also wirkt ein Faktor e auf den Attacken-Anteil a als √(1 + a·(e − 1)).
+  K.fieldScore = (units, o = {}) => {
+    const tr = K.traitsFor(units);
+    const team = tr.filter((x) => x.lv && data.traits[x.type] && data.traits[x.type].scope !== 'type').reduce((a, x) => a + K.traitBonus(x.type, x.lv) * 0.5, 0);
+    const lvOf = {}; tr.forEach((x) => { lvOf[x.type] = x.lv; });
+    let sum = 0; const dup = new Set();
+    for (const u of units) {
+      // Eine zweite Kopie derselben Linie zählt für keinen Typ und verschmilzt später ohnehin – nur 80 % ihres Werts
+      const b0 = K.base(u.line); let b = (dup.has(b0) ? 0.8 : 1) + team; dup.add(b0);
+      for (const t of K.lineTypes(u.line)) if (lvOf[t] && (!data.traits[t] || data.traits[t].scope === 'type')) b += K.traitBonus(t, lvOf[t]);
+      const m = o.foes ? Math.sqrt(Math.max(0.1, 1 + K.abilityShare(u.line, u.star) * (K.matchup(u.line, u.star, o.foes) - 1))) : 1;
+      sum += K.unitPower(u.line, u.star, (u.items || []).length) * b * m * (u.w || 1);
+    }
+    return { score: sum, traits: tr };
+  };
+  // Beste Aufstellung mit höchstens `slots` Pokémon aus cands ([{line, star, items, w}], w = Zusatzgewicht z. B. Plan).
+  // Gierig aufbauen, dann tauschen, solange es besser wird. Wer schon steht (onBoard), gewinnt knappe Vergleiche.
+  K.bestField = (cands, slots, o = {}) => {
+    const pool = cands.map((u, i) => ({ ...u, i })); const n = Math.min(slots, pool.length);
+    const val = (set) => K.fieldScore(set, o).score + set.reduce((a, u) => a + (u.onBoard ? 0.02 : 0), 0);
+    let cur = [];
+    while (cur.length < n) {
+      let best = null, bv = -Infinity;
+      for (const u of pool) { if (cur.includes(u)) continue; const v = val([...cur, u]); if (v > bv) { bv = v; best = u; } }
+      if (!best) break; cur.push(best);
+    }
+    let v0 = val(cur);
+    for (let it = 0; it < 30; it++) {
+      let bestSwap = null, bv = v0 + 1e-6;
+      for (let a = 0; a < cur.length; a++) for (const u of pool) {
+        if (cur.includes(u)) continue; const set = cur.slice(); set[a] = u; const v = val(set);
+        if (v > bv) { bv = v; bestSwap = set; }
+      }
+      if (!bestSwap) break; cur = bestSwap; v0 = bv;
+    }
+    const fs = K.fieldScore(cur, o);
+    return { units: cur, score: fs.score, traits: fs.traits };
+  };
+
   /* ---------- Shop ---------- */
   K.pSlot = (level, line, o = {}) => {
     const pvp = data.pvp; const l = lineInfo(line); if (!l || !l.shop) return 0;
@@ -279,7 +414,8 @@ function create(opts) {
       // und mit den Shops der kommenden Runden (horizon) plus dem aktuellen Gold.
       const ps = miss.map((u) => {
         const c = K.lineCost(u.line); const lv = Math.min(9, Math.max(level, c >= 5 ? 8 : 7));
-        return binomAtLeast(N, K.pSlot(lv, u.line, { own: 0 }), 1);
+        // others: Kopien, die Gegner halten (gesehen in den Kämpfen) – die fehlen im gemeinsamen Pool
+        return binomAtLeast(N, K.pSlot(lv, u.line, { own: 0, others: (o.others || {})[K.base(u.line)] || 0 }), 1);
       });
       const allow = need.length >= 7 ? 1 : 0;
       const pBuild = atLeastK(ps, Math.max(0, miss.length - allow));
@@ -687,27 +823,95 @@ function create(opts) {
     const fieldTraits = K.traitsFor(boardLines.map((l) => ({ line: l, items: [] })));
     const gold = o.gold || 0; const buys = [];
     const counted = {}; let room = o.benchFree != null ? o.benchFree : null; // freie Bankplätze (null = unbekannt)
+    // Kopien für den Ziel-Stern des Plans (Statistik der Comp: ★★ = 3 Kopien, ★★★ = 9)
+    const tgt = (u) => Math.pow(3, Math.max(1, Math.min(3, Math.round(u.star || 2))) - 1);
+    // Beste Aufstellung jetzt (aus den Spielwerten) – Maßstab für Käufe, die das Feld stärker machen
+    const slots = o.level || 0; let cands = o.cands || null;
+    const field0 = cands && slots ? K.bestField(cands, slots, { foes: o.foes }) : null;
+    const pend = []; // Shop-Plätze ohne Plan-/Stern-Grund: danach nacheinander gegen das Feld rechnen
     (o.shop || []).forEach((line, slot) => {
-      if (!line) return; const cost = K.lineCost(line) || 1; const own = (owned[line] || 0) + (counted[line] || 0);
+      if (!line) return; const cost = (o.costs && o.costs[slot]) || K.lineCost(line) || 1; const own = (owned[line] || 0) + (counted[line] || 0);
       const inPlan = pl[line]; const onField = boardLines.includes(line);
-      let kind = '', prio = 0, why = '';
+      let kind = '', prio = 0, why = '', extra = null;
       // Stern-Aufstieg: Liegt die Karte live im Spiel, sagt das Spiel selbst, ob der Kauf verschmilzt (Klasse merge m2|m3);
       // nur ohne Live-Stand (Shop von Hand) wird aus den gezählten Kopien geschätzt
       const mg = o.merge && o.merge[slot] != null ? o.merge[slot] : null;
       const star = mg != null ? mg > 0 && !counted[line] : own % 3 === 2 && own < 9;
       if (star && (inPlan || onField || own >= 2 || mg)) { kind = 'star'; prio = inPlan ? 100 : 80; why = mg === 3 || (mg == null && own >= 8) ? 'star3' : 'star2'; }
       else if (inPlan && own === 0) { kind = 'buy'; prio = 70 - inPlan.rank * 2 + (inPlan.share >= 80 ? 8 : 0); why = inPlan.share >= 80 ? 'core' : 'plan'; }
-      else if (inPlan && own % 3 === 1 && own < 9) { kind = 'buy'; prio = 50 - inPlan.rank; why = 'pair'; } // ab ★★★ (9 Kopien) bringt eine weitere nichts
-      else if (inPlan && inPlan.share >= 80 && own >= 3 && own < 9 && own % 3 === 0) { kind = 'buy'; prio = 40 - inPlan.rank; why = 'toward3'; } // Kern schon ★★: weiter Richtung ★★★
-      // Typ-Käufe nur, wenn das Pokémon auch aufs Feld kann (freier Platz) und auf der Bank Platz ist – sonst wird es gleich wieder verkauft
-      else if (!onField && !own && (o.benchN == null || o.benchN < 7) && (o.teamN == null || !o.level || o.teamN < o.level)) {
+      else if (inPlan && own < tgt(inPlan) && own % 3 === 1) { kind = 'buy'; prio = 50 - inPlan.rank; why = 'pair'; }
+      // Plan will ★★★ und du hast ★★: jede weitere Kopie zählt (im Abenteuer/Turm ist ★★★ besonders stark)
+      else if (inPlan && own >= 3 && own < tgt(inPlan)) { kind = 'buy'; prio = 44 - inPlan.rank + (o.stage == null && o.mode && o.mode !== 'pvp' ? 6 : 0); why = 'toward3'; }
+      else if (!own && field0 && (o.benchN == null || o.benchN < 8)) { pend.push({ line, slot }); return; }
+      else if (!field0 && !onField && !own && (o.benchN == null || o.benchN < 7) && (o.teamN == null || !o.level || o.teamN < o.level)) {
+        // Ohne Kandidaten (Shop von Hand): Typ-Stufe vervollständigen, wenn ein Platz frei ist
         const hit = K.lineTypes(line).map((t) => fieldTraits.find((x) => x.type === t)).find((x) => x && x.next && x.next - x.n === 1);
-        if (hit) { kind = 'trait'; prio = 30; why = 'trait'; buys.push({ line, slot, cost, kind, prio, why, trait: hit.type, next: hit.next }); counted[line] = (counted[line] || 0) + 1; return; }
+        if (hit) { kind = 'trait'; prio = 30; why = 'trait'; extra = { trait: hit.type, next: hit.next }; }
       }
       // Volle Bank: Das Spiel nimmt nur noch Käufe an, die sofort verschmelzen – alles andere erst nach einem Verkauf
       if (kind && kind !== 'star' && room != null) { if (room <= 0) kind = ''; else room--; }
-      if (kind) { buys.push({ line, slot, cost, kind, prio, why }); counted[line] = (counted[line] || 0) + 1; }
+      if (kind) {
+        buys.push({ line, slot, cost, kind, prio, why, ...(extra || {}) }); counted[line] = (counted[line] || 0) + 1;
+        if (cands && kind === 'buy' && !own) cands = [...cands, { line, star: 1, items: [] }]; // neues Plan-Pokémon zählt fürs Feld mit
+      }
     });
+    // Rechnung statt Faustregel: Wie viel stärker wird die beste Aufstellung mit diesem Pokémon (★)? Immer das beste zuerst,
+    // dann gegen das Feld mit diesem Kauf weiter rechnen (sonst würden bei einem freien Platz drei Käufe empfohlen).
+    // Ist das Feld voll, ersetzt es das schwächste – dann sagt der Coach, wen.
+    // Ein freier Platz wird gefüllt, sobald es spürbar hilft; ein Austausch muss das Feld um mindestens 10 % stärken
+    // und darf keine Zinsstufe kosten (Gold unter der Grenze arbeitet sonst nicht mehr).
+    const it0 = o.interest || data.pvp.interest || { step: 10, max: 5 }; const cap0 = it0.step * it0.max;
+    if (field0 && pend.length) {
+      let cur = K.bestField(cands, slots, { foes: o.foes }); let left = pend.slice();
+      let spent = buys.reduce((a, b) => a + b.cost, 0);
+      while (left.length) {
+        let best = null;
+        for (const p of left) {
+          if (counted[p.line]) continue;
+          const f1 = K.bestField([...cands, { line: p.line, star: 1, items: [] }], slots, { foes: o.foes });
+          if (!f1.units.some((u) => u.i === cands.length)) continue;
+          const gain = f1.score - cur.score; if (!best || gain > best.gain) best = { ...p, f1, gain };
+        }
+        if (!best) break;
+        const fill = cur.units.length < slots; const cost = (o.costs && o.costs[best.slot]) || K.lineCost(best.line) || 1;
+        if (best.gain < (fill ? Math.max(0.25, 0.03 * cur.score) : Math.max(0.25, 0.1 * cur.score))) break;
+        const tierLoss = gold - spent < cap0 + it0.step && Math.floor((gold - spent - cost) / it0.step) < Math.floor((gold - spent) / it0.step);
+        if (!fill && tierLoss && !o.lost) break;
+        if (room != null) { if (room <= 0) break; room--; }
+        spent += cost;
+        const lv0 = {}; cur.traits.forEach((x) => { lv0[x.type] = x.lv; });
+        const up = best.f1.traits.find((x) => K.lineTypes(best.line).includes(x.type) && x.lv > (lv0[x.type] || 0));
+        const out = cur.units.length >= slots ? cur.units.find((u) => !best.f1.units.some((v) => v.i === u.i)) : null;
+        buys.push({ line: best.line, slot: best.slot, cost, kind: up ? 'trait' : 'power', prio: up ? 34 : 26, why: up ? 'trait' : 'power',
+          trait: up ? up.type : null, next: up ? up.th[up.lv - 1] : null, gain: best.gain / Math.max(0.1, cur.score), out: out ? { line: out.line, star: out.star } : null, fill: cur.units.length < slots });
+        counted[best.line] = 1; cands = [...cands, { line: best.line, star: 1, items: [] }]; cur = K.bestField(cands, slots, { foes: o.foes });
+        left = left.filter((p) => p.line !== best.line);
+      }
+    }
+    // Ein Platz mehr (EP) plus ein Shop-Pokémon: Lohnt sich der Aufstieg jetzt? (z. B. Level 8 und Bluzuk für Käfer 3)
+    // Nur Abenteuer/Turm – im PvP regelt das Level-Ziel der Stage den Aufstieg.
+    let xpAdd = null; const pveMode = o.stage == null && !!o.mode && o.mode !== 'pvp';
+    if (field0 && pveMode && slots && slots < 9 && o.xp && !o.nz) {
+      const need = o.xp.buys || 1; const fb = K.bestField(cands, slots, { foes: o.foes }); // Feld nach den Käufen oben
+      const spent = buys.reduce((a, b) => a + b.cost, 0);
+      (o.shop || []).forEach((line, slot) => {
+        if (!line || owned[line] || counted[line]) return; const cost = (o.costs && o.costs[slot]) || K.lineCost(line) || 1;
+        if (need * 4 + cost > gold - spent) return;
+        const f = K.bestField([...cands, { line, star: 1, items: [] }], slots + 1, { foes: o.foes });
+        const g = f.score - fb.score; if (!f.units.some((u) => u.i === cands.length) || (xpAdd && g <= xpAdd.g)) return;
+        xpAdd = { line, slot, cost, g: g / Math.max(0.1, fb.score), f, need, fb };
+      });
+      // An jeder Station gibt es 2 EP gratis (Spiel-Guide): Fehlen nur noch ≤ 2, kommt der Aufstieg nächste Runde von selbst.
+      // Sonst: ≥ 6 % stärker und danach noch die halbe Zinsgrenze übrig – oder ≥ 10 % stärker oder letzter Kampf verloren.
+      const freeSoon = o.xp.next != null && o.xp.xp != null && o.xp.next - o.xp.xp <= 2;
+      const after = xpAdd ? gold - spent - xpAdd.need * 4 - xpAdd.cost : 0;
+      const worth = xpAdd && (o.lost || xpAdd.g >= 0.1 || (xpAdd.g >= 0.06 && after >= cap0 / 2));
+      if (xpAdd && worth && !(freeSoon && !o.lost) && (room == null || room > 0)) {
+        const lv0 = {}; xpAdd.fb.traits.forEach((x) => { lv0[x.type] = x.lv; });
+        const up = xpAdd.f.traits.find((x) => K.lineTypes(xpAdd.line).includes(x.type) && x.lv > (lv0[x.type] || 0));
+        buys.push({ line: xpAdd.line, slot: xpAdd.slot, cost: xpAdd.cost, kind: up ? 'trait' : 'power', prio: 24, why: 'xpAdd', trait: up ? up.type : null, next: up ? up.th[up.lv - 1] : null, gain: xpAdd.g, xp: xpAdd.need });
+      } else xpAdd = null;
+    }
     buys.sort((a, b) => b.prio - a.prio);
     // Gold reicht nicht für alles: von oben nach unten kaufen
     let left = gold; for (const b of buys) { b.affordable = b.cost <= left; if (b.affordable) left -= b.cost; }
@@ -716,8 +920,13 @@ function create(opts) {
     const it = o.interest || data.pvp.interest || { step: 10, max: 5 }; const cap = it.step * it.max;
     const free = o.teamN != null && o.level ? o.level - o.teamN : null;
     if (free > 0) tips.push({ k: 'free', n: free });
-    const near = fieldTraits.filter((x) => x.next && x.next - x.n === 1).slice(0, 2);
-    for (const x of near) tips.push({ k: 'near', type: x.type, n: x.n, next: x.next });
+    // „Noch 1 Typ X fehlt“ nur, wenn keiner im Shop liegt, der als Kauf empfohlen ist (sonst widerspricht sich der Rat)
+    const near = fieldTraits.filter((x) => x.next && x.next - x.n === 1 && !buys.some((b) => b.trait === x.type || K.lineTypes(b.line).includes(x.type))).slice(0, 2);
+    // Liegt so ein Pokémon im Shop, lohnt sich aber gerade nicht (Feld voll, kein Platz): das sagen statt „halte Ausschau“
+    for (const x of near) {
+      const inShopT = (o.shop || []).find((l) => l && !owned[l] && K.lineTypes(l).includes(x.type));
+      tips.push(inShopT ? { k: 'nearShop', type: x.type, next: x.next, line: inShopT, level: (o.level || 0) + 1 } : { k: 'near', type: x.type, n: x.n, next: x.next });
+    }
     const norm = o.stage != null && o.comp ? K.stageNorm(o.comp, o.stage) : null;
     const missing = plan.filter((u) => !owned[K.base(u.line)]).length;
     if (norm && o.level && o.level < norm.level) tips.push({ k: 'level', stage: o.stage, level: norm.level });
@@ -725,14 +934,20 @@ function create(opts) {
     // Nach einer Niederlage (o.lost) zählt Stärke mehr als Zinsen. o.xp = { buys } aus der Level-Anzeige des Spiels.
     const pve = o.stage == null && !!o.mode && o.mode !== 'pvp';
     const spare = left - cap; const lvl = o.level || 0;
-    const waiting = o.bench != null ? o.bench : 0; // Plan-/starke Pokémon, die keinen Platz haben
+    // Plan-/starke Pokémon, die keinen Platz haben: gerechnet = Ein Platz mehr macht die beste Aufstellung spürbar stärker
+    let waiting = o.bench != null ? o.bench : 0;
+    if (field0 && slots < 9) { const f2 = K.bestField(cands, slots + 1, { foes: o.foes }); if (f2.score - field0.score >= 0.08 * field0.score) waiting = Math.max(waiting, 1); }
     let xpTip = null;
     if (pve && lvl && lvl < 9 && !o.nz) {
       // EP nur, wenn der Aufstieg mit diesem Gold jetzt erreichbar ist – halbe Wege kosten Zinsen und bringen keinen Platz
       const need = o.xp && o.xp.buys ? o.xp.buys : 1; const budget = o.lost ? left : spare;
-      if (((spare >= 4 && (waiting > 0 || plan.length > lvl)) || (o.lost && left >= 4)) && need * 4 <= budget) xpTip = { k: 'xp', buys: need, need, level: lvl + 1, lost: !!o.lost };
-      else if (o.lost && left >= 2) tips.push({ k: 'lostRoll', missing: plan.filter((u) => !owned[K.base(u.line)]).length });
+      const freeSoon = o.xp && o.xp.next != null && o.xp.xp != null && o.xp.next - o.xp.xp <= 2 && !o.lost; // 2 EP gratis je Station
+      if (freeSoon) { /* Aufstieg kommt nächste Runde von selbst */ } else if (((spare >= 4 && (waiting > 0 || plan.length > lvl)) || (o.lost && left >= 4)) && need * 4 <= budget) xpTip = { k: 'xp', buys: need, need, level: lvl + 1, lost: !!o.lost };
+      // Nach einer Niederlage würfeln nur mit genug Gold (≥ 12) und wenn dem Plan noch Pokémon fehlen – sonst verbrennt man sein Gold früh
+      else if (o.lost && left >= 12 && plan.some((u) => !owned[K.base(u.line)])) tips.push({ k: 'lostRoll', missing: plan.filter((u) => !owned[K.base(u.line)]).length });
     }
+    // Gerechnet: Mit einem Platz mehr und dem passenden Shop-Pokémon wird das Feld deutlich stärker -> EP jetzt, auch unter der Zinsgrenze
+    if (xpAdd && pve && !xpTip && xpAdd.need * 4 + xpAdd.cost <= gold) xpTip = { k: 'xp', buys: xpAdd.need, need: xpAdd.need, level: lvl + 1, lost: !!o.lost, add: xpAdd.line, gain: xpAdd.g };
     if (xpTip) tips.push(xpTip);
     if (!buys.some((b) => b.kind !== 'trait' && b.affordable) && !o.nz) {
       if (gold < cap && !(pve && o.lost)) tips.push({ k: 'save', cap, max: it.max, gold });
@@ -763,7 +978,7 @@ function create(opts) {
       if (lvl && lvl < pvpGoal(o.stage, norm) && need * 4 <= left && !tips.some((x) => x.k === 'xp')) tips.unshift({ k: 'xp', buys: need, need, level: lvl + 1, lost: true });
       tips.unshift({ k: 'allin', hp: o.hp, missing });
     }
-    return { buys, tips, fieldTraits, cap };
+    return { buys, tips, fieldTraits, cap, field: field0 };
   };
 
   /* ---------- Kampagnen-/Turm-Coach: Phasen und Kaufempfehlung ---------- */
@@ -829,5 +1044,5 @@ function create(opts) {
   return K;
 }
 
-root.KKCore = { NEW_LINES, PVP_ALIAS, CAMP_ALIAS, splitId, spriteDex, create, binomAtLeast, atLeastK, TYPE_COL, COST_COL, STONE_ART, NUM };
+root.KKCore = { NEW_LINES, PVP_ALIAS, CAMP_ALIAS, GEN1, GEN1_DE, EFF, typeEff, splitId, spriteDex, create, binomAtLeast, atLeastK, TYPE_COL, COST_COL, STONE_ART, NUM };
 })(typeof window !== 'undefined' ? window : globalThis);
