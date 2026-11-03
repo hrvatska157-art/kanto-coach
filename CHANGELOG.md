@@ -4,6 +4,13 @@ All versions below 1.0 are **beta** – the extension stays in beta until everyt
 
 Alle Versionen unter 1.0 sind **Beta** – die Erweiterung bleibt Beta, bis alles in jedem Modus sauber läuft. (Frühere Releases hießen 2.x; es sind dieselben Stände wie 0.1–0.7.)
 
+## 0.8.5 Beta – 2026-11-03
+**EN**
+- Names for 39 Adventure stops and Tower floors from the new game statistics (patch 41), e.g. the Biker Boss and “The Fossil Awakens”, and Tower floors above 100. Before, they showed in Spanish or as raw ids.
+
+**DE**
+- Namen für 39 Abenteuer-Stationen und Turm-Etagen aus der neuen Spielstatistik (Patch 41), z. B. Rocker-Boss und „Das Fossil erwacht“, dazu Turm-Etagen über 100. Vorher standen sie auf Spanisch oder als rohe Kennung da.
+
 ## Autoplay (Windows) – 2026-11-01
 **EN**
 - New: **Kanto Coach Autoplay**, a standalone Windows program (download `kanto-coach-autoplay-windows.zip` from the release, source in `tools/autoplay/`). It plays Adventure, Battle Tower, Nuzlocke and PvP training against bots with the coach's logic and saves a match log after every game.

@@ -691,6 +691,78 @@ window.KK_DE = {
 "de": "Mewtu",
 "en": "Mewtwo"
 },
+"Bajada": {
+"de": "Abstieg",
+"en": "Descent"
+},
+"Hierba alta": {
+"de": "Hohes Gras",
+"en": "Tall Grass"
+},
+"Motero": {
+"de": "Rocker",
+"en": "Biker"
+},
+"La bandada de Spearow": {
+"de": "Der Habitak-Schwarm",
+"en": "The Spearow Flock"
+},
+"¡El Team Rocket!": {
+"de": "Team Rocket!",
+"en": "Team Rocket!"
+},
+"Macarra": {
+"de": "Schläger",
+"en": "Cue Ball"
+},
+"Jefe de los moteros": {
+"de": "Rocker-Boss",
+"en": "Biker Boss"
+},
+"Playa": {
+"de": "Strand",
+"en": "Beach"
+},
+"El enjambre": {
+"de": "Der Schwarm",
+"en": "The Swarm"
+},
+"Nadadora": {
+"de": "Schwimmerin",
+"en": "Swimmer"
+},
+"El Samurái": {
+"de": "Der Samurai",
+"en": "The Samurai"
+},
+"Pareja de nadadores": {
+"de": "Schwimmer-Paar",
+"en": "Swimmer Pair"
+},
+"Entrada": {
+"de": "Eingang",
+"en": "Entrance"
+},
+"Corrientes": {
+"de": "Strömungen",
+"en": "Currents"
+},
+"Articuno": {
+"de": "Arktos",
+"en": "Articuno"
+},
+"Puerto": {
+"de": "Hafen",
+"en": "Harbor"
+},
+"Sótano": {
+"de": "Keller",
+"en": "Basement"
+},
+"El fósil despierta": {
+"de": "Das Fossil erwacht",
+"en": "The Fossil Awakens"
+},
 "brock": {
 "de": "Rocko",
 "en": "Brock"
@@ -774,6 +846,90 @@ window.KK_DE = {
 "magneton": {
 "de": "Magneton",
 "en": "Magneton"
+},
+"missingno": {
+"de": "MissingNo.",
+"en": "MissingNo."
+},
+"lorelei": {
+"de": "Lorelei",
+"en": "Lorelei"
+},
+"cloyster": {
+"de": "Austos",
+"en": "Cloyster"
+},
+"pescador": {
+"de": "Angler",
+"en": "Fisherman"
+},
+"aves": {
+"de": "Legendäre Vögel",
+"en": "Legendary Birds"
+},
+"cientifico": {
+"de": "Forscher",
+"en": "Scientist"
+},
+"mew": {
+"de": "Mew",
+"en": "Mew"
+},
+"blaine": {
+"de": "Pyro",
+"en": "Blaine"
+},
+"arcanine": {
+"de": "Arkani",
+"en": "Arcanine"
+},
+"bruno": {
+"de": "Bruno",
+"en": "Bruno"
+},
+"dragonite": {
+"de": "Dragoran",
+"en": "Dragonite"
+},
+"karateka": {
+"de": "Karateka",
+"en": "Black Belt"
+},
+"machamp": {
+"de": "Machomei",
+"en": "Machamp"
+},
+"agatha": {
+"de": "Agathe",
+"en": "Agatha"
+},
+"ditto": {
+"de": "Ditto",
+"en": "Ditto"
+},
+"lance": {
+"de": "Siegfried",
+"en": "Lance"
+},
+"iniciales": {
+"de": "Starter-Pokémon",
+"en": "Starter Pokémon"
+},
+"giovanni2": {
+"de": "Giovanni",
+"en": "Giovanni"
+},
+"rhydon": {
+"de": "Rizeros",
+"en": "Rhydon"
+},
+"campeon": {
+"de": "Champ",
+"en": "Champion"
+},
+"mewtwo2": {
+"de": "Mewtu",
+"en": "Mewtwo"
 }
 },
 "leagues": {
