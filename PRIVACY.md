@@ -1,6 +1,6 @@
 # Privacy · Datenschutz – Kanto Coach
 
-*Last updated / Stand: 2026-11-03 · Version 0.8.5 Beta*
+*Last updated / Stand: 2026-11-17 · Version 0.8.6 Beta*
 
 ## English
 

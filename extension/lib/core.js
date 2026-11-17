@@ -868,7 +868,8 @@ function create(opts) {
     for (const [id, s] of Object.entries(data.seals || {})) {
       for (const n of [s.name && s.name.en, s.name && s.name.es, sde[id] && sde[id][0]]) {
         if (!n) continue;
-        if (s.template === 'type' && n.includes('{T}')) { const [a, b] = normS(n).split('{t}'); tpl.push({ id, a, b }); } else exact[normS(n)] = id;
+        // Ein Name kann in zwei Sprachen verschiedene Siegel meinen (deutsch „Bodyguard“ = Safeguard, englisch Bodyguard = „Leibwache“)
+        if (s.template === 'type' && n.includes('{T}')) { const [a, b] = normS(n).split('{t}'); tpl.push({ id, a, b }); } else { const k = normS(n); (exact[k] = exact[k] || []).includes(id) || exact[k].push(id); }
       }
     }
     const types = Object.keys(data.traits || {}).map((t) => ({ t, names: [data.traits[t].en, data.traits[t].es, DE.types && DE.types[t]].filter(Boolean).map(normS) }));
@@ -877,15 +878,21 @@ function create(opts) {
   K.sealMatch = (label, round) => {
     const n = normS(String(label || '').split(':')[0]); if (!n) return null;
     const ix = sealIndex();
-    if (ix.exact[n]) return { id: ix.exact[n], type: null };
+    const nums = (t) => (String(t || '').match(/\d+/g) || []).sort().join(',');
+    const want = nums(String(label).split(':').slice(1).join(':').split('.')[0]);
+    const ex = ix.exact[n];
+    if (ex && ex.length === 1) return { id: ex[0], type: null };
+    if (ex) {
+      const sde = (typeof window !== 'undefined' && window.KK_SEALS_DE) || {};
+      const fit = ex.filter((id) => { const s = data.seals[id]; return [...(s.text || []).map((t) => t.line && t.line.en), sde[id] && sde[id][1]].some((t) => t && nums(t) === want); });
+      return { id: (fit.length === 1 ? fit : ex)[0], type: null };
+    }
     for (const x of ix.tpl) {
       if (!n.startsWith(x.a) || !n.endsWith(x.b) || n.length <= x.a.length + x.b.length) continue;
       const mid = n.slice(x.a.length, n.length - x.b.length); const ty = ix.types.find((y) => y.names.includes(mid));
       if (ty) return { id: x.id, type: ty.t };
     }
     // Rückfall (Name anders übersetzt): gleiche Zahlen im Wirkungstext wie genau ein Siegel dieser Runde
-    const nums = (t) => (String(t || '').match(/\d+/g) || []).sort().join(',');
-    const want = nums(String(label).split(':').slice(1).join(':').split('.')[0]);
     if (!want) return null;
     const hit = Object.entries(data.seals || {}).filter(([, s]) => s.template !== 'type' && (s.text || []).some((t) => (!round || t.round === round) && nums(t.line && t.line.en) === want));
     return hit.length === 1 ? { id: hit[0][0], type: null } : null;

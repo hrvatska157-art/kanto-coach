@@ -4,6 +4,15 @@ All versions below 1.0 are **beta** – the extension stays in beta until everyt
 
 Alle Versionen unter 1.0 sind **Beta** – die Erweiterung bleibt Beta, bis alles in jedem Modus sauber läuft. (Frühere Releases hießen 2.x; es sind dieselben Stände wie 0.1–0.7.)
 
+## 0.8.6 Beta – 2026-11-17
+**EN**
+- German texts now match the game exactly: Pokémon, types, items, boons, moves and all 136 seals use the official German names and lines from the game (e.g. “Wahlbrille”, “Schützer”, “Giftpanzer”, “Zaubertausch”).
+- Seal picks are recognised for all 136 seals in German, English and Spanish – including seals whose name means a different seal in another language (German “Bodyguard” = Safeguard).
+
+**DE**
+- Deutsche Texte wie im Spiel: Pokémon, Typen, Items, Segen, Attacken und alle 136 Siegel tragen jetzt die offiziellen deutschen Namen und Texte (z. B. „Wahlbrille“, „Schützer“, „Giftpanzer“, „Zaubertausch“).
+- Die Siegel-Wahl wird für alle 136 Siegel auf Deutsch, Englisch und Spanisch erkannt – auch bei Namen, die in einer anderen Sprache ein anderes Siegel meinen (deutsch „Bodyguard“ = Safeguard).
+
 ## 0.8.5 Beta – 2026-11-03
 **EN**
 - Names for 39 Adventure stops and Tower floors from the new game statistics (patch 41), e.g. the Biker Boss and “The Fossil Awakens”, and Tower floors above 100. Before, they showed in Spanish or as raw ids.
